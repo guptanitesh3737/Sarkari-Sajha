@@ -1,0 +1,8 @@
+{
+  "name": "SarkariSajha",
+  "description": "Nepal's Premier Lok Sewa & Government Vacancy Alert Platform featuring Candidate Dashboard, AI Matcher, Timed Practice Quizzes, Preparation Streaks & Analytics",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

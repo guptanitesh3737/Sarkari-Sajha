@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /vacancies
+Allow: /vacancies/*
+Allow: /quiz
+Allow: /syllabus
+Allow: /leaderboard
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://sarkarisajha.com/sitemap.xml

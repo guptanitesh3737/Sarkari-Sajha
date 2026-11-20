@@ -1,0 +1,59 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isBootstrappedAdmin() {
+      return isAuthenticated() && 
+        request.auth.token.email != null &&
+        request.auth.token.email_verified == true && (
+          request.auth.token.email == 'guptanitesh3737@gmail.com' ||
+          request.auth.token.email == 'admin@sarkarisajha.gov.np' ||
+          request.auth.token.email == 'admin@sarkarisajha.com'
+        );
+    }
+
+    function isValidResumeContentType() {
+      return request.resource.contentType.matches('application/pdf|image/(jpeg|png|webp)|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    }
+
+    function isValidNoticeContentType() {
+      return request.resource.contentType.matches('application/pdf|image/(jpeg|png|webp)');
+    }
+
+    // User resumes & attachments: Private to the authenticated owner
+    match /users/{userId}/resumes/{allPaths=**} {
+      allow read: if isOwner(userId) || isBootstrappedAdmin();
+      allow write: if isOwner(userId) && 
+        request.resource.size < 10 * 1024 * 1024 && // 10MB limit
+        isValidResumeContentType();
+    }
+
+    // Official Gazette Notices & Vacancy PDFs: Public read; write restricted to verified admins
+    match /notices/{allPaths=**} {
+      allow read: if true;
+      allow write: if isBootstrappedAdmin() && 
+        request.resource.size < 25 * 1024 * 1024 && // 25MB limit
+        isValidNoticeContentType();
+    }
+
+    // General user uploads: strictly scoped to owner
+    match /uploads/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId) || isBootstrappedAdmin();
+      allow write: if isOwner(userId) && 
+        request.resource.size < 10 * 1024 * 1024 &&
+        isValidResumeContentType();
+    }
+
+    // Default deny for anything else
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

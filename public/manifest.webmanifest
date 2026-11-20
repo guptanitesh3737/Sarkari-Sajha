@@ -1,0 +1,73 @@
+{
+  "name": "SarkariSajha – Nepal Government Vacancies & Lok Sewa",
+  "short_name": "SarkariSajha",
+  "description": "Verified Nepal Government job vacancies, Lok Sewa Aayog notices, syllabus outlines, and daily practice quizzes.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "lang": "ne-NP",
+  "dir": "ltr",
+  "categories": ["education", "government", "productivity", "news"],
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "All Vacancies",
+      "short_name": "Vacancies",
+      "description": "Explore latest Lok Sewa and Government vacancies",
+      "url": "/?tab=vacancies&source=pwa_shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Daily Lok Sewa Quiz",
+      "short_name": "Quiz Lab",
+      "description": "Practice syllabus-aligned multiple choice questions",
+      "url": "/?tab=quizzes&source=pwa_shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Career Assistant",
+      "short_name": "AI Assistant",
+      "description": "Ask eligibility and syllabus inquiries in Nepali or English",
+      "url": "/?tab=ai_assistant&source=pwa_shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Application Tracker",
+      "short_name": "Tracker",
+      "description": "Track deadlined applications and roll numbers",
+      "url": "/?tab=tracker&source=pwa_shortcut",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

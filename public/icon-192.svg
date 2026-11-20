@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="50%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="goldGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="crimsonGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad192)"/>
+  <circle cx="96" cy="96" r="78" fill="none" stroke="url(#goldGrad192)" stroke-width="3" stroke-dasharray="6 3"/>
+  <rect x="70" y="36" width="52" height="14" rx="3" fill="url(#crimsonGrad192)"/>
+  <text x="96" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7" font-weight="900" text-anchor="middle" fill="#ffffff" letter-spacing="1">NEPAL</text>
+  <text x="96" y="112" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="60" font-weight="900" text-anchor="middle" fill="#ffffff" letter-spacing="-2">SS</text>
+  <path d="M50,136 Q96,124 142,136 L142,142 Q96,130 50,142 Z" fill="url(#goldGrad192)"/>
+</svg>

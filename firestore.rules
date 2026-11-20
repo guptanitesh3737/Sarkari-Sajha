@@ -1,0 +1,247 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny Catch-All Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isBootstrappedAdmin() {
+      return isAuthenticated() && 
+        request.auth.token.email != null &&
+        request.auth.token.email_verified == true && (
+          request.auth.token.email == 'guptanitesh3737@gmail.com' ||
+          request.auth.token.email == 'admin@sarkarisajha.gov.np' ||
+          request.auth.token.email == 'admin@sarkarisajha.com'
+        );
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserData().role == 'admin' ||
+         getUserData().role == 'super_admin' ||
+         getUserData().role == 'editor')
+      );
+    }
+
+    function isFullAdmin() {
+      return isBootstrappedAdmin() || (
+        isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserData().role == 'admin' || getUserData().role == 'super_admin')
+      );
+    }
+
+    function isSuperAdmin() {
+      return isBootstrappedAdmin() || (
+        isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        getUserData().role == 'super_admin'
+      );
+    }
+
+    // USERS: Private to owner or full admin. Content Editors cannot access PII.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isFullAdmin();
+
+      // On create: allowed for owner (with role candidate/user or super_admin if matching owner email) or full admin
+      allow create: if (isOwner(userId) && 
+        (!('role' in request.resource.data) || 
+         request.resource.data.role == 'candidate' || 
+         request.resource.data.role == 'user' ||
+         isBootstrappedAdmin())) || 
+        isFullAdmin();
+
+      // On update: allowed if owner (maintaining role or bootstrapping owner email) or full admin
+      allow update: if (isOwner(userId) && 
+        (!('role' in request.resource.data) || 
+         request.resource.data.role == resource.data.role ||
+         isBootstrappedAdmin())) || 
+        isFullAdmin();
+
+      allow delete: if isFullAdmin();
+    }
+
+    // VACANCIES: Public read; create, edit, delete strictly forbidden for normal users (admins/editors only)
+    match /vacancies/{vacancyId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // SAVED_VACANCIES: Restricted to user's UID or admin
+    match /saved_vacancies/{savedId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // APPLICATIONS: Restricted to user's UID or admin
+    match /applications/{appId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // QUIZ SETS, CATEGORIES, EXAM PROFILES & QUESTION BANK: Public read; write only by admins/editors
+    match /quiz_sets/{setId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /quiz_categories/{catId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /exam_profiles/{examId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /question_sources/{sourceId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /quiz_questions/{questionId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // QUIZ ATTEMPTS: Restricted to user's UID or admin read
+    match /quiz_attempts/{attemptId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // NOTIFICATIONS: Restricted to user's UID or global or admin
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || resource.data.userId == 'all' || isAdmin());
+      allow create, update, delete: if isAdmin() || (isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid));
+    }
+
+    // IN_APP_NOTIFICATIONS: Private to authenticated recipient
+    match /in_app_notifications/{notifId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update, delete: if isAdmin() || (isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid));
+    }
+
+    // JOB ALERT PREFERENCES: Private to candidate owner or admin
+    match /job_alert_preferences/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // ADMIN ACTIVITY: Strictly restricted to admins/editors
+    match /admin_activity/{activityId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ADMIN TEAM: Managed by full administrators; editors can read team profiles
+    match /admin_team/{memberId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isFullAdmin();
+    }
+
+    // SYLLABUS POSTS: Public read; create, edit, delete by admins/editors
+    match /syllabus_posts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ADMIN ALERTS & NOTICES: Public read; write by admins/editors
+    match /admin_alerts/{alertId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // SETTINGS: Public read; write restricted to full admins
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update, delete: if isFullAdmin();
+    }
+
+    // USER SUBSCRIPTIONS: Read by owner or admin; WRITE STRICTLY RESTRICTED TO ADMIN/BACKEND (prevents client-side premium elevation)
+    match /user_subscriptions/{subId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ANNOUNCEMENTS: Public read for published notices; write strictly restricted to admins/editors
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // SUBSCRIPTION PLANS: Public read; write restricted to admins
+    match /subscription_plans/{planId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // COUPONS: Validation & management restricted to admin or backend
+    match /coupons/{couponId} {
+      allow read, write: if isAdmin();
+    }
+
+    // AI KNOWLEDGE LAYER: Public read for verified official curricula; write restricted to admins/editors
+    match /ai_knowledge/{knowledgeId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // AUDIT LOGS: Read and write restricted to administrative roles
+    match /audit_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+
+    // MISTAKE NOTEBOOK: Private to the authenticated candidate
+    match /mistake_notebook/{itemId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create, update: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // BETA FEEDBACKS: Anyone or authenticated can submit; read/resolve by admin
+    match /beta_feedbacks/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // VACANCY REPORTS: Authenticated or guest can report; read/resolve by admin
+    match /vacancy_reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // CANDIDATE SURVEYS: Authenticated or guest can submit; read by admin
+    match /candidate_surveys/{surveyId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // CLIENT TELEMETRY & ERROR LOGS: Create allowed for error reporting; read/delete by admin
+    match /client_telemetry_errors/{errorId} {
+      allow read: if isAdmin();
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+  }
+}

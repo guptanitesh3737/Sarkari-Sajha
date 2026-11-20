@@ -1,0 +1,385 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profiles",
+      "description": "User profiles, preferences, and permissions",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["candidate", "editor", "admin", "super_admin"] },
+        "qualificationLevel": { "type": "string" },
+        "fieldOfStudy": { "type": "string" },
+        "province": { "type": "string" },
+        "age": { "type": "number" },
+        "preferredCategories": { "type": "array" },
+        "notificationPrefs": { "type": "object" },
+        "resumeText": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "vacancies": {
+      "title": "Government & Banking Vacancies",
+      "description": "Verified public sector vacancy announcements",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "titleNp": { "type": "string" },
+        "shortOrg": { "type": "string" },
+        "org": { "type": "string" },
+        "province": { "type": "string" },
+        "category": { "type": "string" },
+        "level": { "type": "string" },
+        "posts": { "type": "number" },
+        "fee": { "type": "number" },
+        "deadline": { "type": "string" },
+        "examDate": { "type": "string" },
+        "applyUrl": { "type": "string" },
+        "description": { "type": "string" },
+        "noticeNumber": { "type": "string" },
+        "qualifications": { "type": "object" },
+        "status": { "type": "string" },
+        "syllabusPoints": { "type": "array" },
+        "verifiedByAdmin": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "org", "category", "verifiedByAdmin"]
+    },
+    "saved_vacancies": {
+      "title": "Saved Vacancies",
+      "description": "Bookmarks and saved job postings per candidate",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "vacancyId": { "type": "string" },
+        "notes": { "type": "string" },
+        "isFavorite": { "type": "boolean" },
+        "savedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "vacancyId"]
+    },
+    "applications": {
+      "title": "Application Trackers",
+      "description": "User saved job applications and pipeline status",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "vacancyId": { "type": "string" },
+        "status": { "type": "string" },
+        "feePaid": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "appliedAt": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "vacancyId", "status"]
+    },
+    "quiz_sets": {
+      "title": "Lok Sewa & Banking Practice Quizzes",
+      "description": "Timed practice sets with category, exam profile, and negative marking rules",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "titleNp": { "type": "string" },
+        "category": { "type": "string" },
+        "examProfile": { "type": "string" },
+        "level": { "type": "string" },
+        "timeLimitMinutes": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "negativeMarkRate": { "type": "number" },
+        "passingPercentage": { "type": "number" },
+        "isDailyQuiz": { "type": "boolean" },
+        "dailyDate": { "type": "string" },
+        "description": { "type": "string" },
+        "descriptionNp": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "draft", "archived"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category"]
+    },
+    "quiz_categories": {
+      "title": "Quiz Categories",
+      "description": "Structured examination topics and general knowledge categories",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "nameNp": { "type": "string" },
+        "slug": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" },
+        "questionCount": { "type": "number" },
+        "isCustom": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug"]
+    },
+    "exam_profiles": {
+      "title": "Exam & Post Profiles",
+      "description": "Curated examination templates for Section Officer, NaSu, Kharidar, Banking, Police, TSC",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "nameNp": { "type": "string" },
+        "code": { "type": "string" },
+        "organization": { "type": "string" },
+        "level": { "type": "string" },
+        "defaultTimeMinutes": { "type": "number" },
+        "defaultNegativeMarkRate": { "type": "number" },
+        "syllabusOutline": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "code"]
+    },
+    "question_sources": {
+      "title": "Question Source Documents",
+      "description": "Uploaded acts, gazette notices, syllabi, and reference excerpts for anti-hallucination grounded AI generation",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string", "enum": ["act", "gazette", "syllabus", "current_affairs", "book_excerpt"] },
+        "sourceText": { "type": "string" },
+        "referenceCitation": { "type": "string" },
+        "addedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "sourceText"]
+    },
+    "quiz_questions": {
+      "title": "Quiz Question Bank",
+      "description": "Structured multiple-choice questions with bilingual text, citations, and AI validation reports",
+      "type": "object",
+      "properties": {
+        "quizSetId": { "type": "string" },
+        "category": { "type": "string" },
+        "examProfile": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+        "language": { "type": "string", "enum": ["en", "np", "bilingual"] },
+        "questionText": { "type": "string" },
+        "questionTextNp": { "type": "string" },
+        "options": { "type": "array" },
+        "optionsNp": { "type": "array" },
+        "correctOption": { "type": "number" },
+        "explanation": { "type": "string" },
+        "explanationNp": { "type": "string" },
+        "mnemonicTip": { "type": "string" },
+        "syllabusReference": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "topic": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "approved", "rejected", "published"] },
+        "aiValidation": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["questionText", "correctOption", "category"]
+    },
+    "quiz_attempts": {
+      "title": "Quiz Attempts & Performance Analytics",
+      "description": "Candidate scores, negative marking calculations, accuracy, topic breakdown, and AI study tips",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "quizSetId": { "type": "string" },
+        "quizTitle": { "type": "string" },
+        "category": { "type": "string" },
+        "score": { "type": "number" },
+        "rawScore": { "type": "number" },
+        "correctCount": { "type": "number" },
+        "incorrectCount": { "type": "number" },
+        "unattemptedCount": { "type": "number" },
+        "negativeMarksDeducted": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "percentage": { "type": "number" },
+        "timeTakenSeconds": { "type": "number" },
+        "answers": { "type": "object" },
+        "topicBreakdown": { "type": "object" },
+        "aiRecommendations": { "type": "array" },
+        "attemptedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "quizSetId", "score"]
+    },
+    "notifications": {
+      "title": "User Notifications",
+      "description": "Deadline alerts and system notifications",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "vacancyId": { "type": "string" },
+        "vacancyTitle": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "channel": { "type": "string" },
+        "recipientPhoneOrEmail": { "type": "string" },
+        "sentAt": { "type": "string" },
+        "status": { "type": "string" },
+        "triggerType": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "message"]
+    },
+    "admin_activity": {
+      "title": "Admin Audit Log",
+      "description": "System admin activity and audit trail",
+      "type": "object",
+      "properties": {
+        "adminUid": { "type": "string" },
+        "adminEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "targetCollection": { "type": "string" },
+        "targetId": { "type": "string" },
+        "details": { "type": "object" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["adminUid", "action"]
+    },
+    "settings": {
+      "title": "System Settings",
+      "description": "Global application configuration and parameters",
+      "type": "object",
+      "properties": {
+        "settingKey": { "type": "string" },
+        "value": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "updatedBy": { "type": "string" }
+      },
+      "required": ["settingKey"]
+    },
+    "user_subscriptions": {
+      "title": "User Subscriptions",
+      "description": "Premium tier entitlements, expiry timestamps, and payment verification",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "tier": { "type": "string", "enum": ["free", "pro", "enterprise"] },
+        "status": { "type": "string", "enum": ["active", "expired", "cancelled"] },
+        "expiresAt": { "type": "string" }
+      },
+      "required": ["userId", "tier", "status"]
+    },
+    "mistake_notebook": {
+      "title": "Mistake Notebook",
+      "description": "Personal incorrect question review bank for candidates",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "questionId": { "type": "string" },
+        "savedAt": { "type": "string" }
+      },
+      "required": ["userId", "questionId"]
+    },
+    "beta_feedbacks": {
+      "title": "Beta User Feedback",
+      "description": "User suggestions, bug reports, and UX satisfaction entries",
+      "type": "object",
+      "properties": {
+        "feedbackType": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["title", "description"]
+    },
+    "vacancy_reports": {
+      "title": "Vacancy Inaccuracy Reports",
+      "description": "Community reported errors on official vacancy posts",
+      "type": "object",
+      "properties": {
+        "vacancyId": { "type": "string" },
+        "issueType": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["vacancyId", "issueType"]
+    },
+    "announcements": {
+      "title": "Official Announcements",
+      "description": "Public sector notices, deadline alerts, system updates and popup banners",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "short_description": { "type": "string" },
+        "full_content": { "type": "string" },
+        "banner_url": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] },
+        "target_audience": { "type": "string" },
+        "CTA_text": { "type": "string" },
+        "CTA_url": { "type": "string" },
+        "publish_at": { "type": "string" },
+        "expires_at": { "type": "string" },
+        "status": { "type": "string", "enum": ["DRAFT", "SCHEDULED", "PUBLISHED", "EXPIRED", "ARCHIVED"] },
+        "popup_enabled": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "short_description", "status"]
+    },
+    "subscription_plans": {
+      "title": "Subscription Plans",
+      "description": "Configurable candidate subscription tiers and limits",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "enum": ["FREE", "MONTHLY", "QUARTERLY", "YEARLY"] },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "duration_days": { "type": "number" },
+        "features": { "type": "array" },
+        "limits": { "type": "object" },
+        "active": { "type": "boolean" },
+        "trial_period_days": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "name", "price", "duration_days"]
+    },
+    "coupons": {
+      "title": "Discount Coupons",
+      "description": "Promotional vouchers and redemption limits for subscriptions",
+      "type": "object",
+      "properties": {
+        "coupon_code": { "type": "string" },
+        "discount_type": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discount_value": { "type": "number" },
+        "maximum_uses": { "type": "number" },
+        "used_count": { "type": "number" },
+        "per_user_limit": { "type": "number" },
+        "start_date": { "type": "string" },
+        "expiry_date": { "type": "string" },
+        "applicable_plans": { "type": "array" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["coupon_code", "discount_type", "discount_value"]
+    },
+    "ai_knowledge": {
+      "title": "Controlled AI Knowledge Layer",
+      "description": "Verified official curricula, public service laws, syllabus breakdowns, and authentic rules for AI retrieval grounding",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "content": { "type": "string" },
+        "official_sources": { "type": "array" },
+        "verification_status": { "type": "string", "enum": ["verified", "unverified"] },
+        "verified_by": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "content", "verification_status"]
+    },
+    "audit_logs": {
+      "title": "Production Audit Trail",
+      "description": "Granular administrative activity logs capturing resource, previous state, new state, and executor",
+      "type": "object",
+      "properties": {
+        "adminId": { "type": "string" },
+        "adminEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "resource": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "details": { "type": "string" },
+        "severity": { "type": "string", "enum": ["info", "warning", "critical"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["adminId", "action", "resource", "timestamp"]
+    }
+  }
+}
