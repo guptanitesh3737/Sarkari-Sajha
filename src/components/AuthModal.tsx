@@ -12,7 +12,7 @@ import {
   ArrowRight,
   LogOut,
   RefreshCw,
-  Sparkles
+  UserPlus
 } from 'lucide-react';
 import {
   RecaptchaVerifier,
@@ -39,7 +39,6 @@ interface AuthModalProps {
   lang: Language;
   currentUser: FirebaseUser | null;
   onAuthSuccess?: (user: FirebaseUser) => void;
-  onDemoLogin?: (name: string, emailOrPhone: string) => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -47,10 +46,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   lang,
   currentUser,
-  onAuthSuccess,
-  onDemoLogin
+  onAuthSuccess
 }) => {
-  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
   const [emailMode, setEmailMode] = useState<'login' | 'signup' | 'reset'>('login');
 
   // Phone Auth State
@@ -67,6 +65,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
 
+  // Forgot Password / Reset State
+  const [resetSent, setResetSent] = useState(false);
+  const [resetEmailTarget, setResetEmailTarget] = useState('');
+  const [resetCooldown, setResetCooldown] = useState(0);
+
   // Status & Error handling
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -82,8 +85,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   }, [resendTimer]);
 
   useEffect(() => {
+    if (resetCooldown > 0) {
+      const timer = setInterval(() => setResetCooldown((prev) => prev - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [resetCooldown]);
+
+  useEffect(() => {
     setErrorMsg(null);
     setSuccessMsg(null);
+    if (emailMode !== 'reset') {
+      setResetSent(false);
+    }
+    if (!isOpen) {
+      setEmailMode('login');
+      setResetSent(false);
+    }
   }, [authMethod, emailMode, isOpen]);
 
   // Clean up reCAPTCHA on unmount
@@ -161,8 +178,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       let msg = err.message || 'Failed to send OTP code.';
       if (err.code === 'auth/operation-not-allowed') {
         msg = lang === 'np'
-          ? 'फायरबेस कन्सोलमा मोबाइल प्रमाणीकरण (Phone Auth) असक्षम (Disabled) छ। कृपया Firebase Console > Authentication > Sign-in method मा गई "Phone" अन गर्नुहोस्।'
-          : 'Phone authentication is disabled in your Firebase console settings. Enable "Phone" under Firebase Console > Authentication > Sign-in method, or use Quick Demo Sign-In below.';
+          ? 'फायरबेस कन्सोलमा मोबाइल प्रमाणीकरण (Phone Auth) असक्षम छ। कृपया "Email Login" वा "Continue with Google" प्रयोग गर्नुहोस्।'
+          : 'Phone authentication is not enabled in Firebase Console. Please use "Email Login" or "Continue with Google".';
       } else if (err.code === 'auth/invalid-phone-number') {
         msg = lang === 'np' ? 'अमान्य फोन नम्बर!' : 'Invalid phone number format.';
       } else if (err.code === 'auth/too-many-requests') {
@@ -223,14 +240,83 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  // FORGOT PASSWORD / PASSWORD RESET
+  const handlePasswordReset = async (targetEmail?: string) => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    const cleanEmail = (targetEmail ?? email).trim();
+    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
+      setErrorMsg(
+        lang === 'np'
+          ? 'कृपया पासवर्ड रिसेट गर्न मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्।'
+          : 'Please enter a valid registered email address to reset your password.'
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await sendPasswordResetEmail(auth, cleanEmail);
+      setResetEmailTarget(cleanEmail);
+      setResetSent(true);
+      setResetCooldown(60);
+      setSuccessMsg(
+        lang === 'np'
+          ? `यदि ${cleanEmail} मा खाता दर्ता छ भने पासवर्ड रिसेट लिङ्क पठाइएको छ। कृपया इनबक्स र स्प्याम फोल्डर जाँच गर्नुहोस्।`
+          : `If an account exists for ${cleanEmail}, a password reset link has been sent. Please check your inbox and spam folder.`
+      );
+    } catch (err: any) {
+      console.error('Password Reset Error:', err);
+      let msg = err.message || 'Failed to send password reset email.';
+      if (err.code === 'auth/user-not-found') {
+        msg =
+          lang === 'np'
+            ? `यो इमेल (${cleanEmail}) सँग सम्बन्धित कुनै दर्ता भएको खाता भेटिएन।`
+            : `No registered account found with email address ${cleanEmail}.`;
+      } else if (err.code === 'auth/invalid-email' || err.code === 'auth/missing-email') {
+        msg =
+          lang === 'np'
+            ? 'कृपया मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्।'
+            : 'Please enter a valid email address.';
+      } else if (err.code === 'auth/too-many-requests') {
+        msg =
+          lang === 'np'
+            ? 'धेरै पटक पासवर्ड रिसेट अनुरोध गरियो। कृपया केही समयपछि पुन: प्रयास गर्नुहोस्।'
+            : 'Too many password reset requests. Please wait a few minutes and try again.';
+      } else if (err.code === 'auth/operation-not-allowed') {
+        msg =
+          lang === 'np'
+            ? 'फायरबेस कन्सोलमा इमेल/पासवर्ड सेवा असक्षम छ। यदि तपाईंले गूगल खाताबाट लगइन गर्नुभएको थियो भने तलको "Continue with Google" प्रयोग गर्नुहोस्।'
+            : 'Email/Password sign-in is disabled in Firebase Console. If you signed up with Google, use "Continue with Google" below.';
+      } else if (err.code === 'auth/network-request-failed') {
+        msg =
+          lang === 'np'
+            ? 'नेटवर्क जडान समस्या देखियो। कृपया इन्टरनेट जाँच गर्नुहोस्।'
+            : 'Network error. Please check your internet connection and try again.';
+      }
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // EMAIL LOGIN / SIGNUP / RESET
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    if (!email || !email.includes('@')) {
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
       setErrorMsg(lang === 'np' ? 'कृपया मान्य इमेल हाल्नुहोस्।' : 'Please enter a valid email address.');
+      return;
+    }
+
+    if (emailMode === 'reset') {
+      await handlePasswordReset(cleanEmail);
       return;
     }
 
@@ -247,21 +333,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setLoading(false);
           return;
         }
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const userCred = await signInWithEmailAndPassword(auth, cleanEmail, password);
         await syncUserProfileToFirestore(userCred.user.uid, {
           email: userCred.user.email,
-          displayName: userCred.user.displayName
+          displayName: userCred.user.displayName,
+          phoneNumber: userCred.user.phoneNumber
         });
         setSuccessMsg(lang === 'np' ? 'इमेल लगइन सफल भयो!' : 'Successfully signed in!');
         if (onAuthSuccess) onAuthSuccess(userCred.user);
-        setTimeout(() => onClose(), 1000);
+        setTimeout(() => onClose(), 800);
       } else if (emailMode === 'signup') {
         if (!password || password.length < 6) {
           setErrorMsg(lang === 'np' ? 'पासवर्ड कम्तीमा ६ अक्षरको हुनुपर्छ।' : 'Password must be at least 6 characters.');
           setLoading(false);
           return;
         }
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
         if (fullName.trim()) {
           await updateProfile(userCred.user, { displayName: fullName.trim() });
         }
@@ -277,31 +364,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setSuccessMsg(
           lang === 'np'
             ? 'नयाँ खाता सिर्जना भयो! पुष्टीकरण लिङ्क तपाईंको इमेलमा पठाइएको छ।'
-            : `Account created successfully! A verification email has been sent to ${email}. Please check your inbox to verify your account.`
+            : `Account created successfully! A verification email has been sent to ${cleanEmail}. Please check your inbox to verify your account.`
         );
         if (onAuthSuccess) onAuthSuccess(userCred.user);
-        setTimeout(() => onClose(), 2500);
-      } else if (emailMode === 'reset') {
-        await sendPasswordResetEmail(auth, email);
-        setSuccessMsg(
-          lang === 'np'
-            ? `पासवर्ड रिसेट लिङ्क ${email} मा सफलतापूर्वक पठाइयो। कृपया आफ्नो इमेल र स्प्याम फोल्डर जाँच गर्नुहोस्।`
-            : `Password reset email successfully sent to ${email}. Please check your inbox and spam folder.`
-        );
+        setTimeout(() => onClose(), 2200);
       }
     } catch (err: any) {
       console.error('Email Auth Error:', err);
       let msg = err.message || 'Authentication failed.';
       if (err.code === 'auth/operation-not-allowed') {
         msg = lang === 'np'
-          ? 'फायरबेस कन्सोलमा इमेल/पासवर्ड प्रमाणीकरण असक्षम छ। कृपया "Quick Demo Sign-In" प्रयोग गर्नुहोस् वा Firebase Console मा "Email/Password" अन गर्नुहोस्।'
-          : 'Email/Password authentication is disabled in your Firebase console settings. Enable "Email/Password" under Firebase Console > Authentication > Sign-in method, or use Quick Demo Sign-In below.';
+          ? 'फायरबेस कन्सोलमा इमेल/पासवर्ड लगइन हाल असक्षम छ। कृपया तलको "Sign in with Google" प्रयोग गर्नुहोस् वा Firebase Console > Authentication > Sign-in method मा "Email/Password" अन गर्नुहोस्।'
+          : 'Email/Password sign-in is not yet enabled in Firebase Console. You can sign in immediately with any email using "Sign in with Google" below, or enable Email/Password in Firebase Console > Authentication > Sign-in method.';
       } else if (err.code === 'auth/user-not-found') {
-        msg = emailMode === 'reset'
-          ? (lang === 'np' ? `यो इमेल (${email}) सँग सम्बन्धित कुनै दर्ता भएको खाता भेटिएन।` : `No registered account found with email address ${email}.`)
-          : (lang === 'np' ? 'गलत इमेल वा पासवर्ड!' : 'Invalid email or password.');
+        msg =
+          lang === 'np'
+            ? 'यो इमेलमा खाता भेटिएन। कृपया "Create new account" वा "Sign in with Google" प्रयोग गर्नुहोस्।'
+            : 'No password account found for this email. Click "Create new account" or use "Sign in with Google".';
       } else if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-        msg = lang === 'np' ? 'गलत इमेल वा पासवर्ड!' : 'Invalid email or password.';
+        msg = lang === 'np'
+          ? 'गलत इमेल/पासवर्ड, वा यो इमेल गूगल खाताबाट मात्र दर्ता गरिएको छ। पासवर्ड रिसेट वा "Sign in with Google" प्रयास गर्नुहोस्।'
+          : 'Invalid email or password. If you forgot your password, use "Forgot password?" below or try "Continue with Google".';
       } else if (err.code === 'auth/email-already-in-use') {
         setEmailMode('login');
         msg = lang === 'np'
@@ -309,6 +392,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           : 'An account already exists with this email address. Switched to Login mode — please enter your password.';
       } else if (err.code === 'auth/invalid-email') {
         msg = lang === 'np' ? 'कृपया मान्य इमेल ठेगाना प्रविष्ट गर्नुहोस्।' : 'Please enter a valid email address.';
+      } else if (err.code === 'auth/weak-password') {
+        msg = lang === 'np' ? 'पासवर्ड कम्तीमा ६ अक्षरको बलियो हुनुपर्छ।' : 'Password is too weak. Please use at least 6 characters.';
+      } else if (err.code === 'auth/user-disabled') {
+        msg = lang === 'np' ? 'यो खाता प्रशासनद्वारा निष्क्रिय गरिएको छ।' : 'This account has been disabled. Please contact support.';
+      } else if (err.code === 'auth/too-many-requests') {
+        msg = lang === 'np' ? 'धेरै असफल प्रयासहरू भए। कृपया केही समयपछि पुन: प्रयास गर्नुहोस्।' : 'Too many failed attempts. Please wait a moment and try again.';
+      } else if (err.code === 'auth/network-request-failed') {
+        msg = lang === 'np' ? 'नेटवर्क जडान समस्या देखियो। कृपया इन्टरनेट जाँच गर्नुहोस्।' : 'Network error. Please check your internet connection and try again.';
       }
       setErrorMsg(msg);
     } finally {
@@ -322,6 +413,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessMsg(null);
     try {
       setLoading(true);
+      try {
+        await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      } catch (pErr) {
+        console.warn('Persistence config warning:', pErr);
+      }
       const userCred = await signInWithPopup(auth, googleProvider);
       if (userCred.user) {
         await syncUserProfileToFirestore(userCred.user.uid, {
@@ -329,9 +425,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           displayName: userCred.user.displayName,
           phoneNumber: userCred.user.phoneNumber
         });
-        setSuccessMsg(lang === 'np' ? 'गूगलबाट लगइन सफल भयो!' : 'Successfully signed in with Google!');
+        setSuccessMsg(
+          lang === 'np'
+            ? `${userCred.user.email || 'गूगल खाता'} बाट लगइन सफल भयो!`
+            : `Successfully signed in as ${userCred.user.email || 'Google user'}!`
+        );
         if (onAuthSuccess) onAuthSuccess(userCred.user);
-        setTimeout(() => onClose(), 1000);
+        setTimeout(() => onClose(), 800);
       }
     } catch (err: any) {
       const isUserCancellation =
@@ -344,19 +444,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         (err?.message && err.message.includes('popup-blocked'));
 
       if (isUserCancellation) {
-        // Normal user cancellation — log info and don't raise as console error
         console.info('Google sign-in popup was dismissed by user.');
         setErrorMsg(
           lang === 'np'
-            ? 'गूगल लगइन विन्डो बन्द गरियो। पुन: प्रयास गर्नुहोस् वा इमेल / त्वरित डेमो प्रयोग गर्नुहोस्।'
-            : 'Google sign-in popup was closed. You can retry or use Email / Quick Demo access.'
+            ? 'गूगल लगइन विन्डो बन्द गरियो। पुन: प्रयास गर्नुहोस् वा इमेल लगइन प्रयोग गर्नुहोस्।'
+            : 'Google sign-in popup was closed. Please retry or use Email login.'
         );
       } else if (isPopupBlocked) {
         console.warn('Google sign-in popup was blocked by browser.');
         setErrorMsg(
           lang === 'np'
             ? 'ब्राउजरले पपअप ब्लक गर्यो। कृपया पपअप अनुमति दिनुहोस् वा इमेल लगइन प्रयोग गर्नुहोस्।'
-            : 'Sign-in popup was blocked by browser. Please allow popups or use Email / Quick Demo login.'
+            : 'Sign-in popup was blocked by browser. Please allow popups for this site or use Email login.'
         );
       } else {
         console.error('Google Sign In Error:', err);
@@ -364,13 +463,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         if (err?.code === 'auth/operation-not-allowed') {
           msg =
             lang === 'np'
-              ? 'फायरबेस कन्सोलमा गूगल प्रमाणीकरण असक्षम छ। कृपया Firebase Console मा "Google" अन गर्नुहोस् वा Quick Demo Sign-In प्रयोग गर्नुहोस्।'
-              : 'Google sign-in is disabled in your Firebase console settings. Enable "Google" under Firebase Console > Authentication > Sign-in method, or use Quick Demo Sign-In below.';
+              ? 'फायरबेस कन्सोलमा गूगल प्रमाणीकरण असक्षम छ। कृपया Firebase Console मा "Google" अन गर्नुहोस्।'
+              : 'Google sign-in is disabled in Firebase Console. Enable "Google" under Authentication > Sign-in method.';
         } else if (err?.code === 'auth/unauthorized-domain') {
           msg =
             lang === 'np'
               ? 'यो डोमेन Firebase Auth अधिकृत सूचीमा छैन।'
               : 'This domain is not authorized for OAuth operations in Firebase Console.';
+        } else if (err?.code === 'auth/account-exists-with-different-credential') {
+          msg =
+            lang === 'np'
+              ? 'यो इमेल पहिले नै अर्को लगइन विधिबाट दर्ता छ। कृपया इमेल/पासवर्डबाट लगइन गर्नुहोस्।'
+              : 'An account already exists with this email using another sign-in method. Please sign in with Email/Password.';
         }
         setErrorMsg(msg);
       }
@@ -384,10 +488,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       setLoading(true);
       await auth.signOut();
+      setPassword('');
       setSuccessMsg(lang === 'np' ? 'साइन आउट गरियो।' : 'Signed out successfully.');
-      setTimeout(() => onClose(), 1000);
+      setTimeout(() => onClose(), 800);
     } catch (err: any) {
       console.error('Sign Out Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // SWITCH ACCOUNT (Sign out & stay open for logging in with another email)
+  const handleSwitchAccount = async () => {
+    try {
+      setLoading(true);
+      setErrorMsg(null);
+      await auth.signOut();
+      setEmail('');
+      setPassword('');
+      setAuthMethod('email');
+      setEmailMode('login');
+      setSuccessMsg(
+        lang === 'np'
+          ? 'अघिल्लो खाताबाट बाहिरिनुभयो। अब अर्को इमेलबाट लगइन गर्नुहोस्।'
+          : 'Signed out. Choose Google or enter another email to sign in.'
+      );
+    } catch (err: any) {
+      console.error('Switch Account Error:', err);
+      setErrorMsg(err?.message || 'Could not switch account.');
     } finally {
       setLoading(false);
     }
@@ -398,12 +526,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       {/* Invisible Recaptcha Container */}
       <div id="recaptcha-container"></div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden relative">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md max-h-[92vh] overflow-y-auto relative">
         {/* Header bar */}
         <div className="bg-slate-900 text-white p-6 relative">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -520,34 +649,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               )}
 
-              <button
-                onClick={handleSignOut}
-                disabled={loading}
-                className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>{lang === 'np' ? 'साइन आउट गर्नुहोस्' : 'Sign Out Account'}</span>
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleSwitchAccount}
+                  disabled={loading}
+                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>{lang === 'np' ? 'अर्को इमेलबाट लगइन' : 'Switch Account'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  disabled={loading}
+                  className="flex-1 py-3 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>{lang === 'np' ? 'साइन आउट' : 'Sign Out'}</span>
+                </button>
+              </div>
             </div>
           ) : (
             <>
               {/* AUTH METHOD SELECTOR TABS */}
               <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
                 <button
-                  onClick={() => setAuthMethod('phone')}
-                  className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 ${
-                    authMethod === 'phone'
-                      ? 'bg-white text-slate-900 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Phone className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{lang === 'np' ? 'फोन / OTP' : 'Phone / OTP'}</span>
-                </button>
-
-                <button
+                  type="button"
                   onClick={() => setAuthMethod('email')}
-                  className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 ${
+                  className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${
                     authMethod === 'email'
                       ? 'bg-white text-slate-900 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -555,6 +685,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 >
                   <Mail className="w-3.5 h-3.5 text-amber-600" />
                   <span>{lang === 'np' ? 'इमेल / पासवर्ड' : 'Email Login'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAuthMethod('phone')}
+                  className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                    authMethod === 'phone'
+                      ? 'bg-white text-slate-900 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Phone className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{lang === 'np' ? 'फोन / OTP' : 'Phone / OTP'}</span>
                 </button>
               </div>
 
@@ -673,17 +816,80 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               {/* EMAIL AUTH TAB */}
               {authMethod === 'email' && (
+                emailMode === 'reset' && resetSent ? (
+                  <div className="space-y-4 animate-in fade-in">
+                    <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2.5 text-xs text-emerald-950">
+                      <div className="flex items-center gap-2 font-bold text-sm text-emerald-900">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                        <span>
+                          {lang === 'np' ? 'पासवर्ड रिसेट इमेल पठाइयो' : 'Password Reset Email Sent'}
+                        </span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed">
+                        {lang === 'np'
+                          ? `हामीले ${resetEmailTarget} मा पासवर्ड रिसेट लिङ्क पठाएका छौं। कृपया आफ्नो इनबक्स तथा स्प्याम/जङ्क फोल्डर जाँच गरी नयाँ पासवर्ड सेट गर्नुहोस्।`
+                          : `We sent a password recovery link to ${resetEmailTarget}. Open the email (check Spam/Junk too), follow the link to set a new password, and then return here to sign in.`}
+                      </p>
+                      <p className="text-[11px] text-slate-500">
+                        {lang === 'np'
+                          ? 'नोट: यदि तपाईंले गूगल खाताबाट मात्र लगइन गर्नुभएको थियो भने तलको "Continue with Google" बटन प्रयोग गर्न सक्नुहुन्छ।'
+                          : 'Note: If you originally registered via Google Sign-In, you can also sign in directly using "Continue with Google" below.'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handlePasswordReset(resetEmailTarget)}
+                        disabled={loading || resetCooldown > 0}
+                        className="flex-1 py-2.5 px-3 bg-amber-50 hover:bg-amber-100 disabled:opacity-50 text-amber-900 border border-amber-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                        <span>
+                          {resetCooldown > 0
+                            ? (lang === 'np' ? `पुन: पठाउनुहोस् (${resetCooldown}s)` : `Resend Link (${resetCooldown}s)`)
+                            : (lang === 'np' ? 'रिसेट लिङ्क पुन: पठाउनुहोस्' : 'Resend Reset Link')}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setResetSent(false);
+                          setErrorMsg(null);
+                          setSuccessMsg(null);
+                        }}
+                        className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition border border-slate-200 cursor-pointer"
+                      >
+                        {lang === 'np' ? 'इमेल परिवर्तन गर्नुहोस्' : 'Try Another Email'}
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmailMode('login');
+                        setResetSent(false);
+                        setErrorMsg(null);
+                        setSuccessMsg(null);
+                      }}
+                      className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>{lang === 'np' ? '← लगइनमा फर्कनुहोस्' : '← Back to Sign In'}</span>
+                    </button>
+                  </div>
+                ) : (
                 <form onSubmit={handleEmailAuth} className="space-y-3.5">
                   {emailMode === 'reset' && (
                     <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-2xl text-xs text-amber-900 space-y-1">
                       <div className="font-bold flex items-center gap-1.5 text-amber-900">
                         <KeyRound className="w-4 h-4 text-amber-600 shrink-0" />
-                        <span>{lang === 'np' ? 'पासवर्ड रिसेट गर्नुहोस्' : 'Forgot Password / Reset'}</span>
+                        <span>{lang === 'np' ? 'पासवर्ड रिसेट / खाता रिकभरी' : 'Account Recovery / Reset Password'}</span>
                       </div>
                       <p className="text-[11px] text-amber-800 leading-normal">
                         {lang === 'np'
-                          ? 'तपाईंको दर्ता भएको इमेल ठेगाना प्रविष्ट गर्नुहोस्। हामी तपाईंलाई पासवर्ड रिसेट गर्ने लिङ्क पठाउनेछौं।'
-                          : 'Enter your registered email address below. Firebase will send you a secure link to reset your password.'}
+                          ? 'तपाईंको दर्ता भएको इमेल ठेगाना प्रविष्ट गर्नुहोस्। हामी तपाईंलाई पासवर्ड रिसेट गर्ने सुरक्षित लिङ्क पठाउनेछौं।'
+                          : 'Enter your registered email address below. Firebase will send you a secure recovery link to set a new password.'}
                       </p>
                     </div>
                   )}
@@ -713,6 +919,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="ramesh@example.com"
                       required
+                      autoFocus={emailMode === 'reset'}
                       className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                   </div>
@@ -755,10 +962,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                           type="button"
                           onClick={() => {
                             setEmailMode('reset');
+                            setResetSent(false);
                             setErrorMsg(null);
                             setSuccessMsg(null);
                           }}
-                          className="text-slate-500 hover:text-amber-700 underline flex items-center gap-1 font-medium"
+                          className="text-slate-600 hover:text-amber-700 underline flex items-center gap-1 font-medium cursor-pointer"
                         >
                           <KeyRound className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                           <span>{lang === 'np' ? 'पासवर्ड बिर्सनुभयो?' : 'Forgot password?'}</span>
@@ -770,7 +978,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                             setErrorMsg(null);
                             setSuccessMsg(null);
                           }}
-                          className="text-amber-700 font-bold hover:underline"
+                          className="text-amber-700 font-bold hover:underline cursor-pointer"
                         >
                           {lang === 'np' ? 'नयाँ खाता खोल्नुहोस्' : 'Create new account'}
                         </button>
@@ -780,10 +988,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         type="button"
                         onClick={() => {
                           setEmailMode('login');
+                          setResetSent(false);
                           setErrorMsg(null);
                           setSuccessMsg(null);
                         }}
-                        className="text-amber-700 font-bold hover:underline ml-auto flex items-center gap-1"
+                        className="text-amber-700 font-bold hover:underline ml-auto flex items-center gap-1 cursor-pointer"
                       >
                         <span>{lang === 'np' ? '← लगइनमा फर्कनुहोस्' : '← Back to Login'}</span>
                       </button>
@@ -793,7 +1002,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 mt-2"
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 mt-2 cursor-pointer"
                   >
                     {loading ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
@@ -809,6 +1018,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     )}
                   </button>
                 </form>
+                )
               )}
 
               {/* DIVIDER & GOOGLE SIGN IN */}
@@ -825,7 +1035,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl transition shadow-2xs flex items-center justify-center gap-2"
+                className="w-full py-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
@@ -845,24 +1055,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                   />
                 </svg>
-                <span>{lang === 'np' ? 'गूगल खाताबाट लगइन गर्नुहोस्' : 'Sign in with Google'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const demoName = authMethod === 'email' && fullName.trim() ? fullName.trim() : 'Sarkari Candidate';
-                  const demoId = authMethod === 'phone' ? (phoneNumber ? `${countryCode}${phoneNumber}` : '+977-9800000000') : (email || 'candidate@sarkarisajha.gov.np');
-                  if (onDemoLogin) {
-                    onDemoLogin(demoName, demoId);
-                  }
-                  setSuccessMsg(lang === 'np' ? 'डेमो खातामा सफलतापुर्वक प्रवेश गरियो!' : 'Quick Demo Signed In successfully!');
-                  setTimeout(() => onClose(), 800);
-                }}
-                className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>{lang === 'np' ? 'त्वरित डेमो लगइन (Quick Demo Sign-In)' : 'Quick Demo Sign-In (Instant Access)'}</span>
+                <span>{lang === 'np' ? 'गूगल खाताबाट लगइन (कुनै पनि इमेल)' : 'Continue with Google (Any Email)'}</span>
               </button>
             </>
           )}

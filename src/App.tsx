@@ -147,6 +147,7 @@ export default function App() {
 
   // Firebase Auth & User Role State
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [, setAuthRefreshTick] = useState(0);
   const [userRole, setUserRole] = useState<AdminRole>('candidate');
   const [checkingRole, setCheckingRole] = useState<boolean>(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -469,7 +470,9 @@ export default function App() {
         }
       } else {
         setUserRole('candidate');
+        setUserProfile(INITIAL_USER_PROFILE);
         setApplications(INITIAL_APPLICATIONS);
+        setQuizAttempts(INITIAL_QUIZ_ATTEMPTS);
       }
       setCheckingRole(false);
     });
@@ -653,7 +656,8 @@ export default function App() {
   const handleReloadUser = async () => {
     if (auth.currentUser) {
       await auth.currentUser.reload();
-      setFirebaseUser({ ...auth.currentUser });
+      setFirebaseUser(auth.currentUser);
+      setAuthRefreshTick((t) => t + 1);
     }
   };
 
@@ -1039,14 +1043,6 @@ export default function App() {
         onClose={() => setShowAuthModal(false)}
         lang={lang}
         currentUser={firebaseUser}
-        onDemoLogin={(name, identifier) => {
-          setUserProfile((prev) => ({
-            ...prev,
-            name: name || 'Sarkari Candidate',
-            email: identifier.includes('@') ? identifier : prev.email,
-            phone: !identifier.includes('@') ? identifier : prev.phone
-          }));
-        }}
       />
 
       {showSheetsModal && (

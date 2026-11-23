@@ -414,11 +414,12 @@ export const MobileMoreDrawer: React.FC<MobileMoreDrawerProps> = ({
         {/* Authentication Button */}
         <div className="pt-1">
           <button
+            type="button"
             onClick={() => {
               onClose();
               onOpenAuth();
             }}
-            className={`w-full py-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 border transition ${
+            className={`w-full py-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 border transition cursor-pointer ${
               firebaseUser
                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                 : 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 shadow-md'
@@ -427,12 +428,12 @@ export const MobileMoreDrawer: React.FC<MobileMoreDrawerProps> = ({
             {firebaseUser ? (
               <>
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>{lang === 'np' ? 'खाता व्यवस्थापन गर्नुहोस्' : 'Manage Firebase Account'}</span>
+                <span>{lang === 'np' ? 'खाता व्यवस्थापन / स्विच' : 'Manage / Switch Account'}</span>
               </>
             ) : (
               <>
                 <User className="w-4 h-4" />
-                <span>{lang === 'np' ? 'फोन / इमेल लगइन गर्नुहोस्' : 'Sign In with Phone / OTP'}</span>
+                <span>{lang === 'np' ? 'लगइन / साइन अप गर्नुहोस्' : 'Sign In / Register'}</span>
               </>
             )}
           </button>

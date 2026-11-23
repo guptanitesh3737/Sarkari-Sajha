@@ -14,7 +14,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { signInWithPopup, GoogleAuthProvider, User as FirebaseUser } from 'firebase/auth';
-import { auth, googleProvider } from '../lib/firebase';
+import { auth, sheetsGoogleProvider } from '../lib/firebase';
 import { ApplicationTrack, Vacancy, QuizSet, Language } from '../types';
 
 interface GoogleSheetsSyncModalProps {
@@ -64,7 +64,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
     setSuccessMsg(null);
     try {
       setLoading(true);
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, sheetsGoogleProvider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       if (credential?.accessToken) {
         setAccessToken(credential.accessToken);

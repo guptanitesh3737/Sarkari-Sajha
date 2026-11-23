@@ -180,25 +180,30 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           <button
+            type="button"
             onClick={onOpenAuth}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg transition text-xs font-bold border shadow-xs ${
+            className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg transition text-xs font-bold border shadow-xs cursor-pointer shrink-0 ${
               firebaseUser
                 ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
                 : 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500'
             }`}
-            title={firebaseUser ? `Logged in as ${firebaseUser.phoneNumber || firebaseUser.email || 'Firebase User'}` : 'Sign in with Phone / OTP or Email'}
+            title={
+              firebaseUser
+                ? `Signed in as ${firebaseUser.email || firebaseUser.phoneNumber || 'User'} (Click to manage or switch account)`
+                : 'Sign in with Email, Google, or Phone'
+            }
           >
             {firebaseUser ? (
               <>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span className="truncate max-w-[100px]">
-                  {firebaseUser.phoneNumber || firebaseUser.email?.split('@')[0] || (lang === 'np' ? 'लगइन भएको' : 'Logged In')}
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="truncate max-w-[110px]">
+                  {firebaseUser.displayName || firebaseUser.email?.split('@')[0] || firebaseUser.phoneNumber || (lang === 'np' ? 'लगइन भएको' : 'Account')}
                 </span>
               </>
             ) : (
               <>
-                <Lock className="w-3.5 h-3.5" />
-                <span>{lang === 'np' ? 'फोन / इमेल लगइन' : 'Sign In / OTP'}</span>
+                <Lock className="w-3.5 h-3.5 shrink-0" />
+                <span>{lang === 'np' ? 'लगइन गर्नुहोस्' : 'Sign In'}</span>
               </>
             )}
           </button>

@@ -9,7 +9,15 @@ export const auth = getAuth(app);
 export const db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId || undefined);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/spreadsheets');
-googleProvider.addScope('https://www.googleapis.com/auth/drive.file');
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
+export const sheetsGoogleProvider = new GoogleAuthProvider();
+sheetsGoogleProvider.addScope('https://www.googleapis.com/auth/spreadsheets');
+sheetsGoogleProvider.addScope('https://www.googleapis.com/auth/drive.file');
+sheetsGoogleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export default app;

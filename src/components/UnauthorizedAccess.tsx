@@ -192,14 +192,15 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
             {user && (
               <button
-                onClick={() => {
-                  auth.signOut();
+                type="button"
+                onClick={async () => {
+                  await auth.signOut();
                   if (onOpenAuthModal) onOpenAuthModal();
                 }}
-                className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition flex items-center justify-center gap-2"
+                className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                <span>{lang === 'np' ? 'खाताबाट बाहिरिनुहोस् (Sign Out)' : 'Sign Out'}</span>
+                <span>{lang === 'np' ? 'साइन आउट गरी अर्को खाता लगइन गर्नुहोस्' : 'Sign Out & Switch Account'}</span>
               </button>
             )}
           </div>

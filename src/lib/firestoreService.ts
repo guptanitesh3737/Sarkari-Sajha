@@ -73,19 +73,41 @@ export async function syncUserProfileToFirestore(
 
     if (snap.exists()) {
       const data = snap.data();
-      
+      const patch: Record<string, any> = {
+        lastActiveAt: new Date().toISOString()
+      };
+
       // If user is designated superadmin by email, elevate in Firestore
       if (isSuperAdmin && data.role !== 'super_admin') {
-        try {
-          await setDoc(userRef, { role: 'super_admin', updatedAt: new Date().toISOString() }, { merge: true });
-        } catch (e) {
-          console.warn('Could not auto-promote super admin in Firestore:', e);
-        }
+        patch.role = 'super_admin';
+        patch.updatedAt = new Date().toISOString();
       }
+      if ((!data.displayName || data.displayName === 'Candidate User') && authData.displayName) {
+        patch.displayName = authData.displayName;
+      }
+      if (!data.email && authData.email) {
+        patch.email = authData.email;
+      }
+      if (!data.phone && authData.phoneNumber) {
+        patch.phone = authData.phoneNumber;
+      }
+
+      try {
+        await setDoc(userRef, patch, { merge: true });
+      } catch (e) {
+        console.warn('Could not sync login metadata in Firestore:', e);
+      }
+
+      const resolvedName =
+        (data.displayName && data.displayName !== 'Candidate User' ? data.displayName : '') ||
+        authData.displayName ||
+        data.displayName ||
+        existingProfileData?.name ||
+        'Candidate User';
 
       const mergedProfile: UserProfile = {
         id: uid,
-        name: data.displayName || authData.displayName || existingProfileData?.name || 'Candidate User',
+        name: resolvedName,
         email: data.email || authData.email || existingProfileData?.email || '',
         phone: data.phone || authData.phoneNumber || existingProfileData?.phone || '',
         dateOfBirth: data.dateOfBirth || existingProfileData?.dateOfBirth,
