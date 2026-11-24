@@ -533,7 +533,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
           <button
             type="button"
             onClick={handleLoadPromptExample}
-            className="px-4 py-2.5 bg-purple-950/60 hover:bg-purple-900/80 text-purple-200 border border-purple-500/30 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 self-start md:self-auto"
+            className="px-4 py-2.5 bg-purple-950/60 hover:bg-purple-900/80 text-purple-200 border border-purple-500/30 rounded-full text-xs font-bold transition flex items-center gap-2 shrink-0 self-start md:self-auto"
           >
             <Zap className="w-4 h-4 text-purple-400" />
             <span>Load Prompt Example (20 Qs · Constitution · Hard)</span>
@@ -545,9 +545,9 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
           <button
             type="button"
             onClick={() => setActiveWorkflowStep('configure')}
-            className={`flex items-center justify-center gap-2 p-3 rounded-2xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-full text-xs font-bold transition ${
               activeWorkflowStep === 'configure'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-950/40'
+                ? 'shadow-purple-950/40 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-950/60 text-slate-400 hover:text-white border border-slate-800/80'
             }`}
           >
@@ -565,9 +565,9 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               }
               setActiveWorkflowStep('review');
             }}
-            className={`flex items-center justify-center gap-2 p-3 rounded-2xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-full text-xs font-bold transition ${
               activeWorkflowStep === 'review'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-950/40'
+                ? 'shadow-purple-950/40 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-950/60 text-slate-400 hover:text-white border border-slate-800/80'
             }`}
           >
@@ -585,9 +585,9 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               }
               setActiveWorkflowStep('approve');
             }}
-            className={`flex items-center justify-center gap-2 p-3 rounded-2xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-full text-xs font-bold transition ${
               activeWorkflowStep === 'approve'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-950/40'
+                ? 'shadow-purple-950/40 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-950/60 text-slate-400 hover:text-white border border-slate-800/80'
             }`}
           >
@@ -642,7 +642,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={selectedExam}
                 onChange={(e) => setSelectedExam(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {EXAM_PRESETS.map(e => (
                   <option key={e} value={e}>{e}</option>
@@ -658,7 +658,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={selectedPost}
                 onChange={(e) => setSelectedPost(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {POST_PRESETS.map(p => (
                   <option key={p} value={p}>{p}</option>
@@ -674,7 +674,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {Object.keys(SUBJECT_TOPIC_PRESETS).map(s => (
                   <option key={s} value={s}>{s}</option>
@@ -693,7 +693,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   setSelectedTopic(e.target.value);
                   setCustomTopic('');
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {(SUBJECT_TOPIC_PRESETS[selectedSubject] || []).map(t => (
                   <option key={t} value={t}>{t}</option>
@@ -711,7 +711,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 placeholder="e.g., Article 242 Clause 3, Right to Clean Environment"
                 value={customTopic}
                 onChange={(e) => setCustomTopic(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               />
             </div>
 
@@ -723,7 +723,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as any)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 <option value="hard">Hard (Multi-statement / Clause analysis / Sakha Adhikrit)</option>
                 <option value="medium">Medium (Standard Lok Sewa NaSu / Officer level)</option>
@@ -740,7 +740,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={languageMode}
                 onChange={(e) => setLanguageMode(e.target.value as any)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 <option value="np">Nepali Devanagari (नेपाली) — Official PSC Medium</option>
                 <option value="bilingual">Bilingual (English + Nepali Devanagari)</option>
@@ -759,9 +759,9 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                     key={cnt}
                     type="button"
                     onClick={() => setQuestionCount(cnt)}
-                    className={`flex-1 py-2.5 rounded-xl font-bold transition text-xs ${
+                    className={`flex-1 py-2.5 rounded-full font-bold transition text-xs ${
                       questionCount === cnt
-                        ? 'bg-purple-600 text-white shadow-xs'
+                        ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                         : 'bg-slate-950 border border-slate-800 text-slate-400 hover:bg-slate-800'
                     }`}
                   >
@@ -779,7 +779,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <select
                 value={questionType}
                 onChange={(e) => setQuestionType(e.target.value as any)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 <option value="multiple_choice">Multiple Choice (Single Correct - 4 Options)</option>
                 <option value="true_false">True / False (Statutory Fact Validation)</option>
@@ -794,7 +794,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-purple-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-white">
                   Verified Statutory Grounding Material (Zero Hallucination)
                 </h3>
               </div>
@@ -807,7 +807,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 <select
                   value={selectedSourceId}
                   onChange={(e) => setSelectedSourceId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
                 >
                   <option value="">Custom Excerpt / Gazette Text</option>
                   {VERIFIED_SOURCE_MATERIALS.map(s => (
@@ -823,7 +823,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   value={sourceReferenceTag}
                   onChange={(e) => setSourceReferenceTag(e.target.value)}
                   placeholder="e.g., Constitution of Nepal 2072, Part 3, Art 16-46"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
                 />
               </div>
             </div>
@@ -837,7 +837,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 value={customSourceText}
                 onChange={(e) => setCustomSourceText(e.target.value)}
                 placeholder="Paste official gazette or act text here for zero-hallucination factual questions..."
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white text-xs font-mono leading-relaxed focus:outline-none focus:ring-1 focus:ring-purple-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 text-white text-xs font-mono leading-relaxed focus:outline-none focus:ring-1 focus:ring-sky-300"
               />
             </div>
           </div>
@@ -846,7 +846,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
           <button
             type="submit"
             disabled={generating}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm rounded-2xl transition flex items-center justify-center gap-3 shadow-xl shadow-purple-950/40"
+            className="w-full py-4 font-bold text-sm rounded-full transition flex items-center justify-center gap-3 shadow-purple-950/40 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             {generating ? (
               <>
@@ -885,7 +885,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={handleBatchApproveHighQuality}
-                className="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 rounded-xl font-bold transition flex items-center gap-1.5"
+                className="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 rounded-full font-bold transition flex items-center gap-1.5"
               >
                 <Award className="w-4 h-4" />
                 <span>Approve High Quality (≥80%)</span>
@@ -894,7 +894,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={() => setSelectedQuestions(generatedQuestions.map(q => q.id))}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full font-semibold transition"
               >
                 Select All
               </button>
@@ -902,7 +902,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={() => setSelectedQuestions([])}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold transition"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full font-semibold transition"
               >
                 Deselect
               </button>
@@ -910,7 +910,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={() => setActiveWorkflowStep('approve')}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold transition flex items-center gap-1.5 shadow-xs"
+                className="px-4 py-2 rounded-full font-bold transition flex items-center gap-1.5 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <span>Proceed to Publish</span>
                 <ChevronRight className="w-4 h-4" />
@@ -922,31 +922,31 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
           <div className="flex items-center gap-2 flex-wrap text-xs">
             <button
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition ${
-                filterStatus === 'all' ? 'bg-purple-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'
+              className={`px-3 py-1.5 rounded-full font-bold transition ${
+                filterStatus === 'all' ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink' : 'bg-slate-900 text-slate-400 border border-slate-800'
               }`}
             >
               All Questions ({generatedQuestions.length})
             </button>
             <button
               onClick={() => setFilterStatus('draft')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 ${
-                filterStatus === 'draft' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-amber-300 border border-amber-500/30'
+              className={`px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1.5 ${
+                filterStatus === 'draft' ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink' : 'bg-slate-900 text-amber-300 border border-amber-500/30'
               }`}
             >
               <span>Drafts ({draftCount})</span>
             </button>
             <button
               onClick={() => setFilterStatus('approved')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 ${
-                filterStatus === 'approved' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-emerald-300 border border-emerald-500/30'
+              className={`px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1.5 ${
+                filterStatus === 'approved' ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink' : 'bg-slate-900 text-emerald-300 border border-emerald-500/30'
               }`}
             >
               <span>Approved ({approvedCount})</span>
             </button>
             <button
               onClick={() => setFilterStatus('rejected')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1.5 ${
                 filterStatus === 'rejected' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-rose-300 border border-rose-500/30'
               }`}
             >
@@ -981,7 +981,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                             setSelectedQuestions(prev => prev.filter(id => id !== q.id));
                           }
                         }}
-                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 bg-slate-950 border-slate-700"
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-sky-300 bg-slate-950 border-slate-700"
                       />
                       <span className="font-mono font-bold text-white text-sm">
                         Q#{idx + 1}
@@ -997,7 +997,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                       </span>
 
                       {/* Status Badge */}
-                      <span className={`px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 ${
+                      <span className={`px-3 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 ${
                         q.status === 'approved'
                           ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                           : (q.status === 'rejected'
@@ -1016,7 +1016,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                       <button
                         type="button"
                         onClick={() => handleSetQuestionStatus(q.id, q.status === 'approved' ? 'draft' : 'approved')}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                           q.status === 'approved'
                             ? 'bg-emerald-950 text-emerald-300 border border-emerald-700'
                             : 'bg-slate-800 hover:bg-emerald-900/60 text-slate-300 hover:text-emerald-200'
@@ -1033,7 +1033,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                           setShowRegenModal(true);
                         }}
                         disabled={regeneratingId === q.id}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-purple-900/60 text-slate-300 hover:text-purple-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                        className="px-3 py-1.5 bg-slate-800 hover:bg-purple-900/60 text-slate-300 hover:text-purple-200 rounded-full text-xs font-bold transition flex items-center gap-1.5"
                       >
                         {regeneratingId === q.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                         <span>Regenerate</span>
@@ -1042,7 +1042,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                       <button
                         type="button"
                         onClick={() => setEditingQuestion(q)}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition flex items-center gap-1.5"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>Edit</span>
@@ -1139,7 +1139,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Shield className="w-4 h-4 text-purple-400" />
-                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                          <h4 className="text-xs font-bold text-white">
                             AI 7-Point Quality Validation Audit
                           </h4>
                         </div>
@@ -1255,7 +1255,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
             <button
               type="button"
               onClick={handleBatchApproveSelected}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               <Check className="w-4 h-4" />
               <span>Approve All Selected ({selectedQuestions.length})</span>
@@ -1270,7 +1270,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 id="createLiveSetCheck"
                 checked={createLiveSet}
                 onChange={(e) => setCreateLiveSet(e.target.checked)}
-                className="w-5 h-5 rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
+                className="w-5 h-5 rounded text-purple-600 focus:ring-sky-300 bg-slate-900 border-slate-700"
               />
               <div>
                 <label htmlFor="createLiveSetCheck" className="font-bold text-white text-sm cursor-pointer block">
@@ -1290,7 +1290,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                     type="text"
                     value={newLiveSetTitle}
                     onChange={(e) => setNewLiveSetTitle(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white focus:ring-1 focus:ring-purple-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-3 text-white focus:ring-1 focus:ring-sky-300"
                   />
                 </div>
 
@@ -1300,7 +1300,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                     type="number"
                     value={newLiveSetTimeMinutes}
                     onChange={(e) => setNewLiveSetTimeMinutes(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white focus:ring-1 focus:ring-purple-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-3 text-white focus:ring-1 focus:ring-sky-300"
                   />
                 </div>
 
@@ -1309,7 +1309,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   <select
                     value={newLiveSetNegativeMarkRate}
                     onChange={(e) => setNewLiveSetNegativeMarkRate(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white focus:ring-1 focus:ring-purple-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-3 text-white focus:ring-1 focus:ring-sky-300"
                   >
                     <option value={0.20}>20% (-0.20 marks / wrong) [Lok Sewa Standard]</option>
                     <option value={0.25}>25% (-0.25 marks / wrong)</option>
@@ -1325,7 +1325,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
             <button
               type="button"
               onClick={() => setActiveWorkflowStep('review')}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition"
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition"
             >
               Back to Review
             </button>
@@ -1338,7 +1338,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   setSelectedQuestions([]);
                   setActiveWorkflowStep('configure');
                 }}
-                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-300 rounded-xl text-xs font-bold transition"
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-300 rounded-full text-xs font-bold transition"
               >
                 Clear Sandbox
               </button>
@@ -1347,7 +1347,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 type="button"
                 onClick={handlePublishApproved}
                 disabled={generating || selectedQuestions.length === 0}
-                className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-950/40"
+                className="px-6 py-3 rounded-full text-xs font-bold transition flex items-center gap-2 shadow-emerald-950/40 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 <span>Publish {selectedQuestions.length} Selected Questions</span>
@@ -1359,7 +1359,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
 
       {/* EDIT QUESTION MODAL */}
       {editingQuestion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-5">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -1378,7 +1378,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   type="text"
                   value={editingQuestion.questionTextNp || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, questionTextNp: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-serif"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white font-serif"
                 />
               </div>
 
@@ -1388,7 +1388,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   type="text"
                   value={editingQuestion.question || editingQuestion.questionText}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, question: e.target.value, questionText: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-3 text-white"
                 />
               </div>
 
@@ -1411,7 +1411,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                         newOpts[oIdx] = e.target.value;
                         setEditingQuestion({ ...editingQuestion, options: newOpts });
                       }}
-                      className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2 text-white"
+                      className="flex-1 bg-slate-950 border border-slate-800 rounded-full p-2 text-white"
                       placeholder={`Option ${String.fromCharCode(65 + oIdx)}`}
                     />
                   </div>
@@ -1424,7 +1424,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   rows={2}
                   value={editingQuestion.explanationNp || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, explanationNp: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-serif"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white font-serif"
                 />
               </div>
 
@@ -1434,7 +1434,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   rows={2}
                   value={editingQuestion.explanation || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, explanation: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white"
                 />
               </div>
 
@@ -1444,7 +1444,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   type="text"
                   value={editingQuestion.source_reference || editingQuestion.source || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, source_reference: e.target.value, source: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                 />
               </div>
             </div>
@@ -1453,14 +1453,14 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={() => setEditingQuestion(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => handleSaveEditedQuestion(editingQuestion)}
-                className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold"
+                className="px-5 py-2 rounded-full text-xs font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 Save Changes
               </button>
@@ -1471,7 +1471,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
 
       {/* REGENERATE SINGLE QUESTION MODAL */}
       {showRegenModal && regenTargetQ && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1497,7 +1497,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                   value={regenFeedbackPrompt}
                   onChange={(e) => setRegenFeedbackPrompt(e.target.value)}
                   placeholder="e.g., Make it harder, ground in Article 242 clause 2, replace distractor C with a more plausible figure..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
                 />
               </div>
             </div>
@@ -1506,7 +1506,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
               <button
                 type="button"
                 onClick={() => setShowRegenModal(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold"
               >
                 Cancel
               </button>
@@ -1514,7 +1514,7 @@ export const AdminAiQuizLab: React.FC<AdminAiQuizLabProps> = ({ lang }) => {
                 type="button"
                 onClick={() => handleRegenerateSingleQuestion(regenTargetQ, regenFeedbackPrompt)}
                 disabled={regeneratingId !== null}
-                className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold flex items-center gap-2"
+                className="px-5 py-2 rounded-full text-xs font-bold flex items-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {regeneratingId !== null ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                 <span>Regenerate Now</span>

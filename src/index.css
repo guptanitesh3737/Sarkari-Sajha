@@ -1,3 +1,230 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * SarkariSajha design system: "sky" minimal theme.
+ * Soft sky-blue canvas, white rounded surfaces, ink-black pill actions,
+ * a geometric display face for headings and a quiet sans for body text.
+ *
+ * The app's legacy `blue-*` / `indigo-*` utilities are remapped here so every
+ * screen inherits the new palette: solid blue buttons become ink-black pills,
+ * blue tints become soft sky tints.
+ */
+@theme {
+  --font-sans: "Inter", "Mukta", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Mukta", ui-sans-serif, system-ui, sans-serif;
+  /* Decorative monospace badges read as noise; render them in the body face. */
+  --font-mono: "Inter", "Mukta", ui-sans-serif, system-ui, sans-serif;
+
+  /* Quieter type: the legacy UI leans on font-black / font-extrabold everywhere. */
+  --font-weight-black: 700;
+  --font-weight-extrabold: 650;
+
+  --color-ink: #0b1220;
+  --color-ink-soft: #475467;
+  --color-sky-50: #f3f9fe;
+  --color-sky-100: #e4f2fc;
+  --color-sky-200: #cfe8fa;
+  --color-sky-300: #b3dbf7;
+
+  /* Primary accent → ink + sky */
+  --color-blue-50: #f3f9fe;
+  --color-blue-100: #e4f2fc;
+  --color-blue-200: #cfe8fa;
+  --color-blue-300: #a9d4f4;
+  --color-blue-400: #5ea9e2;
+  --color-blue-500: #3b8fd6;
+  --color-blue-600: #0b1220;
+  --color-blue-700: #000000;
+  --color-blue-800: #0b1220;
+  --color-blue-900: #0b1220;
+  --color-blue-950: #0b1a2e;
+
+  --color-indigo-50: #f3f9fe;
+  --color-indigo-100: #e4f2fc;
+  --color-indigo-200: #cfe8fa;
+  --color-indigo-300: #a9d4f4;
+  --color-indigo-400: #5ea9e2;
+  --color-indigo-500: #3b8fd6;
+  --color-indigo-600: #0b1220;
+  --color-indigo-700: #000000;
+  --color-indigo-800: #0b1220;
+  --color-indigo-900: #0b1220;
+  --color-indigo-950: #0b1a2e;
+
+  --shadow-pill: 0 10px 24px -10px rgb(11 18 32 / 0.45);
+  --shadow-soft: 0 1px 2px rgb(11 18 32 / 0.04), 0 12px 32px -12px rgb(11 18 32 / 0.12);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #f7fbff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Page canvas: sky gradient that fades into white, like the reference hero. */
+.sky-canvas {
+  background:
+    radial-gradient(1200px 520px at 15% -10%, rgb(255 255 255 / 0.9), transparent 60%),
+    radial-gradient(900px 480px at 90% 0%, rgb(255 255 255 / 0.7), transparent 60%),
+    linear-gradient(180deg, #bfe3fb 0px, #d9effd 360px, #f3f9fe 720px, #f7fbff 1100px);
+  background-repeat: no-repeat;
+}
+
+/* Torn-paper highlighter behind a word in a heading. */
+.marker {
+  position: relative;
+  display: inline;
+  padding: 0 0.18em;
+  background: linear-gradient(180deg, transparent 12%, #bfe1f8 12%, #bfe1f8 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/*
+ * Page intro. Replaces the legacy dark gradient banners with an open headline
+ * on the sky canvas (like the home hero): no card, no badge pill, no
+ * decorative side widgets. Rules are unlayered, so they beat Tailwind
+ * utilities and re-colour the banners' existing white/pale text in place.
+ */
+.hero-panel {
+  background: transparent;
+  color: var(--color-ink);
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 1.5rem !important;
+}
+
+.hero-panel [class*="blur-3xl"],
+.hero-panel [class*="blur-2xl"],
+/* Eyebrow badge pill directly above the heading. */
+.hero-panel .rounded-full:has(+ :is(h1, h2)),
+/* Decorative right-hand info boxes (no controls inside). */
+.hero-panel > div > div + div:not(:has(input, button, select, a, textarea)) {
+  display: none;
+}
+
+.hero-panel :is(h1, h2) {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+}
+
+.hero-panel :is(h1, h2) + p {
+  max-width: 38rem;
+  margin-top: 0.75rem;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.hero-panel .text-white:not([class*="bg-"]) {
+  color: var(--color-ink);
+}
+
+.hero-panel :is(
+  [class*="text-slate-2"], [class*="text-slate-3"], [class*="text-slate-4"],
+  [class*="text-blue-1"], [class*="text-blue-2"], [class*="text-blue-3"],
+  [class*="text-indigo-1"], [class*="text-indigo-2"], [class*="text-indigo-3"],
+  [class*="text-purple-1"], [class*="text-purple-2"], [class*="text-purple-3"],
+  [class*="text-amber-1"], [class*="text-amber-2"], [class*="text-amber-3"],
+  [class*="text-yellow-1"], [class*="text-yellow-2"], [class*="text-yellow-3"],
+  [class*="text-emerald-2"], [class*="text-emerald-3"], [class*="text-white/"]
+) {
+  color: var(--color-ink-soft);
+}
+
+/* Glassy controls that lived on the dark banner become clean white pills. */
+.hero-panel [class*="bg-white/"] {
+  background-color: #fff;
+  color: var(--color-ink);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-panel :is([class*="border-white/"], [class*="border-slate-7"], [class*="border-slate-8"]) {
+  border-color: rgb(11 18 32 / 0.06);
+}
+
+.hero-panel input::placeholder {
+  color: #8a94a6;
+}
+
+/*
+ * Calm the legacy accent noise. Decorative purple/teal/orange/etc. icons, chips
+ * and bars fall back to ink and sky. Emerald (success), rose/red (warning) and
+ * amber (attention) keep their meaning.
+ */
+svg:is(
+  [class*="text-purple-"], [class*="text-violet-"], [class*="text-fuchsia-"], [class*="text-pink-"],
+  [class*="text-teal-"], [class*="text-cyan-"], [class*="text-orange-"], [class*="text-yellow-"],
+  [class*="text-lime-"], [class*="text-blue-"], [class*="text-indigo-"], [class*="text-sky-"],
+  [class*="text-amber-"]
+) {
+  color: inherit;
+  opacity: 0.7;
+}
+
+:is(
+  [class~="text-purple-600"], [class~="text-purple-700"], [class~="text-purple-800"], [class~="text-purple-900"],
+  [class~="text-violet-600"], [class~="text-violet-700"], [class~="text-violet-800"],
+  [class~="text-fuchsia-600"], [class~="text-fuchsia-700"], [class~="text-pink-600"], [class~="text-pink-700"],
+  [class~="text-teal-600"], [class~="text-teal-700"], [class~="text-teal-800"],
+  [class~="text-cyan-600"], [class~="text-cyan-700"], [class~="text-cyan-800"],
+  [class~="text-orange-600"], [class~="text-orange-700"], [class~="text-orange-800"],
+  [class~="text-lime-700"]
+) {
+  color: var(--color-ink);
+}
+
+:is(
+  [class~="bg-purple-50"], [class~="bg-purple-100"], [class~="bg-violet-50"], [class~="bg-violet-100"],
+  [class~="bg-fuchsia-50"], [class~="bg-fuchsia-100"], [class~="bg-pink-50"], [class~="bg-pink-100"],
+  [class~="bg-teal-50"], [class~="bg-teal-100"], [class~="bg-cyan-50"], [class~="bg-cyan-100"],
+  [class~="bg-orange-50"], [class~="bg-orange-100"], [class~="bg-lime-50"], [class~="bg-lime-100"],
+  [class*="bg-purple-50/"], [class*="bg-orange-50/"], [class*="bg-teal-50/"]
+) {
+  background-color: var(--color-sky-100);
+}
+
+:is(
+  [class~="bg-purple-500"], [class~="bg-purple-600"], [class~="bg-violet-500"], [class~="bg-violet-600"],
+  [class~="bg-teal-500"], [class~="bg-teal-600"], [class~="bg-cyan-500"], [class~="bg-orange-500"],
+  [class~="bg-fuchsia-500"], [class~="bg-pink-500"]
+) {
+  background-color: #5ea9e2;
+}
+
+:is([class*="border-purple-"], [class*="border-violet-"], [class*="border-teal-"], [class*="border-cyan-"],
+    [class*="border-orange-"], [class*="border-fuchsia-"], [class*="border-pink-"]) {
+  border-color: rgb(11 18 32 / 0.06);
+}
+
+/* Decorative motion off; spinners and skeleton shimmer stay. */
+.animate-bounce,
+.animate-ping {
+  animation: none;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

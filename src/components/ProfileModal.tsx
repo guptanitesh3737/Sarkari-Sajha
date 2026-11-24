@@ -138,12 +138,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-2xl text-slate-900 overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
+      <div className="bg-white rounded-[2rem] w-full max-w-2xl text-slate-900 overflow-hidden flex flex-col max-h-[90vh] shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="px-6 py-4 border-b flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
               {photoUrl ? (
                 <img
                   src={photoUrl}
@@ -160,7 +160,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 <h3 className="text-base font-bold text-slate-900 font-sans">
                   {lang === 'np' ? 'उम्मेदवार प्रोफाइल तथा विवरण' : 'Candidate Profile & Preferences'}
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold flex items-center gap-1">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold flex items-center gap-1">
                   <Shield className="w-2.5 h-2.5" />
                   Firebase Sync
                 </span>
@@ -175,7 +175,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
+            className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -241,12 +241,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           {/* 1. PERSONAL INFORMATION */}
           {activeSection === 'personal' && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+              <div className="p-3 bg-sky-50/70 rounded-2xl flex items-center justify-between">
                 <div>
                   <div className="text-slate-800 font-bold text-xs">Firebase Account Identification</div>
                   <div className="text-[11px] text-slate-500 font-mono">UID: {userProfile.id}</div>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">
                   {userProfile.status === 'suspended' ? 'SUSPENDED' : 'ACTIVE CANDIDATE'}
                 </span>
               </div>
@@ -261,7 +261,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Nitesh Gupta"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                 />
               </div>
 
@@ -276,7 +276,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono"
                   />
                 </div>
 
@@ -290,7 +290,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+977-98XXXXXXXX"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono"
                   />
                 </div>
               </div>
@@ -313,7 +313,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                         }
                       }
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-sky-50/70 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
                   />
                 </div>
 
@@ -327,7 +327,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     max={65}
                     value={age}
                     onChange={(e) => setAge(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono"
                   />
                 </div>
               </div>
@@ -341,7 +341,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   value={photoUrl}
                   onChange={(e) => setPhotoUrl(e.target.value)}
                   placeholder="https://example.com/photo.jpg"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono text-[11px]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono text-[11px]"
                 />
               </div>
             </div>
@@ -364,7 +364,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                       const inNew = NEPAL_DISTRICTS.some((d) => d.province === newProv && d.name === district);
                       if (!inNew) setDistrict('');
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                   >
                     {NEPAL_PROVINCES.filter((p) => p.id !== 'All Nepal').map((p) => (
                       <option key={p.id} value={p.id}>
@@ -381,7 +381,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   <select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                   >
                     <option value="">-- Select District --</option>
                     {availableDistricts.map((d) => (
@@ -403,7 +403,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={municipality}
                     onChange={(e) => setMunicipality(e.target.value)}
                     placeholder="e.g. Kathmandu Metropolitan City / Pokhara Lekhnath"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300"
                   />
                 </div>
 
@@ -418,12 +418,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={ward}
                     onChange={(e) => setWard(e.target.value)}
                     placeholder="e.g. 10"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-2xl flex items-start gap-2.5 text-blue-900">
+              <div className="p-3 bg-blue-50/70 rounded-2xl flex items-start gap-2.5 text-blue-900">
                 <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <p className="text-[11px] leading-relaxed">
                   Provincial vacancies published by Pradesh Lok Sewa Aayog (Pradesh 1 to Sudurpashchim) prioritize
@@ -444,7 +444,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   <select
                     value={qualificationLevel}
                     onChange={(e) => setQualificationLevel(e.target.value as QualificationLevel)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                   >
                     <option value="SEE/SLC">SEE/SLC (Class 10)</option>
                     <option value="+2 High School">+2 / Intermediate (Class 12)</option>
@@ -463,7 +463,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={graduationYear}
                     onChange={(e) => setGraduationYear(e.target.value)}
                     placeholder="e.g. 2024 A.D. / 2080 B.S."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-mono"
                   />
                 </div>
               </div>
@@ -478,7 +478,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   value={fieldOfStudy}
                   onChange={(e) => setFieldOfStudy(e.target.value)}
                   placeholder="e.g. Computer Science, Public Administration, Civil Engineering, Management, Law, General Science"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300"
                 />
               </div>
 
@@ -491,7 +491,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
                   placeholder="e.g. Tribhuvan University / Kathmandu University / NEB"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300"
                 />
               </div>
             </div>
@@ -507,7 +507,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 <select
                   value={preferredExam}
                   onChange={(e) => setPreferredExam(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                 >
                   {EXAM_PREFERENCE_OPTIONS.map((exam) => (
                     <option key={exam} value={exam}>
@@ -529,7 +529,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                         key={cat}
                         type="button"
                         onClick={() => handleCategoryToggle(cat)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition ${
                           selected
                             ? 'bg-rose-600 text-white shadow-xs'
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
@@ -553,7 +553,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     value={preferredOrganization}
                     onChange={(e) => setPreferredOrganization(e.target.value)}
                     placeholder="e.g. Nepal Bank Limited / NEA / Ministry of Finance"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300"
                   />
                 </div>
 
@@ -568,7 +568,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                       setPreferredProvince(newP);
                       setPreferredDistrict('');
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 font-medium"
                   >
                     {NEPAL_PROVINCES.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -588,7 +588,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   value={resumeText}
                   onChange={(e) => setResumeText(e.target.value)}
                   placeholder="Summary of qualifications, public service aspirations, or exam history..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-rose-500 text-xs"
+                  className="w-full bg-sky-50/70 rounded-2xl p-2.5 text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-300 text-xs"
                 />
               </div>
             </div>
@@ -605,7 +605,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-full transition"
               >
                 {lang === 'np' ? 'रद्द गर्नुहोस्' : 'Cancel'}
               </button>
@@ -618,14 +618,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     else if (activeSection === 'location') setActiveSection('education');
                     else if (activeSection === 'education') setActiveSection('career');
                   }}
-                  className="px-5 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition"
+                  className="px-5 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-full transition"
                 >
                   {lang === 'np' ? 'अर्को खण्ड →' : 'Next Step →'}
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2"
+                  className="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-full transition flex items-center gap-2"
                 >
                   <Check className="w-4 h-4" />
                   <span>{lang === 'np' ? 'प्रोफाइल सेभ गर्नुहोस्' : 'Save Profile'}</span>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, X, Share, PlusSquare, Smartphone, CheckCircle, Sparkles, ShieldCheck } from 'lucide-react';
+import { BrandMark } from './Header';
 import { Language } from '../types';
 import { isPwaInstalled, isIosDevice } from '../lib/pwa';
 
@@ -96,8 +97,8 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
     const isIos = isIosDevice();
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-5 text-slate-900 dark:text-white relative">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 bg-ink/30 backdrop-blur-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 max-w-md w-full space-y-5 text-slate-900 dark:text-white relative shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <button
             onClick={() => {
               setShowIosGuide(false);
@@ -111,13 +112,11 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
 
           {/* App Header Emblem */}
           <div className="flex items-center gap-3.5 pt-1">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md shrink-0">
-              SS
-            </div>
+            <div className="w-12 h-12 rounded-full bg-sky-100 dark:bg-white/10 flex items-center justify-center shrink-0"><BrandMark className="w-3/5 h-3/5" /></div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-black tracking-tight">SarkariSajha App</h3>
-                <span className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 text-[10px] px-2 py-0.5 rounded font-mono font-bold">
+                <span className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 text-[10px] px-2 py-0.5 rounded font-mono font-bold">
                   PWA
                 </span>
               </div>
@@ -128,7 +127,7 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
           </div>
 
           {/* Features Checklist */}
-          <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl space-y-2.5 text-xs">
+          <div className="bg-sky-50/70 dark:bg-white/5 p-4 rounded-2xl space-y-2.5 text-xs">
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
               <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>{lang === 'np' ? 'तत्काल १-क्लिक होमस्क्रिन पहुँच' : 'Instant 1-tap Home Screen access'}</span>
@@ -149,7 +148,7 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
 
           {/* Guide for iOS Safari vs Android Chrome */}
           {isIos ? (
-            <div className="space-y-3 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 p-4 rounded-2xl text-xs text-blue-950 dark:text-blue-200">
+            <div className="space-y-3 bg-blue-50/70 dark:bg-blue-950/40 p-4 rounded-2xl text-xs text-blue-950 dark:text-blue-200">
               <h4 className="font-bold flex items-center gap-1.5 text-blue-900 dark:text-blue-300">
                 <Smartphone className="w-4 h-4" />
                 <span>{lang === 'np' ? 'iPhone / Safari मा कसरी इन्स्टल गर्ने:' : 'How to install on iPhone & iPad (Safari):'}</span>
@@ -181,7 +180,7 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
               <button
                 onClick={handleInstallClick}
                 disabled={isInstalling || isInstalled}
-                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 text-white font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                className="w-full py-3.5 disabled:opacity-50 font-bold text-sm rounded-full transition flex items-center justify-center gap-2 cursor-pointer bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <Download className="w-4 h-4" />
                 <span>
@@ -207,7 +206,7 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
                 setShowIosGuide(false);
                 if (onCloseModal) onCloseModal();
               }}
-              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition"
+              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-full transition"
             >
               {lang === 'np' ? 'बन्द गर्नुहोस्' : 'Dismiss'}
             </button>
@@ -222,54 +221,34 @@ export const PwaInstallPrompt: React.FC<PwaInstallPromptProps> = ({
     return null;
   }
 
-  // Floating Bottom Banner for mobile and desktop
+  // Floating bottom pill for mobile and desktop
   return (
-    <div className="fixed bottom-16 sm:bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-40 sm:max-w-md bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-800/80 rounded-2xl p-3.5 sm:p-4 shadow-xl text-slate-900 dark:text-white transition-all animate-in slide-in-from-bottom duration-300">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-base shadow-sm shrink-0">
-            SS
-          </div>
-          <div>
-            <h4 className="text-xs font-black flex items-center gap-1.5">
-              <span>{lang === 'np' ? 'सरकारी साझा एप इन्स्टल गर्नुहोस्' : 'Install SarkariSajha App'}</span>
-              <span className="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold px-1.5 py-0.2 rounded">
-                FAST
-              </span>
-            </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
-              {lang === 'np'
-                ? '१-ट्याप पहुँच, अफलाइन प्रश्नोत्तर तथा सूचनाहरू'
-                : '1-tap access, offline quizzes & instant notices'}
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={handleDismissBanner}
-          className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          title="Dismiss"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div className="fixed bottom-24 lg:bottom-5 left-3 right-3 sm:left-auto sm:right-5 z-40 sm:max-w-sm flex items-center gap-3 pl-2 pr-2 py-2 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-soft ring-1 ring-black/[0.05] dark:ring-white/10 text-ink dark:text-white">
+      <span className="w-10 h-10 rounded-full bg-sky-100 dark:bg-white/10 inline-flex items-center justify-center shrink-0">
+        <BrandMark className="w-6 h-6" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium leading-tight truncate">
+          {lang === 'np' ? 'एप इन्स्टल गर्नुहोस्' : 'Get the app'}
+        </p>
+        <p className="text-xs text-ink-soft dark:text-slate-400 truncate">
+          {lang === 'np' ? 'अफलाइन क्विज र तुरुन्त सूचना' : 'Offline quizzes & instant alerts'}
+        </p>
       </div>
-
-      <div className="mt-3 flex items-center gap-2">
-        <button
-          onClick={handleInstallClick}
-          className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>{lang === 'np' ? 'इन्स्टल गर्नुहोस्' : 'Install App'}</span>
-        </button>
-
-        <button
-          onClick={handleDismissBanner}
-          className="px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
-        >
-          {lang === 'np' ? 'पछि' : 'Later'}
-        </button>
-      </div>
+      <button
+        onClick={handleInstallClick}
+        className="h-9 px-4 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-[13px] font-medium shrink-0"
+      >
+        {lang === 'np' ? 'इन्स्टल' : 'Install'}
+      </button>
+      <button
+        onClick={handleDismissBanner}
+        className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-slate-100 dark:hover:bg-white/10 shrink-0"
+        title={lang === 'np' ? 'पछि' : 'Later'}
+        aria-label="Dismiss"
+      >
+        <X className="w-4 h-4" />
+      </button>
     </div>
   );
 };

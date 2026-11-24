@@ -531,7 +531,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
   // Strict RBAC Gate for Content Editor
   if (isEditor) {
     return (
-      <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 text-center text-white space-y-4">
+      <div className="hero-panel p-8 text-center space-y-4">
         <div className="w-16 h-16 rounded-2xl bg-amber-950/60 border border-amber-800 text-amber-400 flex items-center justify-center mx-auto">
           <ShieldAlert className="w-8 h-8" />
         </div>
@@ -578,7 +578,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
       {/* 1. TOP METRICS DASHBOARD */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* Total Users */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
             <span>Total Users</span>
             <Users className="w-4 h-4 text-slate-400" />
@@ -588,7 +588,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         </div>
 
         {/* Active Users */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-emerald-400 text-xs mb-1">
             <span>Active Users</span>
             <UserCheck className="w-4 h-4 text-emerald-400" />
@@ -598,7 +598,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         </div>
 
         {/* New Users (30d) */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-blue-400 text-xs mb-1">
             <span>New (30 Days)</span>
             <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -608,7 +608,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         </div>
 
         {/* Subscribers */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-amber-400 text-xs mb-1">
             <span>Subscribers</span>
             <CreditCard className="w-4 h-4 text-amber-400" />
@@ -618,7 +618,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         </div>
 
         {/* Free Users */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
             <span>Free Users</span>
             <BookOpen className="w-4 h-4 text-slate-400" />
@@ -628,7 +628,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         </div>
 
         {/* Suspended */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white">
+        <div className="hero-panel p-4">
           <div className="flex items-center justify-between text-rose-400 text-xs mb-1">
             <span>Suspended</span>
             <UserX className="w-4 h-4 text-rose-400" />
@@ -639,7 +639,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
       </div>
 
       {/* 2. SEARCH, FILTER & ACTION BAR */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-4">
+      <div className="hero-panel p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -654,7 +654,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
-              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-full text-xs font-bold text-slate-300 flex items-center gap-1.5 transition"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -663,7 +663,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
             {isSuperAdmin && (
               <button
                 onClick={handleExportCSV}
-                className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
+                className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export CSV</span>
@@ -689,7 +689,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 setFilterTab(tab.id);
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1.5 ${
                 filterTab === tab.id
                   ? 'bg-rose-600 text-white shadow-xs'
                   : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -716,7 +716,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 setCurrentPage(1);
               }}
               placeholder="Search Name, Email, Phone, UID..."
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-8 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-full pl-9 pr-8 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-300"
             />
             {searchQuery && (
               <button
@@ -736,7 +736,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 setRoleFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-full px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-sky-300"
             >
               <option value="all">All Roles</option>
               <option value="candidate">Candidate</option>
@@ -754,7 +754,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 setProvinceFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-full px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-sky-300"
             >
               <option value="all">All Provinces</option>
               {NEPAL_PROVINCES.filter((p) => p.id !== 'All Nepal').map((p) => (
@@ -770,7 +770,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-full px-3 py-2 text-slate-300 focus:outline-none focus:ring-1 focus:ring-sky-300"
             >
               <option value="newest">Registered: Newest First</option>
               <option value="oldest">Registered: Oldest First</option>
@@ -783,7 +783,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
       </div>
 
       {/* 3. USERS TABLE */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden text-white">
+      <div className="hero-panel overflow-hidden">
         {loading ? (
           <div className="py-16 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
             <Loader2 className="w-7 h-7 animate-spin text-rose-500" />
@@ -800,7 +800,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-900 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+              <thead className="bg-slate-900 text-slate-400 font-mono text-[10px] border-b border-slate-800">
                 <tr>
                   <th className="p-3.5">Candidate / User</th>
                   <th className="p-3.5">Contact & Location</th>
@@ -912,7 +912,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                         <select
                           value={u.role}
                           onChange={(e) => handleRoleElevation(u.uid, e.target.value as AdminRole)}
-                          className="bg-slate-900 border border-slate-800 text-slate-200 rounded-lg px-2 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-rose-500"
+                          className="bg-slate-900 border border-slate-800 text-slate-200 rounded-full px-2 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-sky-300"
                         >
                           <option value="candidate">Candidate</option>
                           <option value="editor">Editor</option>
@@ -921,7 +921,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                         </select>
                       ) : (
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             u.role === 'super_admin'
                               ? 'bg-purple-950 text-purple-300 border border-purple-800'
                               : u.role === 'admin'
@@ -941,7 +941,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenUserProfile(u.uid)}
-                          className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white rounded-lg text-xs font-bold border border-slate-800 flex items-center gap-1 transition"
+                          className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white rounded-full text-xs font-bold border border-slate-800 flex items-center gap-1 transition"
                           title="View Complete User Profile"
                         >
                           <Eye className="w-3.5 h-3.5 text-rose-400" />
@@ -953,7 +953,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                             {u.status === 'suspended' ? (
                               <button
                                 onClick={() => handleConfirmReactivate(u)}
-                                className="p-1.5 bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 rounded-lg border border-emerald-800 transition"
+                                className="p-1.5 bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 rounded-full border border-emerald-800 transition"
                                 title="Reactivate Account"
                               >
                                 <UserCheck className="w-3.5 h-3.5" />
@@ -961,7 +961,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                             ) : (
                               <button
                                 onClick={() => setSuspendModalUser(u)}
-                                className="p-1.5 bg-slate-900 hover:bg-rose-950 text-slate-400 hover:text-rose-400 rounded-lg border border-slate-800 hover:border-rose-800 transition"
+                                className="p-1.5 bg-slate-900 hover:bg-rose-950 text-slate-400 hover:text-rose-400 rounded-full border border-slate-800 hover:border-rose-800 transition"
                                 title="Suspend Account"
                               >
                                 <UserX className="w-3.5 h-3.5" />
@@ -988,7 +988,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-slate-900 border border-slate-800 text-slate-300 rounded-lg px-2 py-1 text-xs focus:outline-none"
+              className="bg-slate-900 border border-slate-800 text-slate-300 rounded-full px-2 py-1 text-xs focus:outline-none"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
@@ -1004,7 +1004,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 border border-slate-800 transition"
+              className="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 border border-slate-800 transition"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -1014,7 +1014,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 border border-slate-800 transition"
+              className="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 border border-slate-800 transition"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -1024,7 +1024,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
       {/* 4. COMPLETE USER PROFILE MODAL */}
       {selectedUserUid && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-950 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl text-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
             {/* Modal Header */}
             <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
@@ -1055,7 +1055,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                         ACTIVE CANDIDATE
                       </span>
                     )}
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 uppercase font-bold">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 font-bold">
                       {selectedUserDetails?.user.role || 'candidate'}
                     </span>
                   </div>
@@ -1072,7 +1072,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   setSelectedUserUid(null);
                   setSelectedUserDetails(null);
                 }}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition"
+                className="p-2 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1147,7 +1147,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                                   fieldOfStudy: selectedUserDetails.user.fieldOfStudy
                                 });
                               }}
-                              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold flex items-center gap-1.5 transition text-xs"
+                              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold flex items-center gap-1.5 transition text-xs"
                             >
                               <Edit className="w-3.5 h-3.5 text-blue-400" />
                               <span>Edit Profile</span>
@@ -1155,7 +1155,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                             <button
                               onClick={() => setNotifyModalUser(selectedUserDetails.user)}
-                              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold flex items-center gap-1.5 transition text-xs"
+                              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold flex items-center gap-1.5 transition text-xs"
                             >
                               <Bell className="w-3.5 h-3.5 text-amber-400" />
                               <span>Send Notice</span>
@@ -1164,7 +1164,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                             {selectedUserDetails.user.status === 'suspended' ? (
                               <button
                                 onClick={() => handleConfirmReactivate(selectedUserDetails.user)}
-                                className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-xl font-bold border border-emerald-800 flex items-center gap-1.5 transition text-xs"
+                                className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-full font-bold border border-emerald-800 flex items-center gap-1.5 transition text-xs"
                               >
                                 <UserCheck className="w-3.5 h-3.5" />
                                 <span>Reactivate</span>
@@ -1172,7 +1172,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                             ) : (
                               <button
                                 onClick={() => setSuspendModalUser(selectedUserDetails.user)}
-                                className="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-xl font-bold border border-rose-800 flex items-center gap-1.5 transition text-xs"
+                                className="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-full font-bold border border-rose-800 flex items-center gap-1.5 transition text-xs"
                               >
                                 <UserX className="w-3.5 h-3.5" />
                                 <span>Suspend Account</span>
@@ -1181,7 +1181,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                             <button
                               onClick={() => setDeleteModalUser(selectedUserDetails.user)}
-                              className="px-3 py-1.5 bg-red-950 hover:bg-red-900 text-red-300 rounded-xl font-bold border border-red-800 flex items-center gap-1.5 transition text-xs"
+                              className="px-3 py-1.5 bg-red-950 hover:bg-red-900 text-red-300 rounded-full font-bold border border-red-800 flex items-center gap-1.5 transition text-xs"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                               <span>Anonymize</span>
@@ -1294,7 +1294,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Firebase Unique ID (UID)</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Firebase Unique ID (UID)</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs mt-1">
                             <span>{selectedUserDetails.user.uid}</span>
                             <button
@@ -1307,42 +1307,42 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Registered Email Address</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Registered Email Address</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.email || 'N/A'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Full Name</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Full Name</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-semibold">
                             {selectedUserDetails.user.displayName}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Contact Phone Number</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Contact Phone Number</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.phone || 'N/A'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Date of Birth</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Date of Birth</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.dateOfBirth || 'Not provided'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Age (Years)</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Age (Years)</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.age ?? 'N/A'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Account Standing</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Account Standing</label>
                           <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 flex items-center justify-between">
                             <span className={selectedUserDetails.user.status === 'suspended' ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}>
                               {selectedUserDetails.user.status === 'suspended' ? 'SUSPENDED' : 'ACTIVE'}
@@ -1356,7 +1356,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Registration Date</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Registration Date</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.createdAt || 'N/A'}
                           </div>
@@ -1375,28 +1375,28 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Province</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Province</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-semibold">
                             {selectedUserDetails.user.province || 'Bagmati'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">District (77 Nepal Districts)</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">District (77 Nepal Districts)</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-semibold">
                             {selectedUserDetails.user.district || 'Not specified'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Municipality / Rural Municipality</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Municipality / Rural Municipality</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.municipality || 'Not specified'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Ward Number</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Ward Number</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.ward ? `Ward No. ${selectedUserDetails.user.ward}` : 'N/A'}
                           </div>
@@ -1415,28 +1415,28 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Highest Qualification Level</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Highest Qualification Level</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-bold">
                             {selectedUserDetails.user.qualificationLevel || 'N/A'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Field / Stream of Study</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Field / Stream of Study</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-medium">
                             {selectedUserDetails.user.fieldOfStudy || 'N/A'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Institution / Board / University</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Institution / Board / University</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.institution || 'Not specified'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Graduation Year</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Graduation Year</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.graduationYear || 'N/A'}
                           </div>
@@ -1455,14 +1455,14 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Target Exam Profile</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Target Exam Profile</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-semibold">
                             {selectedUserDetails.user.preferredExam || 'Lok Sewa (PSC)'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Target Organization</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Target Organization</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.preferredOrganization || 'Public Service'}
                           </div>
@@ -1471,7 +1471,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       {selectedUserDetails.user.preferredCategories && selectedUserDetails.user.preferredCategories.length > 0 && (
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono mb-1.5">Preferred Government Sectors</label>
+                          <label className="text-slate-500 block text-[10px] font-mono mb-1.5">Preferred Government Sectors</label>
                           <div className="flex flex-wrap gap-1.5">
                             {selectedUserDetails.user.preferredCategories.map((cat) => (
                               <span key={cat} className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 text-[11px] font-semibold">
@@ -1484,7 +1484,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       {selectedUserDetails.user.resumeText && (
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono mb-1">Voluntary Bio / Resume Statement</label>
+                          <label className="text-slate-500 block text-[10px] font-mono mb-1">Voluntary Bio / Resume Statement</label>
                           <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-slate-300 text-xs leading-relaxed">
                             {selectedUserDetails.user.resumeText}
                           </div>
@@ -1564,7 +1564,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                           <CreditCard className="w-4 h-4 text-amber-400" />
                           <span>Subscription Plan & Billing Status</span>
                         </h4>
-                        <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                        <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold ${
                           selectedUserDetails.user.isSubscriber
                             ? 'bg-amber-950 text-amber-300 border border-amber-800'
                             : 'bg-slate-800 text-slate-400 border border-slate-700'
@@ -1575,28 +1575,28 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Plan Tier</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Plan Tier</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1 font-bold">
                             {selectedUserDetails.user.subscriptionPlan || 'Free Tier (Zero Cost)'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Subscription Standing</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Subscription Standing</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.isSubscriber ? 'Active Premium' : 'Free User'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Payment Reference ID</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Payment Reference ID</label>
                           <div className="font-mono text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.paymentRef || 'N/A (Free tier)'}
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-slate-500 block text-[10px] uppercase font-mono">Status</label>
+                          <label className="text-slate-500 block text-[10px] font-mono">Status</label>
                           <div className="text-white bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs mt-1">
                             {selectedUserDetails.user.paymentStatus || 'Completed'}
                           </div>
@@ -1631,7 +1631,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                           {selectedUserDetails.feedbacks.map((fb) => (
                             <div key={fb.id} className="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
                               <div className="flex items-center justify-between">
-                                <span className="font-bold text-rose-400 text-xs uppercase font-mono">{fb.category}</span>
+                                <span className="font-bold text-rose-400 text-xs font-mono">{fb.category}</span>
                                 <span className="text-[10px] text-slate-500 font-mono">{fb.createdAt?.slice(0, 10)}</span>
                               </div>
                               <p className="text-slate-300 text-xs">{fb.comment}</p>
@@ -1713,7 +1713,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   setSelectedUserUid(null);
                   setSelectedUserDetails(null);
                 }}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-xs font-bold transition"
               >
                 Close Profile
               </button>
@@ -1724,8 +1724,8 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
       {/* SUSPEND USER MODAL */}
       {suspendModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-md p-6 text-white space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel w-full max-w-md p-6 space-y-4">
             <div className="flex items-center gap-3 text-rose-400">
               <AlertTriangle className="w-6 h-6" />
               <h3 className="font-bold text-base">Suspend Candidate Account</h3>
@@ -1744,7 +1744,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
                 placeholder="e.g. Terms violation, multiple duplicate accounts, investigation..."
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
               />
             </div>
 
@@ -1754,14 +1754,14 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   setSuspendModalUser(null);
                   setSuspendReason('');
                 }}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-full transition"
               >
                 Cancel
               </button>
               <button
                 disabled={submittingAction || !suspendReason.trim()}
                 onClick={handleConfirmSuspend}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl transition flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-full transition flex items-center gap-1.5 disabled:opacity-50"
               >
                 {submittingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserX className="w-4 h-4" />}
                 <span>Confirm Suspension</span>
@@ -1773,8 +1773,8 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
       {/* ANONYMIZE / DELETE MODAL */}
       {deleteModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-950 border border-red-900/80 rounded-2xl w-full max-w-md p-6 text-white space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel border-red-900/80 w-full max-w-md p-6 space-y-4 shadow-2xl">
             <div className="flex items-center gap-3 text-red-400">
               <ShieldAlert className="w-6 h-6" />
               <h3 className="font-bold text-base">Super Admin: Anonymize Account</h3>
@@ -1794,7 +1794,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
               value={deleteConfirmationCode}
               onChange={(e) => setDeleteConfirmationCode(e.target.value)}
               placeholder={`CONFIRM_DELETE_${deleteModalUser.uid.slice(-6).toUpperCase()}`}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white font-mono focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-xs text-white font-mono focus:outline-none focus:ring-1 focus:ring-sky-300"
             />
 
             <div className="pt-2 flex justify-end gap-2 text-xs font-bold">
@@ -1803,7 +1803,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   setDeleteModalUser(null);
                   setDeleteConfirmationCode('');
                 }}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-full transition"
               >
                 Cancel
               </button>
@@ -1813,7 +1813,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   deleteConfirmationCode.trim() !== `CONFIRM_DELETE_${deleteModalUser.uid.slice(-6).toUpperCase()}`
                 }
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full transition flex items-center gap-1.5 disabled:opacity-50"
               >
                 {submittingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                 <span>Execute Deletion</span>
@@ -1825,8 +1825,8 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
       {/* SEND NOTIFICATION MODAL */}
       {notifyModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-md p-6 text-white space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel w-full max-w-md p-6 space-y-4">
             <div className="flex items-center gap-3 text-amber-400">
               <Bell className="w-5 h-5" />
               <h3 className="font-bold text-base">Direct In-App Notification</h3>
@@ -1843,7 +1843,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 value={notifyTitle}
                 onChange={(e) => setNotifyTitle(e.target.value)}
                 placeholder="e.g. Document Verification Required / Important Notice"
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
               />
             </div>
 
@@ -1855,7 +1855,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                 value={notifyMessage}
                 onChange={(e) => setNotifyMessage(e.target.value)}
                 placeholder="Details of the announcement or query..."
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-2.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-sky-300"
               />
             </div>
 
@@ -1866,14 +1866,14 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   setNotifyTitle('');
                   setNotifyMessage('');
                 }}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-full transition"
               >
                 Cancel
               </button>
               <button
                 disabled={submittingAction || !notifyTitle.trim() || !notifyMessage.trim()}
                 onClick={handleSendNotification}
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl transition flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 rounded-full transition flex items-center gap-1.5 disabled:opacity-50 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {submittingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Bell className="w-4 h-4" />}
                 <span>Send Notification</span>
@@ -1885,8 +1885,8 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
 
       {/* EDIT USER PROFILE MODAL */}
       {editModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-lg p-6 text-white space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel w-full max-w-lg p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2 text-white font-bold">
                 <Edit className="w-4 h-4 text-blue-400" />
@@ -1904,7 +1904,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   type="text"
                   value={editForm.name || ''}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                 />
               </div>
 
@@ -1915,7 +1915,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                     type="text"
                     value={editForm.phone || ''}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white font-mono"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white font-mono"
                   />
                 </div>
 
@@ -1924,7 +1924,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   <select
                     value={editForm.province || 'Bagmati'}
                     onChange={(e) => setEditForm({ ...editForm, province: e.target.value as Province })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     {NEPAL_PROVINCES.filter((p) => p.id !== 'All Nepal').map((p) => (
                       <option key={p.id} value={p.id}>
@@ -1942,7 +1942,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                     type="text"
                     value={editForm.district || ''}
                     onChange={(e) => setEditForm({ ...editForm, district: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
 
@@ -1952,7 +1952,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                     type="text"
                     value={editForm.municipality || ''}
                     onChange={(e) => setEditForm({ ...editForm, municipality: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
               </div>
@@ -1963,7 +1963,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                   <select
                     value={editForm.qualificationLevel || 'Bachelor Degree'}
                     onChange={(e) => setEditForm({ ...editForm, qualificationLevel: e.target.value as QualificationLevel })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="SEE/SLC">SEE/SLC</option>
                     <option value="+2 High School">+2 High School</option>
@@ -1979,7 +1979,7 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
                     type="text"
                     value={editForm.fieldOfStudy || ''}
                     onChange={(e) => setEditForm({ ...editForm, fieldOfStudy: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
               </div>
@@ -1988,14 +1988,14 @@ export const AdminUsersManagement: React.FC<AdminUsersManagementProps> = ({
             <div className="pt-3 border-t border-slate-800 flex justify-end gap-2 text-xs font-bold">
               <button
                 onClick={() => setEditModalUser(null)}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-full transition"
               >
                 Cancel
               </button>
               <button
                 disabled={submittingAction}
                 onClick={handleSaveEditedProfile}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition flex items-center gap-1.5"
+                className="px-5 py-2 rounded-full transition flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {submittingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                 <span>Save to Firestore</span>

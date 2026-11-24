@@ -194,7 +194,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
   const getPriorityBadge = (p: AnnouncementPriority) => {
     switch (p) {
       case 'urgent':
-        return <span className="px-2 py-0.5 text-xs font-black rounded bg-red-900/60 text-red-200 border border-red-700 uppercase tracking-wide">Urgent</span>;
+        return <span className="px-2 py-0.5 text-xs font-black rounded bg-red-900/60 text-red-200 border border-red-700">Urgent</span>;
       case 'high':
         return <span className="px-2 py-0.5 text-xs font-bold rounded bg-amber-900/60 text-amber-200 border border-amber-700">High</span>;
       case 'normal':
@@ -237,7 +237,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
         <button
           id="btn-create-announcement"
           onClick={handleOpenCreate}
-          className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-md transition-all shrink-0"
+          className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm transition-all shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>New Announcement</span>
@@ -261,7 +261,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
             placeholder="Search by title, description or audience..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-rose-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-full focus:outline-none focus:border-rose-500"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -270,7 +270,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
             id="select-status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-rose-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-full focus:outline-none focus:border-rose-500"
           >
             <option value="ALL">All Statuses</option>
             <option value="PUBLISHED">Published</option>
@@ -286,7 +286,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
             id="select-priority-filter"
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-rose-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-full focus:outline-none focus:border-rose-500"
           >
             <option value="ALL">All Priorities</option>
             <option value="urgent">Urgent</option>
@@ -355,7 +355,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id={`btn-preview-${item.id}`}
                     onClick={() => setPreviewItem(item)}
                     title="Live Preview"
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center space-x-1"
+                    className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center space-x-1"
                   >
                     <Eye className="w-4 h-4" />
                     <span className="hidden sm:inline">Preview</span>
@@ -364,7 +364,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id={`btn-toggle-${item.id}`}
                     onClick={() => handleTogglePublish(item)}
                     title={item.status === 'PUBLISHED' ? 'Archive notice' : 'Publish notice'}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
                       item.status === 'PUBLISHED'
                         ? 'bg-amber-900/40 text-amber-300 hover:bg-amber-900/70 border border-amber-800'
                         : 'bg-emerald-900/50 text-emerald-200 hover:bg-emerald-800 border border-emerald-700'
@@ -376,7 +376,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id={`btn-edit-${item.id}`}
                     onClick={() => handleOpenEdit(item)}
                     title="Edit Announcement"
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200"
+                    className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -384,7 +384,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id={`btn-delete-${item.id}`}
                     onClick={() => handleDelete(item.id, item.title)}
                     title="Delete Announcement"
-                    className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
+                    className="p-2 rounded-full bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -397,7 +397,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
 
       {/* CREATE / EDIT MODAL */}
       {isEditModalOpen && editingAnnouncement && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
               <div className="flex items-center space-x-2">
@@ -409,7 +409,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
               <button
                 id="btn-close-modal"
                 onClick={() => setIsEditModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-white rounded-full"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -428,7 +428,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.title || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, title: e.target.value })}
                     placeholder="e.g. Lok Sewa Aayog Section Officer 2082 Examination Schedule Published"
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -443,7 +443,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.short_description || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, short_description: e.target.value })}
                     placeholder="Brief 1-2 sentence overview for candidate notifications and feeds..."
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-2xl focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -457,7 +457,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.full_content || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, full_content: e.target.value })}
                     placeholder="Detailed explanation, instructions, official references, and syllabus notes..."
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-2xl focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -467,7 +467,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id="select-announcement-status"
                     value={editingAnnouncement.status || 'DRAFT'}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, status: e.target.value as AnnouncementStatus })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   >
                     <option value="DRAFT">DRAFT (Hidden from candidates)</option>
                     <option value="SCHEDULED">SCHEDULED (Auto-activates on publish date)</option>
@@ -483,7 +483,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id="select-announcement-priority"
                     value={editingAnnouncement.priority || 'normal'}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, priority: e.target.value as AnnouncementPriority })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   >
                     <option value="urgent">URGENT (Top Red Banner)</option>
                     <option value="high">HIGH (Highlighted)</option>
@@ -498,7 +498,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     id="select-announcement-audience"
                     value={editingAnnouncement.target_audience || 'all'}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, target_audience: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   >
                     <option value="all">All Candidates</option>
                     <option value="lok_sewa">Lok Sewa (PSC) Aspirants</option>
@@ -517,7 +517,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.banner_url || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, banner_url: e.target.value })}
                     placeholder="https://example.com/banner.jpg"
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -528,7 +528,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     type="datetime-local"
                     value={editingAnnouncement.publish_at || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, publish_at: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -539,7 +539,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     type="datetime-local"
                     value={editingAnnouncement.expires_at || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, expires_at: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -551,7 +551,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.CTA_text || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, CTA_text: e.target.value })}
                     placeholder="e.g. View Exam Centers"
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -563,7 +563,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     value={editingAnnouncement.CTA_url || ''}
                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, CTA_url: e.target.value })}
                     placeholder="https://... or /#vacancies"
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
@@ -574,7 +574,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                       type="checkbox"
                       checked={Boolean(editingAnnouncement.popup_enabled)}
                       onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, popup_enabled: e.target.checked })}
-                      className="w-4 h-4 text-rose-600 rounded bg-slate-800 border-slate-600 focus:ring-rose-500"
+                      className="w-4 h-4 text-rose-600 rounded bg-slate-800 border-slate-600 focus:ring-sky-300"
                     />
                     <div>
                       <p className="text-sm font-bold text-white">Enable Candidate Welcome Popup</p>
@@ -590,7 +590,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-xl bg-slate-800 hover:bg-slate-700 font-medium"
+                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-full bg-slate-800 hover:bg-slate-700 font-medium"
                 >
                   Cancel
                 </button>
@@ -598,7 +598,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                   id="btn-save-announcement"
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 text-sm text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-50 rounded-xl font-bold flex items-center space-x-2"
+                  className="px-5 py-2 text-sm text-white bg-rose-600 hover:bg-rose-500 disabled:opacity-50 rounded-full font-bold flex items-center space-x-2"
                 >
                   {saving ? <span>Saving...</span> : <span>Save to Firestore</span>}
                 </button>
@@ -610,12 +610,12 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
 
       {/* LIVE BANNER PREVIEW MODAL */}
       {previewItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Sparkles className="w-5 h-5 text-rose-400" />
-                <h4 className="text-xs font-mono uppercase tracking-widest text-slate-400">Candidate View Preview</h4>
+                <h4 className="text-xs font-mono text-slate-400">Candidate View Preview</h4>
               </div>
               <button onClick={() => setPreviewItem(null)} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -647,7 +647,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
                     href={previewItem.CTA_url || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs"
+                    className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs"
                   >
                     <span>{previewItem.CTA_text}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -658,7 +658,7 @@ export const AdminAnnouncements: React.FC<AdminAnnouncementsProps> = ({
 
             <button
               onClick={() => setPreviewItem(null)}
-              className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold"
+              className="w-full py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold"
             >
               Close Preview
             </button>

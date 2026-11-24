@@ -139,7 +139,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
         <button
           type="button"
           onClick={() => setShowAddForm(!showAddForm)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-xs self-start"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition shadow-xs self-start bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
         >
           <UserPlus className="w-3.5 h-3.5" />
           <span>{showAddForm ? 'Cancel Invite' : 'Invite Team Member'}</span>
@@ -147,7 +147,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
       </div>
 
       {message && (
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>{message}</span>
         </div>
@@ -155,7 +155,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
 
       {/* Invite Form */}
       {showAddForm && (
-        <form onSubmit={handleAddMember} className="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 animate-scale-up text-xs">
+        <form onSubmit={handleAddMember} className="bg-sky-50/70 dark:bg-slate-800/40 p-5 rounded-2xl space-y-4 animate-scale-up text-xs">
           <h4 className="font-bold text-slate-800 dark:text-slate-200">Add New Team Member & Assign Permissions</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -166,7 +166,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Ramesh Adhikari"
-                className="w-full p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
+                className="w-full p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
               />
             </div>
             <div>
@@ -177,7 +177,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="e.g. ramesh@sarkarisajha.np"
-                className="w-full p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
+                className="w-full p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
               />
             </div>
             <div>
@@ -185,7 +185,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as TeamRole)}
-                className="w-full p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
+                className="w-full p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
               >
                 <option value="content_creator">Content Creator (Notes & Questions)</option>
                 <option value="quiz_reviewer">Quiz Reviewer (Syllabus & Key Verification)</option>
@@ -198,7 +198,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
               <select
                 value={assignedCategory}
                 onChange={(e) => setAssignedCategory(e.target.value)}
-                className="w-full p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
+                className="w-full p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none"
               >
                 <option value="General Knowledge & Current Affairs">General Knowledge & Current Affairs</option>
                 <option value="Governance & Public Management">Governance & Public Management</option>
@@ -211,7 +211,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition"
+              className="px-5 py-2 rounded-full font-bold transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               Assign Role & Save
             </button>
@@ -228,7 +228,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
           return (
             <div
               key={member.id}
-              className="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-4"
+              className="p-5 bg-white dark:bg-slate-900 rounded-2xl flex flex-col justify-between space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -248,7 +248,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
                   </p>
                 </div>
 
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed bg-sky-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl">
                   {config.desc}
                 </p>
 

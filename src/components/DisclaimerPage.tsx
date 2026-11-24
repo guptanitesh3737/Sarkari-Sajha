@@ -20,13 +20,13 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
       </button>
 
       {/* Header Banner */}
-      <div className="rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300 dark:border-amber-700/60 p-6 sm:p-8 mb-8">
+      <div className="hero-panel p-6 sm:p-8 mb-8">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-md border border-amber-300/60">
+            <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-md border border-amber-300/60">
               {lang === 'np' ? 'आधिकारिक अस्वीकरण' : 'Official Platform Disclaimer'}
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
@@ -61,7 +61,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
 
       {/* Key Clarifications Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
             <Building2 className="w-4 h-4 text-blue-500" />
             {lang === 'np' ? '१. स्वतन्त्र संस्थागत स्वरूप' : '1. Independent Entity Status'}
@@ -71,7 +71,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
             {lang === 'np' ? '२. सूचनाको प्रमाणीकरण' : '2. Verification Responsibility'}
@@ -83,7 +83,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
       </div>
 
       {/* Official Government Portals Directory */}
-      <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4">
+      <div className="rounded-2xl bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <span>{lang === 'np' ? 'आधिकारिक सरकारी अनलाइन आवेदन पोर्टलहरू' : 'Official Government Application Portals'}</span>
         </h3>
@@ -92,7 +92,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
             href="https://pps.psc.gov.np"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+            className="flex items-center justify-between p-3 rounded-full bg-sky-50/70 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
           >
             <span>Lok Sewa Aayog (PSC Online Application)</span>
             <ExternalLink className="w-3.5 h-3.5 text-blue-500" />
@@ -101,7 +101,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
             href="https://online.tsc.gov.np"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+            className="flex items-center justify-between p-3 rounded-full bg-sky-50/70 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
           >
             <span>Teacher Service Commission (TSC Portal)</span>
             <ExternalLink className="w-3.5 h-3.5 text-blue-500" />
@@ -110,7 +110,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
             href="https://psc.gov.np"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+            className="flex items-center justify-between p-3 rounded-full bg-sky-50/70 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
           >
             <span>Public Service Commission Central Gazette</span>
             <ExternalLink className="w-3.5 h-3.5 text-blue-500" />
@@ -119,7 +119,7 @@ export const DisclaimerPage: React.FC<DisclaimerPageProps> = ({ lang, onNavigate
             href="https://nrb.org.np"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+            className="flex items-center justify-between p-3 rounded-full bg-sky-50/70 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
           >
             <span>Nepal Rastra Bank Career Portal</span>
             <ExternalLink className="w-3.5 h-3.5 text-blue-500" />

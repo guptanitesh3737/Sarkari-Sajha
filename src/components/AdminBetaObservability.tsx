@@ -208,7 +208,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
         <button
           onClick={fetchAllBetaData}
           disabled={loading}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+          className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>{lang === 'np' ? 'डाटा ताजा गर्नुहोस्' : 'Refresh Telemetry'}</span>
@@ -219,9 +219,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {metrics && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {/* Active 24h */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">Active 24h</span>
+              <span className="text-[11px] font-bold">Active 24h</span>
               <Users className="w-4 h-4 text-emerald-500" />
             </div>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.activeUsers24h}</p>
@@ -229,9 +229,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
           </div>
 
           {/* Vacancy Engagement */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">Notice Views</span>
+              <span className="text-[11px] font-bold">Notice Views</span>
               <Eye className="w-4 h-4 text-blue-500" />
             </div>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.vacancyViews}</p>
@@ -239,9 +239,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
           </div>
 
           {/* Official Portal Clicks */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">PSC Clicks</span>
+              <span className="text-[11px] font-bold">PSC Clicks</span>
               <ExternalLink className="w-4 h-4 text-indigo-500" />
             </div>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.officialLinkClicks}</p>
@@ -249,9 +249,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
           </div>
 
           {/* Mock Exam Sets */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">Quiz Starts</span>
+              <span className="text-[11px] font-bold">Quiz Starts</span>
               <Award className="w-4 h-4 text-amber-500" />
             </div>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.quizStarts}</p>
@@ -259,9 +259,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
           </div>
 
           {/* AI Latency */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">AI Latency</span>
+              <span className="text-[11px] font-bold">AI Latency</span>
               <Bot className="w-4 h-4 text-purple-500" />
             </div>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{metrics.aiAvgLatencyMs}ms</p>
@@ -269,9 +269,9 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
           </div>
 
           {/* System Health / Error Rate */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-1 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between text-slate-500">
-              <span className="text-[11px] font-bold uppercase tracking-wider">Error Rate</span>
+              <span className="text-[11px] font-bold">Error Rate</span>
               <Activity className="w-4 h-4 text-rose-500" />
             </div>
             <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
@@ -364,7 +364,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Candidate Journey Funnel */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-rose-600" />
                 Candidate Conversion & Engagement Funnel
@@ -424,39 +424,39 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
             </div>
 
             {/* Performance, Latency & AI Cost Controls */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-purple-600" />
                 Backend Health & AI Cost Protections
               </h3>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1">
+                <div className="p-3 bg-sky-50/70 dark:bg-white/5 rounded-2xl space-y-1">
                   <span className="text-[11px] font-bold text-slate-500">API Response Latency</span>
                   <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">~35 ms</p>
                   <p className="text-[10px] text-slate-400">Zero bottle-necks</p>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1">
+                <div className="p-3 bg-sky-50/70 dark:bg-white/5 rounded-2xl space-y-1">
                   <span className="text-[11px] font-bold text-slate-500">AI Prompt In-Memory Cache</span>
                   <p className="text-lg font-black text-blue-600 dark:text-blue-400">92.4% Hit Rate</p>
                   <p className="text-[10px] text-slate-400">15m sliding TTL</p>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1">
+                <div className="p-3 bg-sky-50/70 dark:bg-white/5 rounded-2xl space-y-1">
                   <span className="text-[11px] font-bold text-slate-500">Gemini Token Consumption</span>
                   <p className="text-lg font-black text-purple-600 dark:text-purple-400">462k Tokens</p>
                   <p className="text-[10px] text-slate-400">Under daily free budget</p>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1">
+                <div className="p-3 bg-sky-50/70 dark:bg-white/5 rounded-2xl space-y-1">
                   <span className="text-[11px] font-bold text-slate-500">Android / PWA Parity</span>
                   <p className="text-lg font-black text-indigo-600 dark:text-indigo-400">100% Verified</p>
                   <p className="text-[10px] text-slate-400">Safe crash reporting active</p>
                 </div>
               </div>
 
-              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 rounded-2xl text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>
                   <strong>Private Beta Status:</strong> All endpoints protected with sliding-window rate limiting and official source citations.
@@ -473,7 +473,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {activeTab === 'feedback' && (
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
                 <Filter className="w-3.5 h-3.5" /> Category:
@@ -481,7 +481,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
               <select
                 value={feedbackFilter}
                 onChange={e => setFeedbackFilter(e.target.value)}
-                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs"
               >
                 <option value="ALL">All Categories</option>
                 <option value="bug_report">Bug Reports</option>
@@ -496,7 +496,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
               <select
                 value={feedbackStatusFilter}
                 onChange={e => setFeedbackStatusFilter(e.target.value)}
-                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="new">New ({feedbackList.filter(f => f.status === 'new').length})</option>
@@ -513,7 +513,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
 
           {/* Feedback Items List */}
           {filteredFeedback.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-400 text-xs">
+            <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-[2rem] text-slate-400 text-xs shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               No feedback items found matching filter criteria.
             </div>
           ) : (
@@ -523,7 +523,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                 return (
                   <div
                     key={fb.id}
-                    className={`bg-white dark:bg-slate-900 p-5 rounded-2xl border transition-all space-y-3 ${
+                    className={`bg-white dark:bg-slate-900 p-5 rounded-2xl transition-all space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 ${
                       isNew
                         ? 'border-rose-300 dark:border-rose-800/80 shadow-xs'
                         : 'border-slate-200 dark:border-slate-800'
@@ -564,7 +564,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                               e.target.value as any
                             )
                           }
-                          className={`px-2 py-1 rounded-lg text-xs font-bold border ${
+                          className={`px-2 py-1 rounded-full text-xs font-bold border ${
                             fb.status === 'resolved'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300'
                               : fb.status === 'investigating'
@@ -582,7 +582,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed bg-sky-50/70 dark:bg-slate-950/60 p-3 rounded-xl">
                       {fb.description}
                     </p>
 
@@ -604,11 +604,11 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                             value={noteText}
                             onChange={e => setNoteText(e.target.value)}
                             placeholder="Add resolution note..."
-                            className="px-2 py-1 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white"
+                            className="px-2 py-1 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-full text-xs text-slate-900 dark:text-white"
                           />
                           <button
                             onClick={() => handleUpdateFeedbackStatus(fb.id, fb.status, noteText)}
-                            className="px-2 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold"
+                            className="px-2 py-1 bg-rose-600 text-white rounded-full text-xs font-bold"
                           >
                             Save
                           </button>
@@ -638,13 +638,13 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {/* ---------------------------------------------------- */}
       {activeTab === 'vacancy_reports' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Filter Status:</span>
               <select
                 value={vacancyReportStatusFilter}
                 onChange={e => setVacancyReportStatusFilter(e.target.value)}
-                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs"
               >
                 <option value="ALL">All Reports</option>
                 <option value="pending">Pending Audit ({vacancyReports.filter(r => r.status === 'pending').length})</option>
@@ -663,11 +663,11 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
             {filteredVacancyReports.map(report => (
               <div
                 key={report.id}
-                className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3"
+                className="bg-white dark:bg-slate-900 p-5 rounded-2xl space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[10px] font-bold text-slate-400 block">
                       {report.organization}
                     </span>
                     <h4 className="text-sm font-black text-slate-900 dark:text-white">
@@ -685,7 +685,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                           e.target.value as any
                         )
                       }
-                      className={`px-2 py-1 rounded-lg text-xs font-bold border ${
+                      className={`px-2 py-1 rounded-full text-xs font-bold border ${
                         report.status === 'resolved'
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300'
                           : report.status === 'pending'
@@ -702,7 +702,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                     {onOpenVacancyEditor && (
                       <button
                         onClick={() => onOpenVacancyEditor(report.vacancyId)}
-                        className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold transition"
+                        className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-full text-xs font-bold transition"
                       >
                         Edit Notice
                       </button>
@@ -710,7 +710,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl space-y-1">
+                <div className="p-3 bg-sky-50/70 dark:bg-slate-950/60 rounded-xl space-y-1">
                   <span className="text-[11px] font-bold text-rose-600 block">
                     Issue: {report.reportType.replace('_', ' ').toUpperCase()}
                   </span>
@@ -733,7 +733,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {activeTab === 'ai_feedback' && (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-3">
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-2xl flex items-center gap-3">
               <ThumbsUp className="w-6 h-6 text-emerald-600" />
               <div>
                 <p className="text-xl font-black text-emerald-900 dark:text-emerald-200">
@@ -743,7 +743,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
               </div>
             </div>
 
-            <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 flex items-center gap-3">
+            <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl flex items-center gap-3">
               <ThumbsDown className="w-6 h-6 text-amber-600" />
               <div>
                 <p className="text-xl font-black text-amber-900 dark:text-amber-200">
@@ -753,7 +753,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
               </div>
             </div>
 
-            <div className="bg-rose-50 dark:bg-rose-950/40 p-4 rounded-2xl border border-rose-200 dark:border-rose-800 flex items-center gap-3">
+            <div className="bg-rose-50 dark:bg-rose-950/40 p-4 rounded-2xl flex items-center gap-3">
               <AlertTriangle className="w-6 h-6 text-rose-600" />
               <div>
                 <p className="text-xl font-black text-rose-900 dark:text-rose-200">
@@ -768,7 +768,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
             {aiFeedbackList.map(item => (
               <div
                 key={item.id}
-                className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2"
+                className="bg-white dark:bg-slate-900 p-4 rounded-2xl space-y-2 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
               >
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-800 dark:text-slate-200">
@@ -787,7 +787,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                   </span>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl text-xs text-slate-600 dark:text-slate-400">
+                <div className="p-3 bg-sky-50/70 dark:bg-slate-950/60 rounded-xl text-xs text-slate-600 dark:text-slate-400">
                   <p className="italic">AI Response Snippet:</p>
                   <p className="mt-1">{item.aiResponseSnippet}</p>
                 </div>
@@ -808,8 +808,8 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {/* ---------------------------------------------------- */}
       {activeTab === 'surveys' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
+            <h3 className="text-xs font-black text-slate-700 dark:text-slate-300">
               Completed Candidate Launch Surveys ({surveys.length})
             </h3>
             <span className="text-xs text-slate-500 font-mono">10 Standard Diagnostic Questions</span>
@@ -819,7 +819,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
             {surveys.map((survey, sIdx) => (
               <div
                 key={survey.id}
-                className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-xs"
+                className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
               >
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div className="flex items-center gap-2">
@@ -838,70 +838,70 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">1. Purpose:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q1_purpose}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">2. Most Useful Feature:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q2_most_useful_feature}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">3. Confusing Parts:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q3_confusing_parts || 'None reported'}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">4. Found Relevant Vacancy?</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q4_found_relevant_vacancy}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">5. Used Quiz System?</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q5_used_quiz}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">6. AI Career Assistant Helpful?</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q6_ai_assistant_helpful}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">7. Weekly Return Trigger:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q7_weekly_return_reason}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">8. Biggest Problem:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q8_biggest_problem}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">9. Recommendation Score:</strong>
-                    <p className="text-emerald-600 font-bold bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-emerald-600 font-bold bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q9_recommend_rating}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <strong className="text-slate-700 dark:text-slate-300">10. Priority Improvement:</strong>
-                    <p className="text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg">
+                    <p className="text-slate-600 dark:text-slate-400 bg-sky-50/70 dark:bg-slate-950/60 p-2 rounded-lg">
                       {survey.answers.q10_improve_first}
                     </p>
                   </div>
@@ -917,13 +917,13 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
       {/* ---------------------------------------------------- */}
       {activeTab === 'errors' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Source:</span>
               <select
                 value={errorSourceFilter}
                 onChange={e => setErrorSourceFilter(e.target.value)}
-                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs"
               >
                 <option value="ALL">All Sources</option>
                 <option value="frontend">Frontend / React</option>
@@ -945,7 +945,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
               return (
                 <div
                   key={err.id}
-                  className={`bg-white dark:bg-slate-900 p-4 rounded-2xl border transition-all space-y-2 ${
+                  className={`bg-white dark:bg-slate-900 p-4 rounded-2xl transition-all space-y-2 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 ${
                     !err.resolved
                       ? 'border-rose-200 dark:border-rose-900/60'
                       : 'border-slate-200 dark:border-slate-800 opacity-60'
@@ -953,7 +953,7 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {err.source}
                       </span>
                       <span className="text-xs font-black text-slate-900 dark:text-white">
@@ -967,10 +967,10 @@ export const AdminBetaObservability: React.FC<AdminBetaObservabilityProps> = ({
                       </span>
                       <button
                         onClick={() => handleToggleErrorResolved(err.id, !!err.resolved)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold transition ${
                           err.resolved
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300'
-                            : 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300'
+                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
+                            : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
                         }`}
                       >
                         {err.resolved ? 'Resolved' : 'Mark Resolved'}

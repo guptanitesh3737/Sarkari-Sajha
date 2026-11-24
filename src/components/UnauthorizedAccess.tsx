@@ -66,7 +66,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden text-center">
+      <div className="max-w-md w-full bg-white rounded-2xl overflow-hidden text-center shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Top Warning Banner */}
         <div className="bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 p-6 text-white flex flex-col items-center">
           <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 mb-3 shadow-inner">
@@ -84,7 +84,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
         {/* Content Body */}
         <div className="p-6 space-y-4 text-slate-700">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-left space-y-2">
+          <div className="bg-sky-50/70 rounded-xl p-4 text-xs text-left space-y-2">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200">
               <span className="text-slate-500 font-medium">Logged-in Account:</span>
               <span className="font-bold text-slate-900 truncate max-w-[200px]">
@@ -94,7 +94,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
             <div className="flex items-center justify-between">
               <span className="text-slate-500 font-medium">Current Role:</span>
-              <span className="inline-flex items-center gap-1 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 uppercase text-[10px]">
+              <span className="inline-flex items-center gap-1 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded text-[10px]">
                 <Lock className="w-3 h-3 text-amber-600" />
                 {role || 'candidate'}
               </span>
@@ -105,8 +105,8 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
             <div
               className={`p-3 rounded-xl text-xs flex items-center gap-2 text-left ${
                 feedback.type === 'success'
-                  ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                  : 'bg-rose-50 border border-rose-200 text-rose-800'
+                  ? 'bg-emerald-50 text-emerald-800'
+                  : 'bg-rose-50 text-rose-800'
               }`}
             >
               {feedback.type === 'success' ? (
@@ -120,7 +120,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
           {/* Quick Activate for Verified Admin Email */}
           {user && isOwnerEmail && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-left space-y-2">
+            <div className="bg-amber-50 rounded-xl p-3.5 text-left space-y-2">
               <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs">
                 <Sparkles className="w-4 h-4 text-amber-600" />
                 <span>Verified Super Administrator Account</span>
@@ -131,7 +131,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
               <button
                 onClick={() => handleClaimAdmin()}
                 disabled={loading}
-                className="w-full py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs rounded-lg shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2.5 font-bold text-xs rounded-full shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -151,7 +151,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
               <button
                 onClick={() => handleClaimAdmin()}
                 disabled={loading}
-                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-full transition flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
@@ -175,7 +175,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
             {!user ? (
               <button
                 onClick={onOpenAuthModal}
-                className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2"
+                className="w-full py-3 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <KeyRound className="w-4 h-4" />
                 <span>{lang === 'np' ? 'प्रशासक खाता लगइन गर्नुहोस्' : 'Sign In with Administrator Account'}</span>
@@ -184,7 +184,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
 
             <button
               onClick={onNavigateHome}
-              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{lang === 'np' ? 'गृहपृष्ठमा फर्कनुहोस्' : 'Return to Public Vacancies Directory'}</span>
@@ -197,7 +197,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
                   await auth.signOut();
                   if (onOpenAuthModal) onOpenAuthModal();
                 }}
-                className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-full transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>{lang === 'np' ? 'साइन आउट गरी अर्को खाता लगइन गर्नुहोस्' : 'Sign Out & Switch Account'}</span>
@@ -207,7 +207,7 @@ export const UnauthorizedAccess: React.FC<UnauthorizedAccessProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 text-[10px] text-slate-500 font-mono flex items-center justify-between">
+        <div className="bg-slate-50 px-6 py-3 border-t text-[10px] text-slate-500 font-mono flex items-center justify-between">
           <span>Security Enforced via Firestore ABAC</span>
           <span>SarkariSajha v2.5</span>
         </div>

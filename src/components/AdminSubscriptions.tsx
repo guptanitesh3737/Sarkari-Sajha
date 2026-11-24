@@ -180,7 +180,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
         </div>
         <button
           onClick={loadPlansAndMetrics}
-          className="flex items-center space-x-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 shrink-0"
+          className="flex items-center space-x-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-full border border-slate-700 shrink-0"
         >
           <RefreshCw className="w-4 h-4" />
           <span>Refresh Metrics</span>
@@ -300,7 +300,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                 </div>
 
                 <div className="pt-2 border-t border-slate-800 space-y-1.5 text-xs text-slate-300">
-                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Limits & Quotas:</p>
+                  <p className="text-[11px] font-semibold text-slate-400">Limits & Quotas:</p>
                   <p className="flex justify-between">
                     <span>Daily Quizzes:</span>
                     <span className="font-bold text-white">{p.limits.dailyQuizzes === -1 ? 'Unlimited' : `${p.limits.dailyQuizzes} / day`}</span>
@@ -324,7 +324,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                 <button
                   id={`btn-edit-plan-${p.code}`}
                   onClick={() => handleEditPlan(p)}
-                  className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700"
+                  className="w-full flex items-center justify-center space-x-2 py-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>Configure Tier</span>
@@ -337,7 +337,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
 
       {/* EDIT PLAN MODAL */}
       {editingPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
               <div className="flex items-center space-x-2">
@@ -356,7 +356,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                     required
                     value={editingPlan.name}
                     onChange={(e) => setEditingPlan({ ...editingPlan, name: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-purple-500 focus:outline-none"
                   />
                 </div>
 
@@ -368,7 +368,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                     min={0}
                     value={editingPlan.price}
                     onChange={(e) => setEditingPlan({ ...editingPlan, price: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-purple-500 focus:outline-none"
                   />
                 </div>
 
@@ -380,7 +380,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                     min={1}
                     value={editingPlan.duration_days}
                     onChange={(e) => setEditingPlan({ ...editingPlan, duration_days: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-purple-500 focus:outline-none"
                   />
                 </div>
 
@@ -391,7 +391,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                     min={0}
                     value={editingPlan.trial_period_days}
                     onChange={(e) => setEditingPlan({ ...editingPlan, trial_period_days: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-purple-500 focus:outline-none"
                   />
                 </div>
 
@@ -407,7 +407,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                           ...editingPlan,
                           limits: { ...editingPlan.limits, dailyQuizzes: Number(e.target.value) }
                         })}
-                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-lg"
+                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-full"
                       />
                     </div>
                     <div>
@@ -419,7 +419,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                           ...editingPlan,
                           limits: { ...editingPlan.limits, dailyAiQueries: Number(e.target.value) }
                         })}
-                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-lg"
+                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-full"
                       />
                     </div>
                     <div>
@@ -431,7 +431,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                           ...editingPlan,
                           limits: { ...editingPlan.limits, mockTests: Number(e.target.value) }
                         })}
-                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-lg"
+                        className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-full"
                       />
                     </div>
                   </div>
@@ -466,14 +466,14 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
                 <button
                   type="button"
                   onClick={() => setEditingPlan(null)}
-                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-xl bg-slate-800"
+                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-full bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 text-sm text-white bg-purple-600 hover:bg-purple-500 rounded-xl font-bold"
+                  className="px-5 py-2 text-sm rounded-full font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   {saving ? 'Saving...' : 'Save Plan to Firestore'}
                 </button>
@@ -500,13 +500,13 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
             value={userLookupQuery}
             onChange={(e) => setUserLookupQuery(e.target.value)}
             placeholder="Enter Candidate UID or Email (e.g. candidate@gmail.com)..."
-            className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm px-4 py-2.5 rounded-xl focus:border-purple-500 focus:outline-none"
+            className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm px-4 py-2.5 rounded-full focus:border-purple-500 focus:outline-none"
           />
           <button
             id="btn-lookup-user"
             type="submit"
             disabled={lookingUp}
-            className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold rounded-xl shrink-0 flex items-center justify-center space-x-2"
+            className="px-5 py-2.5 text-sm font-bold rounded-full shrink-0 flex items-center justify-center space-x-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             {lookingUp ? <span>Verifying...</span> : <span>Verify Account</span>}
           </button>
@@ -561,7 +561,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
           <select
             value={grantPlanCode}
             onChange={(e) => setGrantPlanCode(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white text-xs px-3 py-2 rounded-lg"
+            className="bg-slate-800 border border-slate-700 text-white text-xs px-3 py-2 rounded-full"
           >
             <option value="MONTHLY">Monthly Pro Pass (30 Days)</option>
             <option value="QUARTERLY">Quarterly Exam Sprint (90 Days)</option>
@@ -571,7 +571,7 @@ export const AdminSubscriptions: React.FC<AdminSubscriptionsProps> = ({
             id="btn-grant-sub"
             onClick={handleGrantManualSubscription}
             disabled={granting}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold rounded-lg shrink-0"
+            className="px-4 py-2 disabled:opacity-50 text-xs font-bold rounded-full shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             {granting ? 'Granting...' : 'Grant / Extend Access'}
           </button>

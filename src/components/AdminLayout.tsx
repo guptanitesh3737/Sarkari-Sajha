@@ -27,6 +27,7 @@ import {
   Database,
   FileCheck
 } from 'lucide-react';
+import { BrandMark } from './Header';
 import { User as FirebaseUser } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { Language, Vacancy, QuizSet, NotificationLog } from '../types';
@@ -129,9 +130,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           {/* Brand Header */}
           <div className="p-5 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center space-x-3 cursor-pointer" onClick={onExitAdmin}>
-              <div className="w-9 h-9 rounded-xl bg-rose-600 flex items-center justify-center font-black text-white text-base shadow-sm">
-                SS
-              </div>
+              <div className="w-9 h-9 rounded-full bg-sky-100 dark:bg-white/10 flex items-center justify-center shrink-0"><BrandMark className="w-3/5 h-3/5" /></div>
               <div>
                 <h1 className="text-sm font-black tracking-wider text-white">SarkariSajha</h1>
                 <p className="text-[10px] text-rose-400 font-mono font-bold tracking-tight">ADMIN CONTROL PANEL</p>
@@ -170,9 +169,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id, item.minRole)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-rose-600 text-white shadow-md'
+                      ? 'bg-rose-600 text-white'
                       : isRestricted
                       ? 'text-slate-600 hover:text-slate-500 cursor-not-allowed opacity-60'
                       : 'text-slate-400 hover:text-white hover:bg-slate-900'
@@ -200,7 +199,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         <div className="p-4 border-t border-slate-800 space-y-2">
           <button
             onClick={onExitAdmin}
-            className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-full border border-slate-800 transition flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4 text-rose-500" />
             <span>Public Directory</span>
@@ -236,7 +235,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               <span className="text-slate-300 font-bold">{user?.displayName || 'Admin'}</span>
               <button
                 onClick={() => auth.signOut()}
-                className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/20 transition"
+                className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/20 transition"
                 title="Log Out"
               >
                 <LogOut className="w-4 h-4" />

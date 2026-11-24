@@ -197,8 +197,14 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
     }
   ];
 
+  // Follow new messages, but not on first load: scrolling then dragged the whole page down to the footer.
+  const hasMountedRef = useRef(false);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages, loading]);
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -273,7 +279,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
@@ -304,7 +310,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
       </div>
 
       {/* Suggested Quick Prompt Chips */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <div className="flex items-center gap-2 mb-3 text-xs font-bold text-slate-600 dark:text-slate-400">
           <Zap className="w-3.5 h-3.5 text-amber-500" />
           <span>{lang === 'np' ? 'सुझाव गरिएका त्वरित प्रश्नहरू (Suggested Prompts):' : 'Suggested Prompts (1-Click Query):'}</span>
@@ -315,7 +321,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
               key={idx}
               onClick={() => handleSendMessage(sp.prompt)}
               disabled={loading}
-              className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-300 hover:text-blue-700 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition flex items-center gap-1.5 shadow-2xs"
+              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-300 hover:text-blue-700 dark:hover:text-blue-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition flex items-center gap-1.5 shadow-2xs"
             >
               <span>{sp.label}</span>
               <ArrowRight className="w-3 h-3 opacity-60" />
@@ -351,7 +357,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                 className={`space-y-4 max-w-4xl w-full rounded-3xl p-5 sm:p-6 shadow-xs border ${
                   isAi
                     ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100'
-                    : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/80 text-emerald-950 dark:text-emerald-100 ml-auto'
+                    : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 ml-auto'
                 }`}
               >
                 {/* Header info */}
@@ -363,7 +369,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                         : userProfile.name || 'Candidate'}
                     </span>
                     {isAi && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
                         <CheckCircle2 className="w-3 h-3 text-blue-600" />
                         Grounded Database Output
                       </span>
@@ -375,7 +381,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                     {isAi && (
                       <button
                         onClick={() => handleCopy(msg.text, msg.id)}
-                        className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                        className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                         title="Copy text"
                       >
                         {copiedMsgId === msg.id ? (
@@ -400,11 +406,11 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                   <div className="space-y-5 pt-3">
                     {/* TIER 1: DATABASE INFORMATION */}
                     {Array.isArray(structured.databaseMatches) && structured.databaseMatches.length > 0 && (
-                      <div className="space-y-3 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                      <div className="space-y-3 bg-sky-50/70 dark:bg-white/5 p-4 rounded-2xl">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Briefcase className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            <h4 className="text-xs font-black text-slate-700 dark:text-slate-300">
                               {lang === 'np'
                                 ? '१. सरकारी साझा डाटाबेस भर्ना विवरण (Database Information)'
                                 : '1. SarkariSajha Database Matches (Real Vacancies)'}
@@ -426,11 +432,11 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                               >
                                 <div className="space-y-1">
                                   <div className="flex items-center justify-between gap-2">
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase truncate">
+                                    <span className="text-[10px] font-bold text-slate-500 truncate">
                                       {item.organization}
                                     </span>
                                     {item.isClosingSoon && (
-                                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1 shrink-0">
+                                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center gap-1 shrink-0">
                                         <Flame className="w-3 h-3 text-rose-600" />
                                         Closing Soon
                                       </span>
@@ -470,10 +476,10 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
 
                     {/* TIER 2: OFFICIAL SOURCES & REGULATIONS */}
                     {Array.isArray(structured.officialSourceInfo) && structured.officialSourceInfo.length > 0 && (
-                      <div className="space-y-3 bg-amber-50/60 dark:bg-amber-950/30 p-4 rounded-2xl border border-amber-200 dark:border-amber-900/60">
+                      <div className="space-y-3 bg-amber-50/60 dark:bg-amber-950/30 p-4 rounded-2xl">
                         <div className="flex items-center gap-2">
                           <BookOpen className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                          <h4 className="text-xs font-black uppercase tracking-wider text-amber-900 dark:text-amber-300">
+                          <h4 className="text-xs font-black text-amber-900 dark:text-amber-300">
                             {lang === 'np'
                               ? '२. आधिकारिक स्रोत तथा लोक सेवा नियम (Official Sources & Regulations)'
                               : '2. Official Sources & PSC Examination Structure'}
@@ -507,10 +513,10 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
 
                     {/* TIER 3: AI RECOMMENDATIONS & QUIZ LAUNCHER */}
                     {Array.isArray(structured.aiRecommendations) && structured.aiRecommendations.length > 0 && (
-                      <div className="space-y-3 bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-2xl border border-indigo-200 dark:border-indigo-900/60">
+                      <div className="space-y-3 bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-2xl">
                         <div className="flex items-center gap-2">
                           <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                          <h4 className="text-xs font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-300">
+                          <h4 className="text-xs font-black text-indigo-900 dark:text-indigo-300">
                             {lang === 'np'
                               ? '३. एआई सिफारिस तथा अध्ययन सुझाव (AI Recommendations)'
                               : '3. AI Recommendations & Practice Modules'}
@@ -537,7 +543,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                                 <div className="pt-2">
                                   <button
                                     onClick={() => onStartQuiz(rec.recommendedQuizId!)}
-                                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition flex items-center gap-2"
+                                    className="px-3.5 py-1.5 rounded-full text-xs font-bold shadow-xs transition flex items-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                                   >
                                     <Award className="w-3.5 h-3.5" />
                                     <span>Start Recommended Practice Exam: {rec.recommendedQuizTitle || 'Diagnostic Quiz'}</span>
@@ -553,10 +559,10 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
 
                     {/* TIER 4: GENERAL GUIDANCE & 30-DAY PLAN */}
                     {structured.generalGuidance && (
-                      <div className="space-y-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/80">
+                      <div className="space-y-3 bg-sky-50/70 dark:bg-slate-800/40 p-4 rounded-2xl">
                         <div className="flex items-center gap-2">
                           <Target className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                          <h4 className="text-xs font-black text-slate-700 dark:text-slate-300">
                             {lang === 'np'
                               ? '४. सामान्य मार्गदर्शन तथा तयारी योजना (General Guidance)'
                               : '4. General Guidance & Preparation Blueprint'}
@@ -565,7 +571,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
 
                         {Array.isArray(structured.generalGuidance.studyTips) && structured.generalGuidance.studyTips.length > 0 && (
                           <div className="space-y-1">
-                            <span className="text-[11px] font-bold text-slate-500 uppercase">Core Habits:</span>
+                            <span className="text-[11px] font-bold text-slate-500">Core Habits:</span>
                             <ul className="space-y-1 pl-4 list-disc text-xs text-slate-700 dark:text-slate-300">
                               {structured.generalGuidance.studyTips.map((st, sIdx) => (
                                 <li key={sIdx}>{st}</li>
@@ -646,7 +652,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                               key={sqIdx}
                               onClick={() => handleSendMessage(sq)}
                               disabled={loading}
-                              className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 transition border border-slate-200 dark:border-slate-700 flex items-center gap-1"
+                              className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950 text-slate-700 dark:text-slate-300 hover:text-blue-600 transition border border-slate-200 dark:border-slate-700 flex items-center gap-1"
                             >
                               <span>{sq}</span>
                               <ChevronRight className="w-3 h-3 opacity-60" />
@@ -680,7 +686,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                       <button
                         onClick={() => handleFeedbackRating(msg, 'helpful')}
                         disabled={submittingFeedbackId === msg.id}
-                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition ${
+                        className={`px-2.5 py-1 rounded-full font-bold flex items-center gap-1 transition ${
                           msg.feedbackRating === 'helpful'
                             ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600'
@@ -694,7 +700,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                       <button
                         onClick={() => handleFeedbackRating(msg, 'not_helpful')}
                         disabled={submittingFeedbackId === msg.id}
-                        className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition ${
+                        className={`px-2.5 py-1 rounded-full font-bold flex items-center gap-1 transition ${
                           msg.feedbackRating === 'not_helpful'
                             ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-700'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-600'
@@ -710,7 +716,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                           setFlagCommentPromptId(flagCommentPromptId === msg.id ? null : msg.id)
                         }
                         disabled={submittingFeedbackId === msg.id}
-                        className={`px-2 py-1 rounded-lg font-bold flex items-center gap-1 transition ${
+                        className={`px-2 py-1 rounded-full font-bold flex items-center gap-1 transition ${
                           msg.feedbackRating === 'incorrect'
                             ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-300 dark:border-rose-700'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600'
@@ -737,12 +743,12 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                           value={flagComment}
                           onChange={e => setFlagComment(e.target.value)}
                           placeholder="What was incorrect? e.g. Rule changed in 2083 amendment..."
-                          className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                          className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-full text-xs"
                         />
                         <button
                           onClick={() => handleFeedbackRating(msg, 'incorrect', flagComment)}
                           disabled={!flagComment.trim() || submittingFeedbackId === msg.id}
-                          className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition"
+                          className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white rounded-full text-xs font-bold transition"
                         >
                           Submit Report
                         </button>
@@ -760,7 +766,7 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
             <div className="w-9 h-9 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 animate-pulse">
               <Bot className="w-5 h-5" />
             </div>
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-xs max-w-md">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-5 max-w-md shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <div className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400">
                 <RefreshCw className="w-4 h-4 animate-spin" />
                 <span>Querying SarkariSajha Database & Analyzing Syllabus...</span>
@@ -790,13 +796,13 @@ export const AiCareerAssistant: React.FC<AiCareerAssistantProps> = ({
                 ? 'जस्तै: "What jobs are available for BSc Statistics?", "Which vacancies close this week?"'
                 : 'Ask about government jobs, closing deadlines, Lok Sewa syllabus, 30-day prep plan...'
             }
-            className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400"
+            className="flex-1 px-4 py-2.5 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-sky-300 placeholder:text-slate-400"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={!inputQuery.trim() || loading}
-            className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer"
+            className="px-5 py-2.5 rounded-full disabled:opacity-50 text-xs font-bold transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">{lang === 'np' ? 'पठाउनुहोस्' : 'Send'}</span>

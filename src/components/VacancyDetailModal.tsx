@@ -76,13 +76,13 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
   const isAgeMet = userProfile.age >= vacancy.qualifications.minAge && userProfile.age <= vacancy.qualifications.maxAge;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-900 relative flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto text-slate-900 relative flex flex-col shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Modal Header */}
         <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-200 p-5 flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
+              <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
                 {vacancy.category}
               </span>
               <span className="text-slate-500 text-xs font-mono">Notice #{vacancy.noticeNumber}</span>
@@ -98,7 +98,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition"
+            className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -107,30 +107,30 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
         {/* Modal Content Body */}
         <div className="p-6 space-y-6">
           {/* Key Vacancy Specifications Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-sky-50/70 p-4 rounded-xl text-xs">
             <div>
-              <span className="text-slate-500 text-[10px] uppercase block font-semibold">Total Openings</span>
+              <span className="text-slate-500 text-[10px] block font-semibold">Total Openings</span>
               <span className="font-bold text-emerald-700 text-sm flex items-center gap-1 mt-0.5">
                 <Users className="w-4 h-4 text-emerald-600" /> {vacancy.posts} Seats
               </span>
             </div>
 
             <div>
-              <span className="text-slate-500 text-[10px] uppercase block font-semibold">Application Fee</span>
+              <span className="text-slate-500 text-[10px] block font-semibold">Application Fee</span>
               <span className="font-bold text-amber-700 text-sm flex items-center gap-1 mt-0.5">
                 <DollarSign className="w-4 h-4 text-amber-600" /> NPR {vacancy.fee}
               </span>
             </div>
 
             <div>
-              <span className="text-slate-500 text-[10px] uppercase block font-semibold">Deadline</span>
+              <span className="text-slate-500 text-[10px] block font-semibold">Deadline</span>
               <span className="font-bold text-rose-700 text-xs flex items-center gap-1 mt-0.5">
                 <Calendar className="w-4 h-4 text-rose-600" /> {vacancy.deadline}
               </span>
             </div>
 
             <div>
-              <span className="text-slate-500 text-[10px] uppercase block font-semibold">Province / Region</span>
+              <span className="text-slate-500 text-[10px] block font-semibold">Province / Region</span>
               <span className="font-bold text-blue-700 text-xs flex items-center gap-1 mt-0.5">
                 <MapPin className="w-4 h-4 text-blue-600" /> {vacancy.province}
               </span>
@@ -139,21 +139,21 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
 
           {/* Role Overview */}
           <div>
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
               <FileText className="w-4 h-4 text-blue-600" /> Overview & Description
             </h3>
-            <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <p className="text-xs text-slate-700 leading-relaxed bg-sky-50/70 p-3.5 rounded-xl">
               {vacancy.description}
             </p>
           </div>
 
           {/* Structured Eligibility Requirements Checklist */}
           <div>
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <h3 className="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
               <Award className="w-4 h-4 text-purple-600" /> Structured Qualification Requirements
             </h3>
 
-            <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+            <div className="space-y-2 bg-sky-50/70 p-4 rounded-xl text-xs">
               <div className="flex items-center justify-between py-1 border-b border-slate-200">
                 <span className="text-slate-600">Min Qualification Level:</span>
                 <span className="font-semibold text-slate-900 flex items-center gap-1.5">
@@ -200,7 +200,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
           </div>
 
           {/* AI Matcher Recommendation Section */}
-          <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-200 space-y-3">
+          <div className="bg-blue-50/60 p-5 rounded-2xl space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-blue-100 rounded-xl text-blue-700 border border-blue-200">
@@ -216,7 +216,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
                 <button
                   onClick={handleComputeMatch}
                   disabled={loadingMatch}
-                  className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-xs"
+                  className="px-3.5 py-2 text-xs font-bold rounded-full transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   {loadingMatch ? (
                     <>
@@ -277,13 +277,13 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
           {/* Syllabus Breakdown */}
           {vacancy.syllabusPoints.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <h3 className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
                 <FileText className="w-4 h-4 text-emerald-600" /> Examination Syllabus Structure
               </h3>
 
               <div className="space-y-1.5">
                 {vacancy.syllabusPoints.map((pt, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-slate-800">
+                  <div key={i} className="flex items-start gap-2 text-xs bg-sky-50/70 p-2.5 rounded-lg text-slate-800">
                     <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-800 font-mono font-bold flex items-center justify-center text-[10px] flex-shrink-0">
                       {i + 1}
                     </span>
@@ -300,9 +300,9 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onBookmark(vacancy)}
-              className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold border flex items-center gap-2 transition ${
+              className={`px-3.5 py-2.5 rounded-full text-xs font-semibold border flex items-center gap-2 transition ${
                 isBookmarked
-                  ? 'bg-amber-50 text-amber-700 border-amber-300'
+                  ? 'bg-amber-50 text-amber-700'
                   : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
               }`}
             >
@@ -337,7 +337,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
                 URL.revokeObjectURL(url);
               }}
               title="Add deadline to Apple/Google/Outlook Calendar"
-              className="px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 flex items-center gap-1.5 transition"
+              className="px-3.5 py-2.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 flex items-center gap-1.5 transition"
             >
               <CalendarPlus className="w-4 h-4 text-blue-600" />
               <span className="hidden sm:inline">Add to Calendar</span>
@@ -346,7 +346,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
             <button
               onClick={() => setShowReportModal(true)}
               title="Report an inaccuracy or broken link in this vacancy notice"
-              className="p-2.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 flex items-center gap-1.5 transition"
+              className="p-2.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 flex items-center gap-1.5 transition"
             >
               <FileWarning className="w-4 h-4 text-rose-600" />
               <span className="hidden sm:inline">Report Issue</span>
@@ -357,7 +357,7 @@ export const VacancyDetailModal: React.FC<VacancyDetailModalProps> = ({
             href={vacancy.applyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 py-2.5 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-xs"
+            className="flex-1 py-2.5 px-5 text-xs font-bold rounded-full transition flex items-center justify-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             <span>Proceed to Official Portal ({vacancy.shortOrg})</span>
             <ExternalLink className="w-4 h-4" />

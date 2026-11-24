@@ -85,7 +85,7 @@ export const OfflineStatusBar: React.FC<OfflineStatusBarProps> = ({ lang }) => {
       <button
         onClick={handleManualCheck}
         disabled={isRetrying}
-        className="px-2.5 py-1 bg-amber-800 hover:bg-amber-900 active:bg-amber-950 text-white text-[11px] font-bold rounded-lg transition flex items-center gap-1 shrink-0 cursor-pointer shadow-xs disabled:opacity-50"
+        className="px-2.5 py-1 bg-amber-800 hover:bg-amber-900 active:bg-amber-950 text-white text-[11px] font-bold rounded-full transition flex items-center gap-1 shrink-0 cursor-pointer shadow-xs disabled:opacity-50"
       >
         <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} />
         <span>{lang === 'np' ? 'पुनः जाँच गर्नुहोस्' : 'Check Connection'}</span>
