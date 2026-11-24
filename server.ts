@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import firebaseAppletConfig from './firebase-applet-config.json';
 import { GoogleGenAI, Type } from '@google/genai';
 import {
   INITIAL_USER_PROFILE,
@@ -437,6 +438,9 @@ let apiPerformanceMetrics = {
 async function startServer() {
   const app = express();
   const PORT = 3000;
+  app.disable('x-powered-by');
+  // Behind Cloud Run / a single reverse proxy: use the real client IP for rate limiting.
+  if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 
   // Strict Payload Limit Guard against volumetric buffer attacks (10MB for documents)
   app.use(express.json({ limit: '10mb' }));
@@ -470,7 +474,11 @@ async function startServer() {
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('X-XSS-Protection', '0');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=()');
     next();
@@ -492,9 +500,13 @@ async function startServer() {
   ) => {
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown-client';
-      const key = `${clientIp}_${req.headers['x-user-email'] || 'anon'}`;
+      // Key by client IP only: client-supplied headers could be rotated to dodge the limit.
+      const key = clientIp;
       const now = Date.now();
 
+      if (store.size > 10000) {
+        for (const [k, b] of store) if (now > b.resetAt) store.delete(k);
+      }
       const bucket = store.get(key);
       if (!bucket || now > bucket.resetAt) {
         store.set(key, { count: 1, resetAt: now + windowMs });
@@ -523,33 +535,126 @@ async function startServer() {
   const aiGenerationLimiter = createRateLimiter(aiRateLimitStore, 40, 60 * 1000, 'AI intelligence service');
 
   app.use('/api', generalApiLimiter);
-  app.use(['/api/ai', '/api/subjective', '/api/admin/extract-vacancy-document', '/api/admin/generate-quiz'], aiGenerationLimiter);
+  app.use([
+    '/api/ai',
+    '/api/ai-assistant/chat',
+    '/api/subjective-evaluations',
+    '/api/match',
+    '/api/parse-resume',
+    '/api/quizzes/ai-explain',
+    '/api/vacancies/ai-ingest',
+    '/api/admin/extract-vacancy-document',
+    '/api/admin/extracted-vacancies',
+    '/api/admin/parse-pdf-notice',
+    '/api/admin/generate-quiz'
+  ], aiGenerationLimiter);
 
-  // 3. Admin Authorization Middleware for Protected Management Routes
-  const requireAdminAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const roleHeader = (req.headers['x-admin-role'] as string) || '';
-    const emailHeader = ((req.headers['x-user-email'] as string) || '').toLowerCase().trim();
-    const authHeader = req.headers['authorization'] || '';
+  // 3. Authentication & Admin Authorization
+  //
+  // Identity comes ONLY from a Firebase ID token sent as `Authorization: Bearer <idToken>`.
+  // The token is verified with Google (Identity Toolkit accounts:lookup), and the admin role
+  // is read from Firestore `users/{uid}` using that same token, so Firestore security rules
+  // decide what the caller may read. Client-supplied headers such as `x-admin-role` or
+  // `x-user-email` are never trusted.
+  const BOOTSTRAPPED_ADMIN_EMAILS = new Set([
+    'guptanitesh3737@gmail.com',
+    'admin@sarkarisajha.gov.np',
+    'admin@sarkarisajha.com'
+  ]);
+  const ADMIN_ROLES = new Set(['super_admin', 'admin', 'editor']);
 
-    const isAuthorizedAdminEmail =
-      emailHeader === 'guptanitesh3737@gmail.com' ||
-      emailHeader === 'admin@sarkarisajha.gov.np' ||
-      emailHeader === 'admin@sarkarisajha.com';
+  interface VerifiedUser {
+    uid: string;
+    email: string;
+    emailVerified: boolean;
+    role: string;
+    isAdmin: boolean;
+  }
 
-    const isAuthorizedRole =
-      roleHeader === 'super_admin' ||
-      roleHeader === 'admin' ||
-      roleHeader === 'editor';
+  const authCache = new Map<string, { user: VerifiedUser | null; expiry: number }>();
+  const AUTH_CACHE_TTL_MS = 5 * 60 * 1000;
 
-    // Allow if verified admin email or valid administrative role claim or local dev context with admin header
-    if (isAuthorizedAdminEmail || isAuthorizedRole || authHeader.startsWith('Bearer ')) {
-      return next();
+  const fetchFirestoreRole = async (uid: string, idToken: string): Promise<string> => {
+    const { projectId, firestoreDatabaseId } = firebaseAppletConfig as { projectId: string; firestoreDatabaseId?: string };
+    const dbId = encodeURIComponent(firestoreDatabaseId || '(default)');
+    const url = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/${dbId}/documents/users/${encodeURIComponent(uid)}`;
+    try {
+      const r = await fetch(url, { headers: { Authorization: `Bearer ${idToken}` } });
+      if (!r.ok) return 'candidate';
+      const docJson: any = await r.json();
+      return docJson?.fields?.role?.stringValue || 'candidate';
+    } catch {
+      return 'candidate';
+    }
+  };
+
+  const verifyIdToken = async (idToken: string): Promise<VerifiedUser | null> => {
+    const cached = authCache.get(idToken);
+    if (cached && Date.now() < cached.expiry) return cached.user;
+
+    let user: VerifiedUser | null = null;
+    try {
+      const r = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${encodeURIComponent((firebaseAppletConfig as { apiKey: string }).apiKey)}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) }
+      );
+      if (r.ok) {
+        const data: any = await r.json();
+        const account = data?.users?.[0];
+        if (account?.localId && !account.disabled) {
+          const email = String(account.email || '').toLowerCase().trim();
+          const emailVerified = account.emailVerified === true;
+          const role = await fetchFirestoreRole(account.localId, idToken);
+          const isBootstrapped = emailVerified && BOOTSTRAPPED_ADMIN_EMAILS.has(email);
+          user = {
+            uid: account.localId,
+            email,
+            emailVerified,
+            role: isBootstrapped ? 'super_admin' : role,
+            isAdmin: isBootstrapped || ADMIN_ROLES.has(role)
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('ID token verification failed:', (err as Error).message);
     }
 
-    res.status(403).json({
-      error: '403 Forbidden: Administrative or Content Editor credentials required for this endpoint.',
-      roleRequired: 'editor | admin | super_admin'
-    });
+    authCache.set(idToken, { user, expiry: Date.now() + (user ? AUTH_CACHE_TTL_MS : 30 * 1000) });
+    if (authCache.size > 5000) {
+      const now = Date.now();
+      for (const [k, v] of authCache) if (now > v.expiry) authCache.delete(k);
+    }
+    return user;
+  };
+
+  const getVerifiedUser = async (req: express.Request): Promise<VerifiedUser | null> => {
+    if ((req as any).verifiedUser !== undefined) return (req as any).verifiedUser;
+    const header = String(req.headers['authorization'] || '');
+    const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+    const user = token && token.length < 4096 ? await verifyIdToken(token) : null;
+    (req as any).verifiedUser = user;
+    return user;
+  };
+
+  const requireUserAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    getVerifiedUser(req).then((user) => {
+      if (user) return next();
+      res.status(401).json({ error: 'Please sign in to continue.' });
+    }).catch(next);
+  };
+
+  const requireAdminAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    getVerifiedUser(req).then((user) => {
+      if (!user) {
+        res.status(401).json({ error: 'Please sign in with an administrator account.' });
+        return;
+      }
+      if (!user.isAdmin) {
+        res.status(403).json({ error: 'Administrator or editor access is required for this action.' });
+        return;
+      }
+      next();
+    }).catch(next);
   };
 
   // Apply admin authorization to all sensitive management routes
@@ -1134,7 +1239,7 @@ You MUST return a clean JSON object conforming strictly to this schema:
     res.json(userProfileStore);
   });
 
-  app.put('/api/profile', (req, res) => {
+  app.put('/api/profile', requireUserAuth, (req, res) => {
     userProfileStore = { ...userProfileStore, ...req.body };
     res.json(userProfileStore);
   });
@@ -1361,7 +1466,7 @@ Return a JSON object:
     res.json(list);
   });
 
-  app.post('/api/quiz-categories', (req, res) => {
+  app.post('/api/quiz-categories', requireAdminAuth, (req, res) => {
     const { name, nameNp, description, icon } = req.body;
     if (!name) {
       res.status(400).json({ error: 'Category name is required' });
@@ -1386,7 +1491,7 @@ Return a JSON object:
     res.json(examProfilesStore);
   });
 
-  app.post('/api/exam-profiles', (req, res) => {
+  app.post('/api/exam-profiles', requireAdminAuth, (req, res) => {
     const { name, nameNp, code, organization, level, defaultTimeMinutes, defaultNegativeMarkRate, syllabusOutline, description } = req.body;
     const newProfile: ExamProfile = {
       id: `exam_${Date.now()}`,
@@ -1404,11 +1509,11 @@ Return a JSON object:
     res.status(201).json(newProfile);
   });
 
-  app.get('/api/question-sources', (req, res) => {
+  app.get('/api/question-sources', requireAdminAuth, (req, res) => {
     res.json(questionSourcesStore);
   });
 
-  app.post('/api/question-sources', (req, res) => {
+  app.post('/api/question-sources', requireAdminAuth, (req, res) => {
     const { title, type, sourceText, referenceCitation, addedBy } = req.body;
     if (!title || !sourceText) {
       res.status(400).json({ error: 'Title and Source Text are required.' });
@@ -1427,13 +1532,13 @@ Return a JSON object:
     res.status(201).json(newSource);
   });
 
-  app.delete('/api/question-sources/:id', (req, res) => {
+  app.delete('/api/question-sources/:id', requireAdminAuth, (req, res) => {
     questionSourcesStore = questionSourcesStore.filter(s => s.id !== req.params.id);
     res.json({ success: true, message: 'Question source removed.' });
   });
 
   // 5. QUESTION BANK MANAGEMENT & BULK ACTIONS
-  app.get('/api/quiz-bank', (req, res) => {
+  app.get('/api/quiz-bank', requireAdminAuth, (req, res) => {
     const { subject, category, examProfile, status, difficulty, language, questionType, search } = req.query;
     let questions = [...quizQuestionsStore];
 
@@ -1475,7 +1580,7 @@ Return a JSON object:
     res.json(questions);
   });
 
-  app.post('/api/quiz-bank', (req, res) => {
+  app.post('/api/quiz-bank', requireAdminAuth, (req, res) => {
     const qData = req.body;
     const qType: QuestionType = qData.questionType || (Array.isArray(qData.correctAnswers) ? 'multiple_select' : (qData.isTrue !== undefined ? 'true_false' : 'multiple_choice'));
     
@@ -1519,7 +1624,7 @@ Return a JSON object:
     res.status(201).json(newQ);
   });
 
-  app.put('/api/quiz-bank/:id', (req, res) => {
+  app.put('/api/quiz-bank/:id', requireAdminAuth, (req, res) => {
     const idx = quizQuestionsStore.findIndex(q => q.id === req.params.id);
     if (idx === -1) {
       res.status(404).json({ error: 'Question not found' });
@@ -1538,12 +1643,12 @@ Return a JSON object:
     res.json(quizQuestionsStore[idx]);
   });
 
-  app.delete('/api/quiz-bank/:id', (req, res) => {
+  app.delete('/api/quiz-bank/:id', requireAdminAuth, (req, res) => {
     quizQuestionsStore = quizQuestionsStore.filter(q => q.id !== req.params.id);
     res.json({ success: true, message: 'Question deleted successfully.' });
   });
 
-  app.post('/api/quiz-bank/bulk-action', (req, res) => {
+  app.post('/api/quiz-bank/bulk-action', requireAdminAuth, (req, res) => {
     const { action, questionIds, targetQuizSetId, newStatus } = req.body;
     if (!Array.isArray(questionIds) || questionIds.length === 0) {
       res.status(400).json({ error: 'No question IDs provided.' });
@@ -1582,7 +1687,7 @@ Return a JSON object:
   });
 
   // 6. AI QUIZ GENERATION & VALIDATION (GEMINI POWERED - PHASE 6 AI QUIZ LAB)
-  app.post('/api/ai/generate-quiz', async (req, res) => {
+  app.post('/api/ai/generate-quiz', requireAdminAuth, async (req, res) => {
     try {
       const {
         exam,
@@ -1931,7 +2036,7 @@ JSON Array Schema:
   });
 
   // 6b. REGENERATE SINGLE QUESTION ENDPOINT (Human-in-the-Loop)
-  app.post('/api/ai/regenerate-single-question', async (req, res) => {
+  app.post('/api/ai/regenerate-single-question', requireAdminAuth, async (req, res) => {
     try {
       const {
         questionId,
@@ -2056,7 +2161,7 @@ Provide ONLY a single JSON object with the fields:
   });
 
   // 7. COMPREHENSIVE AI QUESTION VALIDATION
-  app.post('/api/ai/validate-quiz', async (req, res) => {
+  app.post('/api/ai/validate-quiz', requireAdminAuth, async (req, res) => {
     try {
       const { questions } = req.body;
       if (!Array.isArray(questions) || questions.length === 0) {
@@ -2667,7 +2772,7 @@ Return JSON:
   });
 
   // Comprehensive Matching Engine (Qualification, Fields, Province, District, Job Level, Organization, Subjects)
-  app.post('/api/notifications/match-and-notify', (req, res) => {
+  app.post('/api/notifications/match-and-notify', requireAdminAuth, (req, res) => {
     const prefs: JobAlertPreferences = req.body.preferences || userProfileStore.jobAlertPreferences || userJobAlertPreferencesStore;
     if (!prefs.enabled) {
       res.json({ success: false, message: 'Job alerts are currently disabled by user.', createdCount: 0 });
@@ -2864,7 +2969,7 @@ Return JSON:
   });
 
   // Automated Deadline Reminders Engine (7 days, 2 days, 1 day, deadline day)
-  app.post('/api/notifications/check-deadline-reminders', (req, res) => {
+  app.post('/api/notifications/check-deadline-reminders', requireAdminAuth, (req, res) => {
     const prefs: JobAlertPreferences = req.body.preferences || userProfileStore.jobAlertPreferences || userJobAlertPreferencesStore;
     const userId = req.body.userId || userProfileStore.id || 'usr_default_01';
     
@@ -2983,7 +3088,7 @@ Return JSON:
   });
 
   // Scanner endpoint that runs both Job Matching & Deadline Reminders
-  app.post('/api/notifications/scan-alerts', (req, res) => {
+  app.post('/api/notifications/scan-alerts', requireUserAuth, (req, res) => {
     const prefs: JobAlertPreferences = req.body.preferences || userProfileStore.jobAlertPreferences || userJobAlertPreferencesStore;
     const userId = req.body.userId || userProfileStore.id || 'usr_default_01';
 
@@ -3103,9 +3208,10 @@ Return JSON:
   });
 
   // Simulated Email & Web Push Preview Endpoints
-  app.post('/api/notifications/send-email', (req, res) => {
-    const { toEmail, subject, bodyHtml, vacancyId } = req.body;
-    const recipient = toEmail || userProfileStore.email || 'guptanitesh3737@gmail.com';
+  app.post('/api/notifications/send-email', requireUserAuth, (req, res) => {
+    const { subject, bodyHtml, vacancyId } = req.body;
+    // Alerts only go to the signed-in user's own verified address.
+    const recipient = (req as any).verifiedUser.email as string;
     const logEntry: NotificationLog = {
       id: `email_log_${Date.now()}`,
       vacancyId: vacancyId || 'vac_psc_001',
@@ -3131,7 +3237,7 @@ Return JSON:
     });
   });
 
-  app.post('/api/notifications/send-push', (req, res) => {
+  app.post('/api/notifications/send-push', requireUserAuth, (req, res) => {
     const { title, body, token } = req.body;
     const logEntry: NotificationLog = {
       id: `push_log_${Date.now()}`,
@@ -3156,7 +3262,7 @@ Return JSON:
     res.json(notificationLogsStore);
   });
 
-  app.post('/api/notifications/trigger-cron', (req, res) => {
+  app.post('/api/notifications/trigger-cron', requireAdminAuth, (req, res) => {
     const openVacancies = vacanciesStore.filter(v => isVacancyPubliclyVisible(v) && v.status !== 'expired' && v.status !== 'archived');
     const newLogs: NotificationLog[] = [];
 
@@ -3211,7 +3317,7 @@ Return JSON:
     });
   });
 
-  app.post('/api/notifications/test-send', (req, res) => {
+  app.post('/api/notifications/test-send', requireAdminAuth, (req, res) => {
     const { channel, vacancyTitle } = req.body;
     const log: NotificationLog = {
       id: `notif_test_${Date.now()}`,
@@ -3315,7 +3421,7 @@ Return JSON:
     res.json(list);
   });
 
-  app.post('/api/admin-alerts', (req, res) => {
+  app.post('/api/admin-alerts', requireAdminAuth, (req, res) => {
     const { title, titleNp, organization, category, alertType, noticeNumber, effectiveExamDate, pdfDownloadUrl, summary, summaryNp, urgent } = req.body;
     const newAlert: AdministrativeAlert = {
       id: `alert_${Date.now()}`,
@@ -3336,7 +3442,7 @@ Return JSON:
     res.status(201).json(newAlert);
   });
 
-  app.delete('/api/admin-alerts/:id', (req, res) => {
+  app.delete('/api/admin-alerts/:id', requireAdminAuth, (req, res) => {
     adminAlertsStore = adminAlertsStore.filter(a => a.id !== req.params.id);
     res.json({ success: true, message: 'Alert notice removed' });
   });
@@ -4130,8 +4236,9 @@ Return structured JSON conforming to the complete 14-field extraction schema.`;
   // -------------------------------------------------------------
   // 12. SUBSCRIPTIONS & MONETIZATION
   // -------------------------------------------------------------
-  app.get('/api/user/subscription', (req, res) => {
-    const userId = (req.query.userId as string) || 'default_user';
+  app.get('/api/user/subscription', async (req, res) => {
+    const verified = await getVerifiedUser(req);
+    const userId = verified?.uid || 'default_user';
     const sub = userSubscriptionsStore[userId] || {
       tier: 'free',
       status: 'active',
@@ -4146,9 +4253,15 @@ Return structured JSON conforming to the complete 14-field extraction schema.`;
     res.json(sub);
   });
 
-  app.post('/api/user/subscription/upgrade', (req, res) => {
-    const { userId, tier, paymentMethod } = req.body;
-    const targetUserId = userId || 'default_user';
+  app.post('/api/user/subscription/upgrade', requireUserAuth, (req, res) => {
+    const { tier } = req.body;
+    // Only ever upgrade the signed-in caller, never an arbitrary userId from the body.
+    const targetUserId = (req as any).verifiedUser.uid as string;
+    const allowedTiers = ['pro', 'yearly_pro'];
+    if (tier && !allowedTiers.includes(tier)) {
+      res.status(400).json({ error: 'Unknown subscription tier.' });
+      return;
+    }
 
     const upgraded: UserSubscription = {
       tier: tier || 'pro',

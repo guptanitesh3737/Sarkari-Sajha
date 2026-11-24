@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Megaphone, X, ExternalLink, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 import { Announcement } from '../types';
 import { fetchAnnouncementsFromFirestore } from '../lib/firestoreService';
 
@@ -42,51 +42,36 @@ export const AnnouncementPopupModal: React.FC = () => {
   if (!isOpen || !activePopup) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative">
-        {/* Top Decorative accent */}
-        <div className={`h-2 w-full ${
-          activePopup.priority === 'urgent'
-            ? 'bg-rose-500'
-            : activePopup.priority === 'high'
-            ? 'bg-amber-500'
-            : 'bg-emerald-500'
-        }`} />
-
-        <div className="p-6 space-y-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+      <div className="relative w-full max-w-md rounded-[2rem] bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
+        <div className="px-7 pt-7 pb-6 bg-gradient-to-b from-sky-100 to-white dark:from-[#0f2236] dark:to-slate-900">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                <Megaphone className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-rose-400 font-mono">
-                Official SarkariSajha Notice
-              </span>
-            </div>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs text-ink dark:text-slate-200">
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  activePopup.priority === 'urgent' ? 'bg-rose-500' : activePopup.priority === 'high' ? 'bg-amber-500' : 'bg-emerald-500'
+                }`}
+              />
+              Notice
+            </span>
             <button
               onClick={handleDismiss}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+              className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-white/80 dark:text-slate-400 dark:hover:bg-white/10 transition"
               aria-label="Close Announcement"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
+          <h3 className="mt-5 font-display text-2xl font-semibold leading-tight text-ink dark:text-white">{activePopup.title}</h3>
+          <p className="mt-2 text-sm text-ink-soft dark:text-slate-400 leading-relaxed">{activePopup.short_description}</p>
+        </div>
 
-          <div className="space-y-2">
-            <h3 className="text-lg font-bold text-white leading-snug">{activePopup.title}</h3>
-            <p className="text-sm text-slate-300 leading-relaxed">{activePopup.short_description}</p>
-            {activePopup.full_content && activePopup.full_content !== activePopup.short_description && (
-              <p className="text-xs text-slate-400 bg-slate-850 p-3 rounded-xl border border-slate-800 leading-relaxed">
-                {activePopup.full_content}
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-            <button
-              onClick={handleDismiss}
-              className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
-            >
+        <div className="px-7 pb-7">
+          {activePopup.full_content && activePopup.full_content !== activePopup.short_description && (
+            <p className="text-[13px] text-ink-soft dark:text-slate-400 leading-relaxed">{activePopup.full_content}</p>
+          )}
+          <div className="mt-6 flex items-center justify-end gap-2">
+            <button onClick={handleDismiss} className="h-11 px-4 rounded-full text-sm text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white transition">
               Dismiss
             </button>
             {activePopup.CTA_url ? (
@@ -95,17 +80,14 @@ export const AnnouncementPopupModal: React.FC = () => {
                 target="_blank"
                 rel="noreferrer"
                 onClick={handleDismiss}
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-md transition-all"
+                className="h-11 px-5 inline-flex items-center gap-1.5 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill"
               >
-                <span>{activePopup.CTA_text || 'View Notice'}</span>
+                {activePopup.CTA_text || 'View notice'}
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             ) : (
-              <button
-                onClick={handleDismiss}
-                className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs"
-              >
-                Got It
+              <button onClick={handleDismiss} className="h-11 px-5 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill">
+                Got it
               </button>
             )}
           </div>

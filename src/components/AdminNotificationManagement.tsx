@@ -184,7 +184,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
   return (
     <div className="space-y-6">
       {/* Top Banner & Privacy Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
+      <div className="hero-panel p-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
             <Bell className="w-5 h-5" />
@@ -256,7 +256,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                       key={type.id}
                       type="button"
                       onClick={() => handleTypeChange(type.id as any)}
-                      className={`p-3 rounded-xl border text-xs font-bold transition flex items-center gap-2 text-left ${
+                      className={`p-3 rounded-full border text-xs font-bold transition flex items-center gap-2 text-left ${
                         isSelected
                           ? 'bg-blue-600/20 border-blue-500 text-blue-300 shadow-xs'
                           : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
@@ -279,7 +279,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                 <select
                   value={selectedVacancyId}
                   onChange={(e) => handleVacancySelect(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-full px-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                 >
                   <option value="">-- Choose Vacancy --</option>
                   {vacancies.map((v) => (
@@ -300,7 +300,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                 <select
                   value={selectedQuizSetId}
                   onChange={(e) => setSelectedQuizSetId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-900 border border-slate-700 text-white rounded-full px-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                 >
                   <option value="quiz_set_001">Lok Sewa Section Officer Paper 1 (GK + IQ)</option>
                   <option value="quiz_gk_01">Nepal General Knowledge & Geography Master</option>
@@ -320,7 +320,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Breaking: 48 Section Officer Vacancies Opened"
-                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-full px-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                   required
                 />
               </div>
@@ -331,7 +331,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                   value={titleNp}
                   onChange={(e) => setTitleNp(e.target.value)}
                   placeholder="उदा. शाखा अधिकृत पदमा ४८ जनाको विज्ञापन खुला"
-                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-full px-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                 />
               </div>
             </div>
@@ -345,7 +345,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Enter concise, informative notice content for candidates..."
-                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-2xl p-3 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                   required
                 />
               </div>
@@ -356,7 +356,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                   value={messageNp}
                   onChange={(e) => setMessageNp(e.target.value)}
                   placeholder="उम्मेदवारहरूका लागि स्पष्ट सूचना विवरण यहाँ लेख्नुहोस्..."
-                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-2xl p-3 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
                 />
               </div>
             </div>
@@ -372,13 +372,13 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                       key={p}
                       type="button"
                       onClick={() => setPriority(p)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition capitalize ${
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold transition capitalize ${
                         priority === p
                           ? p === 'urgent'
                             ? 'bg-rose-600 text-white'
                             : p === 'high'
-                            ? 'bg-amber-600 text-white'
-                            : 'bg-blue-600 text-white'
+                            ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
+                            : 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                           : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-200'
                       }`}
                     >
@@ -404,7 +404,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                         key={ch.id}
                         type="button"
                         onClick={() => toggleChannel(ch.id as any)}
-                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                        className={`px-2.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                           isChecked
                             ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500'
                             : 'bg-slate-950 text-slate-500 border border-slate-800'
@@ -443,7 +443,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                     <select
                       value={targetAudience.qualification || 'All'}
                       onChange={(e) => setTargetAudience({ ...targetAudience, qualification: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-xs"
+                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-full p-1.5 text-xs"
                     >
                       <option value="All">All Qualifications</option>
                       <option value="SEE / SLC (१० कक्षा)">SEE / SLC</option>
@@ -458,7 +458,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                     <select
                       value={targetAudience.province || 'All Nepal'}
                       onChange={(e) => setTargetAudience({ ...targetAudience, province: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-xs"
+                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-full p-1.5 text-xs"
                     >
                       <option value="All Nepal">All Nepal</option>
                       <option value="Bagmati">Bagmati Province</option>
@@ -476,7 +476,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
                     <select
                       value={targetAudience.category || 'All'}
                       onChange={(e) => setTargetAudience({ ...targetAudience, category: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-xs"
+                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-full p-1.5 text-xs"
                     >
                       <option value="All">All Categories</option>
                       <option value="Lok Sewa (PSC)">Lok Sewa (PSC)</option>
@@ -499,7 +499,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
               <button
                 type="submit"
                 disabled={loading}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs"
+                className="px-5 py-2.5 rounded-full text-xs font-bold transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 <span>Broadcast to Candidates</span>
@@ -519,7 +519,7 @@ export const AdminNotificationManagement: React.FC<AdminNotificationManagementPr
               <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
 
               <div className="flex items-center justify-between text-[11px] pt-1">
-                <span className="font-bold text-blue-400 uppercase tracking-wider text-[10px]">
+                <span className="font-bold text-blue-400 text-[10px]">
                   {broadcastType.replace('_', ' ')}
                 </span>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${

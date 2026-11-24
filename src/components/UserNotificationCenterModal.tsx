@@ -116,106 +116,94 @@ export const UserNotificationCenterModal: React.FC<UserNotificationCenterModalPr
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Modal Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600/10 text-blue-400 rounded-2xl border border-blue-500/20 relative">
-              <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[9px] font-black flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-black text-white">
-                  {lang === 'np' ? 'सूचना केन्द्र' : 'Candidate Notification Center'}
-                </h3>
-                {unreadCount > 0 && (
-                  <span className="text-[10px] font-bold bg-blue-950 text-blue-300 px-2 py-0.5 rounded-full border border-blue-800">
-                    {unreadCount} Unread
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-400">
-                Official announcements, vacancy radar alerts, and model test notices.
-              </p>
-            </div>
-          </div>
+  const np = lang === 'np';
+  const FILTERS = [
+    { id: 'all', en: 'All', np: 'सबै' },
+    { id: 'job_match', en: 'Jobs', np: 'जागिर' },
+    { id: 'deadline_reminder', en: 'Deadlines', np: 'म्याद' },
+    { id: 'quiz_announcement', en: 'Quizzes', np: 'क्विज' },
+    { id: 'announcements', en: 'News', np: 'समाचार' }
+  ];
 
-          <div className="flex items-center gap-2">
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-ink/30 backdrop-blur-sm" onClick={onClose}>
+      <aside
+        role="dialog"
+        aria-label={np ? 'सूचनाहरू' : 'Notifications'}
+        onClick={(e) => e.stopPropagation()}
+        className="h-full w-full sm:max-w-md flex flex-col bg-white dark:bg-slate-900 sm:rounded-l-[2rem] shadow-soft"
+      >
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 flex items-start justify-between gap-3">
+          <div>
+            <h3 className="font-display text-2xl font-semibold text-ink dark:text-white">{np ? 'सूचनाहरू' : 'Notifications'}</h3>
+            <p className="mt-0.5 text-sm text-ink-soft dark:text-slate-400">
+              {unreadCount > 0 ? `${unreadCount} ${np ? 'नपढिएका' : 'unread'}` : np ? 'सबै पढिसकिएको' : 'You’re all caught up'}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-xs text-blue-400 hover:text-blue-300 font-bold px-2.5 py-1.5 rounded-xl bg-blue-950/50 border border-blue-900/60 transition flex items-center gap-1.5"
+                className="h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-sm text-ink-soft hover:text-ink hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 transition"
               >
-                <CheckCheck className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Mark all read</span>
+                <CheckCheck className="w-4 h-4" />
+                {np ? 'सबै पढियो' : 'Mark all read'}
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              aria-label="Close"
+              className="w-9 h-9 inline-flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 text-ink dark:text-white"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Filter Navigation Tabs */}
-        <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between gap-3 overflow-x-auto">
-          <div className="flex items-center gap-1.5 flex-nowrap">
-            {[
-              { id: 'all', label: 'All' },
-              { id: 'job_match', label: 'Job Alerts' },
-              { id: 'deadline_reminder', label: 'Deadlines' },
-              { id: 'quiz_announcement', label: 'Model Tests' },
-              { id: 'announcements', label: 'Platform News' }
-            ].map((tab) => (
+        {/* Filters */}
+        <div className="px-6 pb-4 flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1">
+            {FILTERS.map((f) => (
               <button
-                key={tab.id}
-                onClick={() => setActiveFilter(tab.id as any)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                  activeFilter === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-400 hover:text-slate-200 bg-slate-950 border border-slate-800'
+                key={f.id}
+                onClick={() => setActiveFilter(f.id as any)}
+                className={`h-8 px-3.5 rounded-full text-[13px] whitespace-nowrap transition ${
+                  activeFilter === f.id
+                    ? 'bg-ink text-white dark:bg-white dark:text-ink'
+                    : 'text-ink-soft hover:text-ink bg-slate-100/70 dark:bg-white/5 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
-                {tab.label}
+                {np ? f.np : f.en}
               </button>
             ))}
           </div>
-
-          <label className="text-xs text-slate-400 flex items-center gap-1.5 shrink-0 cursor-pointer select-none">
+          <label className="text-xs text-ink-soft dark:text-slate-400 flex items-center gap-1.5 shrink-0 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={unreadOnly}
               onChange={(e) => setUnreadOnly(e.target.checked)}
-              className="rounded bg-slate-800 text-blue-600"
+              className="rounded accent-ink"
             />
-            <span>Unread only</span>
+            {np ? 'नपढिएका' : 'Unread'}
           </label>
         </div>
 
-        {/* Notifications Scrollable List */}
-        <div className="p-5 overflow-y-auto space-y-3 flex-1 min-h-[300px]">
+        {/* List */}
+        <div className="flex-1 overflow-y-auto px-3 pb-4 border-t border-slate-100 dark:border-white/10">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-400 text-xs">
-              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2" />
-              Loading notifications...
+            <div className="py-16 text-center text-sm text-ink-soft dark:text-slate-400">
+              <div className="w-6 h-6 mx-auto mb-3 border-2 border-ink/70 dark:border-white/70 border-t-transparent rounded-full animate-spin" />
+              {np ? 'लोड हुँदैछ…' : 'Loading…'}
             </div>
           ) : filteredNotifications.length === 0 ? (
-            <div className="text-center py-12 space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-slate-950 text-slate-500 flex items-center justify-center mx-auto border border-slate-800">
-                <Bell className="w-6 h-6" />
+            <div className="py-16 px-6 text-center">
+              <div className="w-14 h-14 mx-auto rounded-full bg-sky-100 dark:bg-white/10 flex items-center justify-center">
+                <Bell className="w-6 h-6 text-ink dark:text-white" />
               </div>
-              <p className="text-sm font-bold text-slate-300">No notifications found</p>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                You're completely caught up! New vacancy matches, quiz releases, and official PSC deadline alerts will appear here.
+              <p className="mt-4 font-display text-lg font-semibold text-ink dark:text-white">{np ? 'कुनै सूचना छैन' : 'Nothing here yet'}</p>
+              <p className="mt-1 text-sm text-ink-soft dark:text-slate-400">
+                {np ? 'नयाँ विज्ञापन, क्विज र म्यादका सूचना यहाँ देखिनेछन्।' : 'New vacancy matches, quizzes and deadline reminders will show up here.'}
               </p>
             </div>
           ) : (
@@ -223,99 +211,74 @@ export const UserNotificationCenterModal: React.FC<UserNotificationCenterModalPr
               const isJob = notif.type === 'job_match' || notif.type === 'vacancy_alert';
               const isDeadline = notif.type === 'deadline_reminder';
               const isQuiz = notif.type === 'quiz_announcement';
+              const Icon = isDeadline ? Clock : isJob ? Briefcase : isQuiz ? Target : Bell;
 
               return (
                 <div
                   key={notif.id}
                   onClick={() => markAsRead(notif.id)}
-                  className={`p-4 rounded-2xl border transition relative cursor-pointer ${
-                    notif.isRead
-                      ? 'bg-slate-950/40 border-slate-800/80 hover:border-slate-700 opacity-80 hover:opacity-100'
-                      : 'bg-slate-950 border-blue-500/40 hover:border-blue-500 shadow-md ring-1 ring-blue-500/10'
+                  className={`group mt-1 px-3 py-4 flex gap-3 rounded-2xl cursor-pointer transition hover:bg-slate-50 dark:hover:bg-white/5 ${
+                    notif.isRead ? '' : 'bg-sky-50/70 dark:bg-white/[0.03]'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3 min-w-0">
-                      {/* Icon */}
-                      <div className={`p-2 rounded-xl mt-0.5 shrink-0 ${
-                        isDeadline
-                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                          : isJob
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                          : isQuiz
-                          ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                          : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                      }`}>
-                        {isDeadline ? <Clock className="w-4 h-4" /> : isJob ? <Briefcase className="w-4 h-4" /> : isQuiz ? <Target className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
-                      </div>
+                  <span
+                    className={`mt-0.5 w-9 h-9 shrink-0 rounded-full inline-flex items-center justify-center ${
+                      isDeadline ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300' : 'bg-sky-100 text-ink dark:bg-white/10 dark:text-white'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </span>
 
-                      {/* Content */}
-                      <div className="space-y-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-xs font-bold text-white leading-tight">
-                            {lang === 'np' && notif.titleNp ? notif.titleNp : notif.title}
-                          </h4>
-                          {!notif.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                          )}
-                          {notif.priority === 'urgent' && (
-                            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
-                              Urgent
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-xs text-slate-300 leading-relaxed">
-                          {lang === 'np' && notif.messageNp ? notif.messageNp : notif.message}
-                        </p>
-
-                        {/* Action links / badges */}
-                        <div className="pt-2 flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
-                          <span className="font-mono text-[10px] text-slate-500">
-                            {new Date(notif.createdAt).toLocaleDateString()}
-                          </span>
-
-                          {notif.vacancyId && onSelectVacancy && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                markAsRead(notif.id);
-                                onClose();
-                                onSelectVacancy(notif.vacancyId!);
-                              }}
-                              className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
-                            >
-                              <span>View Vacancy</span>
-                              <ChevronRight className="w-3 h-3" />
-                            </button>
-                          )}
-
-                          {isQuiz && onNavigateTab && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                markAsRead(notif.id);
-                                onClose();
-                                onNavigateTab('quizzes');
-                              }}
-                              className="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1"
-                            >
-                              <span>Open Quiz Lab</span>
-                              <ChevronRight className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className={`text-sm leading-snug text-ink dark:text-white ${notif.isRead ? '' : 'font-semibold'}`}>
+                        {np && notif.titleNp ? notif.titleNp : notif.title}
+                      </h4>
+                      {!notif.isRead && <span className="mt-1.5 w-2 h-2 rounded-full bg-sky-500 shrink-0" aria-label="Unread" />}
                     </div>
-
-                    {/* Delete button */}
-                    <button
-                      onClick={(e) => deleteNotification(notif.id, e)}
-                      className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-900 transition shrink-0"
-                      title="Dismiss notification"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <p className="mt-1 text-[13px] leading-relaxed text-ink-soft dark:text-slate-400">
+                      {np && notif.messageNp ? notif.messageNp : notif.message}
+                    </p>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-ink-soft dark:text-slate-500">
+                      <span>{new Date(notif.createdAt).toLocaleDateString()}</span>
+                      {notif.priority === 'urgent' && <span className="text-rose-600 dark:text-rose-400">{np ? 'जरुरी' : 'Urgent'}</span>}
+                      {notif.vacancyId && onSelectVacancy && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(notif.id);
+                            onClose();
+                            onSelectVacancy(notif.vacancyId!);
+                          }}
+                          className="inline-flex items-center gap-0.5 text-ink dark:text-white font-medium hover:underline underline-offset-4"
+                        >
+                          {np ? 'विज्ञापन हेर्नुहोस्' : 'View vacancy'}
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {isQuiz && onNavigateTab && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(notif.id);
+                            onClose();
+                            onNavigateTab('quizzes');
+                          }}
+                          className="inline-flex items-center gap-0.5 text-ink dark:text-white font-medium hover:underline underline-offset-4"
+                        >
+                          {np ? 'क्विज खोल्नुहोस्' : 'Open quiz'}
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => deleteNotification(notif.id, e)}
+                        className="ml-auto w-7 h-7 inline-flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 text-ink-soft hover:text-rose-600 hover:bg-white dark:hover:bg-white/10 transition"
+                        title={np ? 'हटाउनुहोस्' : 'Dismiss'}
+                        aria-label="Dismiss notification"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -323,23 +286,10 @@ export const UserNotificationCenterModal: React.FC<UserNotificationCenterModalPr
           )}
         </div>
 
-        {/* Footer with Anti-Duplicate & Privacy Guarantee */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950 text-slate-400 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="text-[11px]">
-              Anti-Duplicate Protected • Zero personal information shared • Career-relevant notifications only
-            </span>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition"
-          >
-            Close
-          </button>
-        </div>
-      </div>
+        <p className="px-6 py-4 text-xs text-ink-soft dark:text-slate-500 border-t border-slate-100 dark:border-white/10">
+          {np ? 'तपाईंको व्यक्तिगत जानकारी कसैलाई साझा गरिँदैन।' : 'Only career-relevant alerts. Your personal information is never shared.'}
+        </p>
+      </aside>
     </div>
   );
 };

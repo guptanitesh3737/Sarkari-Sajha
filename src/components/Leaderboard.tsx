@@ -137,10 +137,10 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-slate-900">
+      <div className="bg-white p-6 rounded-2xl text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 mb-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 mb-2">
               <Trophy className="w-3.5 h-3.5 text-amber-600" />
               {lang === 'np' ? 'शीर्ष प्रतिस्पर्धी नतिजा' : 'National Merit Leaderboard'}
             </span>
@@ -153,8 +153,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center min-w-[110px]">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+            <div className="bg-sky-50/70 rounded-xl px-4 py-2 text-center min-w-[110px]">
+              <span className="text-[10px] font-bold text-slate-400 block">
                 {lang === 'np' ? 'कुल प्रतिस्पर्धी' : 'Total Entries'}
               </span>
               <span className="text-lg font-black text-slate-900 font-mono">
@@ -162,8 +162,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               </span>
             </div>
             {top3[0] && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-center min-w-[120px]">
-                <span className="text-[10px] uppercase font-bold text-amber-600 block tracking-wider flex items-center justify-center gap-1">
+              <div className="bg-amber-50 rounded-xl px-4 py-2 text-center min-w-[120px]">
+                <span className="text-[10px] font-bold text-amber-600 block flex items-center justify-center gap-1">
                   <Crown className="w-3 h-3 text-amber-500" /> #1 Top Score
                 </span>
                 <span className="text-lg font-black text-amber-900 font-mono">
@@ -177,7 +177,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
       {/* User Rank Spotlight Card (If candidate is logged in and attempted tests) */}
       {bestUserAttempt && userRankIndex && (
-        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-5 shadow-md relative overflow-hidden">
+        <div className="hero-panel p-5 relative overflow-hidden">
           <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-blue-500/10 pointer-events-none transform skew-x-12" />
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 <Crown className="w-7 h-7" />
               </div>
               <div>
-                <span className="text-[10px] uppercase tracking-wider font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                <span className="text-[10px] font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
                   {lang === 'np' ? 'तपाईंको नतिजा स्थिति' : 'Your Ranking Standing'}
                 </span>
                 <h3 className="text-lg font-bold font-sans text-white mt-1">
@@ -199,7 +199,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
             <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
               <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-3.5 py-2 rounded-xl text-center">
-                <span className="text-[10px] text-blue-200 block uppercase font-mono">
+                <span className="text-[10px] text-blue-200 block font-mono">
                   {lang === 'np' ? 'स्थान (Rank)' : 'Merit Rank'}
                 </span>
                 <span className="text-xl font-black text-amber-300 font-mono">
@@ -208,7 +208,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               </div>
 
               <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-3.5 py-2 rounded-xl text-center">
-                <span className="text-[10px] text-blue-200 block uppercase font-mono">
+                <span className="text-[10px] text-blue-200 block font-mono">
                   {lang === 'np' ? 'प्राप्ताङ्क' : 'Best Score'}
                 </span>
                 <span className="text-xl font-black text-emerald-400 font-mono">
@@ -217,7 +217,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               </div>
 
               <div className="bg-white/10 backdrop-blur-xs border border-white/15 px-3.5 py-2 rounded-xl text-center">
-                <span className="text-[10px] text-blue-200 block uppercase font-mono">
+                <span className="text-[10px] text-blue-200 block font-mono">
                   {lang === 'np' ? 'समय' : 'Completion Time'}
                 </span>
                 <span className="text-sm font-bold text-slate-100 font-mono block mt-1">
@@ -230,15 +230,15 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
       )}
 
       {/* Quiz Set Selector Tabs & Filters */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-4">
+      <div className="bg-white rounded-2xl p-4 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Set Selector Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-slate-100 pb-3">
           <button
             onClick={() => setSelectedSetId('all')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border ${
+            className={`px-3.5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border ${
               selectedSetId === 'all'
                 ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
             }`}
           >
             {lang === 'np' ? 'सबै परीक्षा सेटहरू (All Sets)' : 'All Practice Sets'}
@@ -250,10 +250,10 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               <button
                 key={qs.id}
                 onClick={() => setSelectedSetId(qs.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border ${
+                className={`px-3.5 py-2 rounded-full text-xs font-bold whitespace-nowrap transition border ${
                   isActive
                     ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 {lang === 'np' ? qs.titleNp : qs.title}
@@ -271,7 +271,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={lang === 'np' ? 'परीक्षार्थीको नाम खोज्नुहोस्...' : 'Search candidate name...'}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300"
             />
           </div>
 
@@ -283,7 +283,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
             >
               <option value="score">{lang === 'np' ? 'उच्च प्राप्ताङ्क (Highest Score)' : 'Highest Score'}</option>
               <option value="time">{lang === 'np' ? 'छिटो नतिजा (Fastest Time)' : 'Fastest Time'}</option>
@@ -295,12 +295,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
       {/* Loading Skeleton */}
       {loading ? (
-        <div className="py-12 text-center space-y-3 bg-white rounded-2xl border border-slate-200">
+        <div className="py-12 text-center space-y-3 bg-white rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs text-slate-500 font-mono">Loading Merit Leaderboard...</p>
         </div>
       ) : filteredData.length === 0 ? (
-        <div className="py-12 px-4 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+        <div className="py-12 px-4 text-center bg-white rounded-2xl space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
           <h3 className="text-base font-bold text-slate-900">
             {lang === 'np' ? 'कुनै नतिजा भेटिएन' : 'No Leaderboard Attempts Found'}
@@ -317,7 +317,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                 const found = quizSets.find((q) => q.id === selectedSetId);
                 if (found) onStartQuiz(found);
               }}
-              className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-xs transition"
+              className="mt-2 inline-flex items-center gap-2 px-4 py-2 font-bold text-xs rounded-full shadow-xs transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               <Play className="w-4 h-4" />
               <span>{lang === 'np' ? 'यो परीक्षा सुरु गर्नुहोस्' : 'Attempt This Quiz Now'}</span>
@@ -375,7 +375,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 
                     <div className="bg-white/80 p-3 rounded-xl border border-slate-200/60 flex items-center justify-between text-xs font-mono">
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase block font-sans">
+                        <span className="text-[10px] text-slate-400 block font-sans">
                           {lang === 'np' ? 'अङ्क' : 'Score'}
                         </span>
                         <span className="font-bold text-slate-900 text-sm">
@@ -384,7 +384,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                       </div>
 
                       <div className="text-right">
-                        <span className="text-[10px] text-slate-400 uppercase block font-sans">
+                        <span className="text-[10px] text-slate-400 block font-sans">
                           {lang === 'np' ? 'समय' : 'Time'}
                         </span>
                         <span className="font-bold text-slate-700">
@@ -399,9 +399,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           )}
 
           {/* FULL RANKINGS TABLE */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider font-mono flex items-center gap-1.5">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
+            <div className="p-4 border-b flex items-center justify-between bg-slate-50/50">
+              <h3 className="text-xs font-bold text-slate-800 font-mono flex items-center gap-1.5">
                 <Trophy className="w-4 h-4 text-amber-600" />
                 {lang === 'np' ? 'प्रतिस्पर्धी वरीयता सूची' : 'Complete Merit Standings'}
               </h3>
@@ -413,7 +413,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="border-b bg-slate-50/80 text-slate-600 font-bold text-[10px]">
                     <th className="py-3 px-4 w-16 text-center">Rank</th>
                     <th className="py-3 px-4">Candidate Name</th>
                     <th className="py-3 px-4">Quiz Paper</th>
@@ -437,7 +437,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                         key={item.id || index}
                         className={`transition ${
                           isCurrentUser
-                            ? 'bg-blue-50/70 font-semibold text-slate-900 border-l-4 border-blue-600'
+                            ? 'bg-blue-50/70 font-semibold text-slate-900 border-l-4'
                             : 'hover:bg-slate-50/80 text-slate-800'
                         }`}
                       >
@@ -470,7 +470,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
                               <span className="font-bold text-slate-900 flex items-center gap-1.5">
                                 {item.userName}
                                 {isCurrentUser && (
-                                  <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono uppercase font-bold">
+                                  <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">
                                     You
                                   </span>
                                 )}

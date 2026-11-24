@@ -331,7 +331,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
             <button
               onClick={loadData}
               disabled={loading}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition border border-slate-700"
+              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-semibold flex items-center gap-1.5 transition border border-slate-700"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -358,7 +358,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 });
                 setShowEditModal(true);
               }}
-              className="py-2 px-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
+              className="py-2 px-3.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               <Plus className="w-4 h-4" />
               <span>New Question</span>
@@ -370,9 +370,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
         <div className="flex items-center gap-2 mt-4 pt-1">
           <button
             onClick={() => setActiveTab('bank')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
               activeTab === 'bank'
-                ? 'bg-amber-500 text-slate-950 shadow-xs'
+                ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
             }`}
           >
@@ -382,9 +382,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
           <button
             onClick={() => setActiveTab('sources')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
               activeTab === 'sources'
-                ? 'bg-amber-500 text-slate-950 shadow-xs'
+                ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
             }`}
           >
@@ -394,9 +394,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
               activeTab === 'categories'
-                ? 'bg-amber-500 text-slate-950 shadow-xs'
+                ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
             }`}
           >
@@ -420,7 +420,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="Search questions, source, citations..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-full text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-300"
                 />
               </div>
 
@@ -429,7 +429,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <select
                   value={selectedSubject}
                   onChange={(e) => setSelectedSubject(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-300"
                 >
                   <option value="all">All Subjects ({STRUCTURED_QUIZ_SUBJECTS.length})</option>
                   {STRUCTURED_QUIZ_SUBJECTS.map(subj => (
@@ -443,7 +443,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <select
                   value={selectedQuestionType}
                   onChange={(e) => setSelectedQuestionType(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-300"
                 >
                   <option value="all">All Question Types</option>
                   <option value="multiple_choice">Multiple Choice</option>
@@ -457,7 +457,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-300"
                 >
                   <option value="all">All Statuses</option>
                   <option value="published">Published</option>
@@ -473,7 +473,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <select
                   value={selectedDifficulty}
                   onChange={(e) => setSelectedDifficulty(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-300"
                 >
                   <option value="all">All Difficulties</option>
                   <option value="easy">Easy</option>
@@ -491,28 +491,28 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <button
                     onClick={() => handleBulkAction('approve')}
                     disabled={bulkActionLoading}
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     <Check className="w-3.5 h-3.5" /> Approve
                   </button>
                   <button
                     onClick={() => handleBulkAction('publish')}
                     disabled={bulkActionLoading}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-full font-bold transition flex items-center gap-1 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     <Send className="w-3.5 h-3.5" /> Publish
                   </button>
                   <button
                     onClick={() => handleBulkAction('reject')}
                     disabled={bulkActionLoading}
-                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-bold transition flex items-center gap-1"
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-full font-bold transition flex items-center gap-1"
                   >
                     <XCircle className="w-3.5 h-3.5" /> Reject
                   </button>
                   <button
                     onClick={() => handleBulkAction('delete')}
                     disabled={bulkActionLoading}
-                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-rose-300 rounded-lg font-bold transition flex items-center gap-1 border border-slate-700"
+                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-rose-300 rounded-full font-bold transition flex items-center gap-1 border border-slate-700"
                   >
                     <Trash2 className="w-3.5 h-3.5" /> Delete
                   </button>
@@ -552,7 +552,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                               setSelectedIds(prev => prev.filter(i => i !== q.id));
                             }
                           }}
-                          className="mt-1 rounded text-amber-500 focus:ring-amber-500 bg-slate-950 border-slate-700"
+                          className="mt-1 rounded text-amber-500 focus:ring-sky-300 bg-slate-950 border-slate-700"
                         />
 
                         <div className="flex-1 min-w-0 space-y-2">
@@ -573,7 +573,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                               {qType === 'multiple_select' ? 'Multiple Select' : qType === 'true_false' ? 'True/False' : 'Multiple Choice'}
                             </span>
                             {q.language && (
-                              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 font-semibold uppercase text-[10px] border border-blue-500/20">
+                              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 font-semibold text-[10px] border border-blue-500/20">
                                 {q.language}
                               </span>
                             )}
@@ -586,7 +586,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             </span>
 
                             {/* Status badge */}
-                            <span className={`px-2.5 py-0.5 rounded-full font-bold uppercase text-[10px] ${
+                            <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
                               q.status === 'published' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
                               q.status === 'approved' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
                               q.status === 'rejected' ? 'bg-rose-950 text-rose-300 border border-rose-800' :
@@ -698,7 +698,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                           <button
                             onClick={() => handleUpdateStatus(q.id, 'approved')}
                             title="Approve Question"
-                            className="p-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded-xl border border-blue-600/30 text-xs transition"
+                            className="p-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded-full border border-blue-600/30 text-xs transition"
                           >
                             <Check className="w-4 h-4" />
                           </button>
@@ -708,7 +708,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                           <button
                             onClick={() => handleUpdateStatus(q.id, 'published')}
                             title="Publish Question"
-                            className="p-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 rounded-xl border border-emerald-600/30 text-xs transition"
+                            className="p-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 rounded-full border border-emerald-600/30 text-xs transition"
                           >
                             <Send className="w-4 h-4" />
                           </button>
@@ -718,7 +718,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                           <button
                             onClick={() => handleUpdateStatus(q.id, 'rejected')}
                             title="Reject Question"
-                            className="p-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-xl border border-rose-600/30 text-xs transition"
+                            className="p-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 rounded-full border border-rose-600/30 text-xs transition"
                           >
                             <XCircle className="w-4 h-4" />
                           </button>
@@ -736,7 +736,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             setShowEditModal(true);
                           }}
                           title="Edit question details"
-                          className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs transition"
+                          className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full border border-slate-700 text-xs transition"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -744,7 +744,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                         <button
                           onClick={() => handleDeleteQuestion(q.id)}
                           title="Delete question"
-                          className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/20 text-xs transition"
+                          className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/20 text-xs transition"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -771,7 +771,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
             <button
               onClick={() => setShowSourceModal(true)}
-              className="py-2 px-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+              className="py-2 px-3.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               <Plus className="w-4 h-4" />
               <span>Add Document Source</span>
@@ -783,7 +783,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
               <div key={s.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-bold uppercase border border-amber-500/20">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20">
                       {s.type}
                     </span>
                     <h4 className="text-sm font-bold text-white">{s.title}</h4>
@@ -791,7 +791,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   </div>
                   <button
                     onClick={() => handleDeleteSource(s.id)}
-                    className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                    className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-full transition"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -824,7 +824,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
               <button
                 onClick={() => setShowCategoryModal(true)}
-                className="py-1.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+                className="py-1.5 px-3 rounded-full text-xs font-bold flex items-center gap-1.5 transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Category</span>
@@ -896,7 +896,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
       {/* MODAL: EDIT / CREATE QUESTION */}
       {showEditModal && editingQuestion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -928,7 +928,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                         isTrue: newType === 'true_false' ? (editingQuestion.isTrue ?? true) : undefined
                       });
                     }}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="multiple_choice">Multiple Choice (Single)</option>
                     <option value="true_false">True / False</option>
@@ -941,7 +941,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <select
                     value={editingQuestion.subject || editingQuestion.category || STRUCTURED_QUIZ_SUBJECTS[0]}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, subject: e.target.value as any, category: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     {STRUCTURED_QUIZ_SUBJECTS.map(s => (
                       <option key={s} value={s}>{s}</option>
@@ -956,7 +956,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                     placeholder="e.g. Fundamental Rights, Census 2078"
                     value={editingQuestion.topic || ''}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, topic: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
               </div>
@@ -968,7 +968,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <select
                     value={editingQuestion.difficulty || 'medium'}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, difficulty: e.target.value as any })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -981,7 +981,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <select
                     value={editingQuestion.language || 'bilingual'}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, language: e.target.value as any })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="bilingual">Bilingual (EN + NP)</option>
                     <option value="np">Nepali Only (नेपाली)</option>
@@ -994,7 +994,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <select
                     value={editingQuestion.status || 'published'}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, status: e.target.value as any })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="published">Published</option>
                     <option value="approved">Approved</option>
@@ -1013,7 +1013,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   required
                   value={editingQuestion.questionText || editingQuestion.question || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, questionText: e.target.value, question: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white"
                 />
               </div>
               <div>
@@ -1022,7 +1022,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   rows={2}
                   value={editingQuestion.questionTextNp || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, questionTextNp: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-serif"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white font-serif"
                 />
               </div>
 
@@ -1040,9 +1040,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                         correct_answer: 'True',
                         options: ['True', 'False']
                       })}
-                      className={`px-4 py-2 rounded-xl font-bold border transition ${
+                      className={`px-4 py-2 rounded-full font-bold border transition ${
                         (editingQuestion.isTrue === true || editingQuestion.correctOption === 0 || editingQuestion.correct_answer === 'True')
-                          ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                          ? 'border-emerald-400 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800'
                       }`}
                     >
@@ -1057,9 +1057,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                         correct_answer: 'False',
                         options: ['True', 'False']
                       })}
-                      className={`px-4 py-2 rounded-xl font-bold border transition ${
+                      className={`px-4 py-2 rounded-full font-bold border transition ${
                         (editingQuestion.isTrue === false || editingQuestion.correctOption === 1 || editingQuestion.correct_answer === 'False')
-                          ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                          ? 'border-emerald-400 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800'
                       }`}
                     >
@@ -1087,9 +1087,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                               : [...currentAnswers, optIdx];
                             setEditingQuestion({ ...editingQuestion, correctAnswers: newAnswers });
                           }}
-                          className={`w-8 h-8 rounded-xl font-bold flex items-center justify-center shrink-0 border transition ${
+                          className={`w-8 h-8 rounded-full font-bold flex items-center justify-center shrink-0 border transition ${
                             isChecked
-                              ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                              ? 'border-emerald-400 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                               : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
                           }`}
                           title="Toggle correct option"
@@ -1106,7 +1106,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             newOpts[optIdx] = e.target.value;
                             setEditingQuestion({ ...editingQuestion, options: newOpts });
                           }}
-                          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2 text-white"
+                          className="flex-1 bg-slate-950 border border-slate-800 rounded-full p-2 text-white"
                         />
                         <input
                           type="text"
@@ -1117,7 +1117,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             newOptsNp[optIdx] = e.target.value;
                             setEditingQuestion({ ...editingQuestion, optionsNp: newOptsNp });
                           }}
-                          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2 text-white font-serif"
+                          className="flex-1 bg-slate-950 border border-slate-800 rounded-full p-2 text-white font-serif"
                         />
                       </div>
                     );
@@ -1141,9 +1141,9 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             correct_answer: opts[optIdx] || String.fromCharCode(65 + optIdx)
                           });
                         }}
-                        className={`w-8 h-8 rounded-xl font-bold flex items-center justify-center shrink-0 border transition ${
+                        className={`w-8 h-8 rounded-full font-bold flex items-center justify-center shrink-0 border transition ${
                           editingQuestion.correctOption === optIdx
-                            ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                            ? 'border-emerald-400 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                             : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
                         }`}
                         title="Click to set as correct answer"
@@ -1164,7 +1164,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                             correct_answer: editingQuestion.correctOption === optIdx ? e.target.value : editingQuestion.correct_answer
                           });
                         }}
-                        className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2 text-white"
+                        className="flex-1 bg-slate-950 border border-slate-800 rounded-full p-2 text-white"
                       />
                       <input
                         type="text"
@@ -1175,7 +1175,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                           newOptsNp[optIdx] = e.target.value;
                           setEditingQuestion({ ...editingQuestion, optionsNp: newOptsNp });
                         }}
-                        className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2 text-white font-serif"
+                        className="flex-1 bg-slate-950 border border-slate-800 rounded-full p-2 text-white font-serif"
                       />
                     </div>
                   ))}
@@ -1189,7 +1189,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   rows={2}
                   value={editingQuestion.explanation || ''}
                   onChange={(e) => setEditingQuestion({ ...editingQuestion, explanation: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white"
                 />
               </div>
 
@@ -1201,7 +1201,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                     value={editingQuestion.source || ''}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, source: e.target.value })}
                     placeholder="e.g. Nepal Gazette 2080, Law Commission"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
                 <div>
@@ -1211,7 +1211,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                     value={editingQuestion.mnemonicTip || ''}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, mnemonicTip: e.target.value })}
                     placeholder="Short acronym or cue"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
                 <div>
@@ -1221,7 +1221,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                     value={editingQuestion.syllabusReference || ''}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, syllabusReference: e.target.value })}
                     placeholder="e.g. Constitution Art 242"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
               </div>
@@ -1230,13 +1230,13 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold transition"
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full font-bold transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold transition"
+                  className="px-5 py-2 rounded-full font-bold transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   Save Question
                 </button>
@@ -1248,7 +1248,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
       {/* MODAL: ADD GROUNDING SOURCE */}
       {showSourceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1267,7 +1267,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="e.g. Civil Service Act 2049 (Section 8)"
                   value={newSourceTitle}
                   onChange={(e) => setNewSourceTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                 />
               </div>
 
@@ -1277,7 +1277,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   <select
                     value={newSourceType}
                     onChange={(e) => setNewSourceType(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   >
                     <option value="act">Act / Law (Ain)</option>
                     <option value="gazette">Nepal Gazette (Rajpatra)</option>
@@ -1293,7 +1293,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                     placeholder="e.g. Law Commission of Nepal"
                     value={newSourceCitation}
                     onChange={(e) => setNewSourceCitation(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                   />
                 </div>
               </div>
@@ -1306,7 +1306,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="Paste relevant statutory provisions, demographics data, or factual paragraphs here..."
                   value={newSourceText}
                   onChange={(e) => setNewSourceText(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white leading-relaxed"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-white leading-relaxed"
                 />
               </div>
 
@@ -1314,13 +1314,13 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <button
                   type="button"
                   onClick={() => setShowSourceModal(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-full font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold"
+                  className="px-5 py-2 rounded-full font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   Add Source
                 </button>
@@ -1332,7 +1332,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
 
       {/* MODAL: ADD CATEGORY */}
       {showCategoryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1351,7 +1351,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="e.g. Constitutional Law"
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white"
                 />
               </div>
               <div>
@@ -1361,7 +1361,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="e.g. संवैधानिक कानुन"
                   value={newCategoryNameNp}
                   onChange={(e) => setNewCategoryNameNp(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-serif"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-full p-2.5 text-white font-serif"
                 />
               </div>
               <div>
@@ -1371,7 +1371,7 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                   placeholder="Brief overview of topic areas..."
                   value={newCategoryDesc}
                   onChange={(e) => setNewCategoryDesc(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-2.5 text-white"
                 />
               </div>
 
@@ -1379,13 +1379,13 @@ export const AdminQuestionBank: React.FC<AdminQuestionBankProps> = ({ lang }) =>
                 <button
                   type="button"
                   onClick={() => setShowCategoryModal(false)}
-                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold"
+                  className="px-4 py-2 bg-slate-800 text-slate-300 rounded-full font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold"
+                  className="px-5 py-2 rounded-full font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   Add Category
                 </button>

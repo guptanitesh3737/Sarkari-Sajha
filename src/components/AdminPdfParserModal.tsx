@@ -143,12 +143,12 @@ export function AdminPdfParserModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 my-8 animate-scale-up">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-[2rem] max-w-3xl w-full p-6 sm:p-8 space-y-6 my-8 animate-scale-up shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300">
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Automated Gazette Notice Parser</span>
             </div>
@@ -163,7 +163,7 @@ export function AdminPdfParserModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 transition"
+            className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 transition"
           >
             ✕
           </button>
@@ -190,11 +190,11 @@ export function AdminPdfParserModal({
             onChange={(e) => setNoticeText(e.target.value)}
             rows={7}
             placeholder="Paste raw text from PDF notice or scanned OCR..."
-            className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 text-xs font-mono border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 text-slate-900 dark:text-slate-100 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-sky-300"
           />
 
           {error && (
-            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
+            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-xl text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -204,10 +204,10 @@ export function AdminPdfParserModal({
             type="button"
             onClick={handleParse}
             disabled={isParsing}
-            className={`w-full py-3 rounded-2xl font-bold text-xs shadow-md transition flex items-center justify-center gap-2 ${
+            className={`w-full py-3 rounded-full font-bold text-xs transition flex items-center justify-center gap-2 ${
               isParsing
                 ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20'
+                : 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
             }`}
           >
             {isParsing ? (
@@ -226,7 +226,7 @@ export function AdminPdfParserModal({
 
         {/* Parsed Result Preview */}
         {parsedResult && (
-          <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-blue-200 dark:border-blue-900/60 space-y-4 animate-scale-up text-xs">
+          <div className="p-5 bg-sky-50/70 dark:bg-slate-800/50 rounded-2xl space-y-4 animate-scale-up text-xs">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
               <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4" />
@@ -237,26 +237,26 @@ export function AdminPdfParserModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Post Title (English)</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Post Title (English)</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{parsedResult.title}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Post Title (Nepali)</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Post Title (Nepali)</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{parsedResult.titleNp}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Organization & Category</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Organization & Category</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-300">{parsedResult.org} ({parsedResult.category})</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Total Posts Demanded</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Total Posts Demanded</span>
                 <span className="font-black text-blue-600 dark:text-blue-400 text-sm">{parsedResult.totalPosts} Posts</span>
               </div>
             </div>
 
             {/* Quota Breakdown Tags */}
             <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-              <span className="text-[10px] font-bold uppercase text-slate-500">Inclusion Quota Reservation Breakdown:</span>
+              <span className="text-[10px] font-bold text-slate-500">Inclusion Quota Reservation Breakdown:</span>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(parsedResult.quotaBreakdown || {}).map(([key, val]) => (
                   <span
@@ -272,15 +272,15 @@ export function AdminPdfParserModal({
             {/* Deadlines & Fee */}
             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Single Fee Deadline</span>
+                <span className="text-slate-400 block text-[10px]">Single Fee Deadline</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{parsedResult.singleFeeDeadline}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Double Fee Deadline</span>
+                <span className="text-slate-400 block text-[10px]">Double Fee Deadline</span>
                 <span className="font-bold text-amber-600 dark:text-amber-400">{parsedResult.doubleFeeDeadline}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase">Application Fee</span>
+                <span className="text-slate-400 block text-[10px]">Application Fee</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">NPR {parsedResult.fee}</span>
               </div>
             </div>
@@ -290,7 +290,7 @@ export function AdminPdfParserModal({
               <button
                 type="button"
                 onClick={handleImportToVacancy}
-                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs shadow-md flex items-center gap-2"
+                className="px-6 py-2.5 rounded-full font-bold text-xs flex items-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Fill Vacancy Form with Extracted Data</span>

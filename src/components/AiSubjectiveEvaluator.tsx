@@ -147,7 +147,7 @@ export function AiSubjectiveEvaluator({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-purple-950 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-purple-200 border border-white/10">
@@ -166,7 +166,7 @@ export function AiSubjectiveEvaluator({
 
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-center">
-              <span className="text-[10px] text-purple-300 block uppercase font-mono">Evaluation Standard</span>
+              <span className="text-[10px] text-purple-300 block font-mono">Evaluation Standard</span>
               <span className="text-xs font-bold text-white">Lok Sewa Marking Rubric</span>
             </div>
           </div>
@@ -177,13 +177,13 @@ export function AiSubjectiveEvaluator({
         {/* Left Column: Question Selection & Answer Workspace (7 cols) */}
         <div className="lg:col-span-7 space-y-5">
           {/* Question Selector Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-purple-600" />
                 Select Written Question (लिखित प्रश्न छान्नुहोस्)
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300">
                 {activeQuestion.marks} Full Marks ({activeQuestion.timeLimitMinutes} Mins)
               </span>
             </div>
@@ -198,7 +198,7 @@ export function AiSubjectiveEvaluator({
                 setTimerSeconds(0);
                 setIsTimerRunning(false);
               }}
-              className="w-full text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl p-3 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full text-xs font-semibold bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-full p-3 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300"
             >
               {questions.map(q => (
                 <option key={q.id} value={q.id}>
@@ -208,9 +208,9 @@ export function AiSubjectiveEvaluator({
             </select>
 
             {/* Active Question Box */}
-            <div className="p-4 bg-purple-50/50 dark:bg-purple-950/20 rounded-2xl border border-purple-100 dark:border-purple-900/40 space-y-3">
+            <div className="p-4 bg-purple-50/50 dark:bg-purple-950/20 rounded-2xl space-y-3">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400">
+                <span className="text-[10px] font-bold text-purple-700 dark:text-purple-400">
                   Target Exam: {activeQuestion.examProfile} • {activeQuestion.subject}
                 </span>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-1 leading-snug">
@@ -239,7 +239,7 @@ export function AiSubjectiveEvaluator({
           </div>
 
           {/* Written Answer Composition Canvas */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -261,9 +261,9 @@ export function AiSubjectiveEvaluator({
                   type="button"
                   onClick={toggleListening}
                   title="Speak in Nepali or English"
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition ${
                     isListening
-                      ? 'bg-rose-500 text-white animate-pulse'
+                      ? 'bg-rose-500 text-white'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
@@ -290,7 +290,7 @@ export function AiSubjectiveEvaluator({
                     : 'Compose your answer here or click Voice Dictate to speak in Nepali/English... Include introduction, constitutional/statutory articles, analysis, and recommendations.'
                 }
                 rows={12}
-                className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 text-xs sm:text-sm leading-relaxed border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
+                className="w-full p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 text-slate-900 dark:text-slate-100 text-xs sm:text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-sky-300 font-sans"
               />
             </div>
 
@@ -339,11 +339,11 @@ export function AiSubjectiveEvaluator({
         {/* Right Column: Instant Evaluation Feedback & Model Answer (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
           {evaluationResult ? (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-5 animate-scale-up">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-5 animate-scale-up shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               {/* Score & Grade Header */}
               <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 rounded-2xl border border-purple-200/50 dark:border-purple-900/50">
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 block">
+                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 block">
                     Awarded Score
                   </span>
                   <div className="flex items-baseline gap-1.5 mt-0.5">
@@ -364,14 +364,14 @@ export function AiSubjectiveEvaluator({
 
               {/* Rubric Criteria Breakdown */}
               <div className="space-y-2.5">
-                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                   <Award className="w-3.5 h-3.5 text-purple-600" />
                   Marking Rubric Breakdown
                 </h4>
 
                 <div className="space-y-2 text-xs">
                   {/* Relevance */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                  <div className="p-3 bg-sky-50/70 dark:bg-slate-800/40 rounded-xl space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-800 dark:text-slate-200">
                       <span>1. Relevance & Subject Coverage</span>
                       <span className="text-purple-600">{evaluationResult.rubric.relevanceScore} / 2.5</span>
@@ -380,7 +380,7 @@ export function AiSubjectiveEvaluator({
                   </div>
 
                   {/* Constitutional & Legal Citations */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                  <div className="p-3 bg-sky-50/70 dark:bg-slate-800/40 rounded-xl space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-800 dark:text-slate-200">
                       <span>2. Statutory & Constitutional Citations</span>
                       <span className="text-purple-600">{evaluationResult.rubric.legalConstitutionalScore} / 2.5</span>
@@ -389,7 +389,7 @@ export function AiSubjectiveEvaluator({
                   </div>
 
                   {/* Structure & Presentation */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                  <div className="p-3 bg-sky-50/70 dark:bg-slate-800/40 rounded-xl space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-800 dark:text-slate-200">
                       <span>3. Structure & Logical Flow</span>
                       <span className="text-purple-600">{evaluationResult.rubric.structurePresentationScore} / 2.5</span>
@@ -398,7 +398,7 @@ export function AiSubjectiveEvaluator({
                   </div>
 
                   {/* Nepal Context & Examples */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                  <div className="p-3 bg-sky-50/70 dark:bg-slate-800/40 rounded-xl space-y-1">
                     <div className="flex items-center justify-between font-bold text-slate-800 dark:text-slate-200">
                       <span>4. Nepal Practical Context & Solutions</span>
                       <span className="text-purple-600">{evaluationResult.rubric.nepalContextExamplesScore} / 2.5</span>
@@ -412,7 +412,7 @@ export function AiSubjectiveEvaluator({
               <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
                 {/* Strengths */}
                 <div className="space-y-1.5">
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-[11px]">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Key Strengths (सकारात्मक पक्षहरू)
                   </span>
@@ -428,7 +428,7 @@ export function AiSubjectiveEvaluator({
 
                 {/* Improvements */}
                 <div className="space-y-1.5 pt-1">
-                  <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                  <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5 text-[11px]">
                     <AlertCircle className="w-3.5 h-3.5" />
                     Areas for Improvement (सुधारका क्षेत्रहरू)
                   </span>
@@ -452,20 +452,20 @@ export function AiSubjectiveEvaluator({
                   </span>
                   <button
                     onClick={handleCopyModelAnswer}
-                    className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                    className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                   >
                     {copiedModelAnswer ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                     <span>{copiedModelAnswer ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl text-slate-700 dark:text-slate-300 text-xs leading-relaxed max-h-56 overflow-y-auto border border-slate-100 dark:border-slate-800 font-sans whitespace-pre-wrap">
+                <div className="p-3 bg-sky-50/70 dark:bg-white/5 rounded-xl text-slate-700 dark:text-slate-300 text-xs leading-relaxed max-h-56 overflow-y-auto font-sans whitespace-pre-wrap">
                   {evaluationResult.modelAnswer}
                 </div>
               </div>
             </div>
           ) : (
             /* Standby Guide Card */
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center">
                 <Award className="w-6 h-6" />
               </div>

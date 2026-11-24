@@ -96,7 +96,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
         </div>
         <button
           onClick={handleExportCsv}
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-all shrink-0"
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-all shrink-0"
         >
           <Download className="w-4 h-4" />
           <span>Export Audit CSV</span>
@@ -121,7 +121,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
             placeholder="Search action, admin email, details, resource ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-blue-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-full focus:outline-none focus:border-blue-500"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -129,7 +129,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
           <select
             value={resourceFilter}
             onChange={(e) => setResourceFilter(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-full focus:outline-none focus:border-blue-500"
           >
             <option value="ALL">All Resources</option>
             <option value="VACANCIES">Vacancies</option>
@@ -187,7 +187,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
                 <div className="shrink-0 self-end md:self-center">
                   <button
                     onClick={() => setInspectLog(l)}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>Inspect State</span>
@@ -201,7 +201,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
 
       {/* INSPECT STATE MODAL */}
       {inspectLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
@@ -251,7 +251,7 @@ export const AdminAuditLogs: React.FC<AdminAuditLogsProps> = ({ user, adminRole 
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setInspectLog(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-xs font-bold"
               >
                 Close
               </button>

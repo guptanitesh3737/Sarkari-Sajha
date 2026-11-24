@@ -130,7 +130,7 @@ export const AdminMaintenance: React.FC<AdminMaintenanceProps> = ({ user, adminR
           <button
             onClick={runScan}
             disabled={scanning}
-            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-all"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-full border border-slate-700 transition-all"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${scanning ? 'animate-spin' : ''}`} />
             <span>Re-Scan Hygiene</span>
@@ -139,7 +139,7 @@ export const AdminMaintenance: React.FC<AdminMaintenanceProps> = ({ user, adminR
             id="btn-export-backup"
             onClick={handleExportBackup}
             disabled={exporting}
-            className="flex items-center space-x-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md transition-all"
+            className="flex items-center space-x-1.5 px-4 py-2 text-xs font-bold rounded-full transition-all bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             <Download className="w-3.5 h-3.5" />
             <span>{exporting ? 'Exporting...' : 'Export Backup JSON'}</span>
@@ -242,7 +242,7 @@ export const AdminMaintenance: React.FC<AdminMaintenanceProps> = ({ user, adminR
               <div key={idx} className="p-3 bg-slate-850/40 hover:bg-slate-800/40 flex items-center justify-between gap-3 text-xs">
                 <div className="space-y-0.5">
                   <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 font-mono font-bold uppercase text-[10px] border border-amber-800">
+                    <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 font-mono font-bold text-[10px] border border-amber-800">
                       {item.type}
                     </span>
                     <span className="font-bold text-white">{item.title}</span>
@@ -277,13 +277,13 @@ export const AdminMaintenance: React.FC<AdminMaintenanceProps> = ({ user, adminR
               placeholder="CONFIRM_PRODUCTION_CLEANUP"
               value={confirmationCode}
               onChange={(e) => setConfirmationCode(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 text-white text-sm font-mono px-4 py-2.5 rounded-xl focus:border-rose-500 focus:outline-none"
+              className="flex-1 bg-slate-900 border border-slate-700 text-white text-sm font-mono px-4 py-2.5 rounded-full focus:border-rose-500 focus:outline-none"
             />
             <button
               id="btn-execute-cleanup"
               onClick={handleExecuteCleanup}
               disabled={cleaning || confirmationCode.trim() !== 'CONFIRM_PRODUCTION_CLEANUP'}
-              className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white font-bold text-xs shadow-lg transition-all shrink-0 flex items-center justify-center space-x-2"
+              className="px-6 py-2.5 rounded-full bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white font-bold text-xs transition-all shrink-0 flex items-center justify-center space-x-2"
             >
               <Trash2 className="w-4 h-4" />
               <span>{cleaning ? 'Executing Cleanup...' : 'Execute Safe Cleanup'}</span>

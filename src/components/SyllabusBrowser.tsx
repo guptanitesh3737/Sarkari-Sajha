@@ -158,7 +158,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
@@ -185,15 +185,15 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={lang === 'np' ? 'विषय वा पाठ खोज्नुहोस्...' : 'Search chapter or topic...'}
-                className="w-full pl-9 pr-11 py-2.5 bg-white/10 hover:bg-white/15 focus:bg-white/20 text-white placeholder:text-slate-300 text-xs rounded-xl border border-white/15 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                className="w-full pl-9 pr-11 py-2.5 bg-white/10 hover:bg-white/15 focus:bg-white/20 text-white placeholder:text-slate-300 text-xs rounded-full border border-white/15 focus:outline-none focus:ring-2 focus:ring-sky-300 transition"
               />
               <button
                 type="button"
                 onClick={toggleListening}
                 title={lang === 'np' ? 'नेपालीमा बोलेर खोज्नुहोस्' : 'Voice Search (Nepali/English)'}
-                className={`absolute right-2 p-1.5 rounded-lg text-xs transition ${
+                className={`absolute right-2 p-1.5 rounded-full text-xs transition ${
                   isListening
-                    ? 'bg-rose-500 text-white animate-pulse'
+                    ? 'bg-rose-500 text-white'
                     : 'bg-white/20 text-white hover:bg-white/30'
                 }`}
               >
@@ -201,7 +201,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
               </button>
             </div>
             {isListening && (
-              <p className="text-[11px] text-rose-300 mt-1 font-medium animate-pulse flex items-center gap-1">
+              <p className="text-[11px] text-rose-300 mt-1 font-medium flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
                 {lang === 'np' ? 'सुन्दैछ... नेपालीमा बोल्नुहोस्' : 'Listening... Speak in Nepali or English'}
               </p>
@@ -221,9 +221,9 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                 setSelectedPostId(post.id);
                 setSelectedPaperIndex(0);
               }}
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap border ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap border ${
                 isSelected
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
+                  ? 'border-blue-600 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                   : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700'
               }`}
             >
@@ -241,12 +241,12 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
 
       {/* Active Post Details Card */}
       {activePost && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
+        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           {/* Post Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-800">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                   {activePost.code}
                 </span>
                 <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -267,7 +267,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                 <button
                   key={paper.id}
                   onClick={() => setSelectedPaperIndex(idx)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
                     selectedPaperIndex === idx
                       ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -281,21 +281,21 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
 
           {/* Paper Information Strip */}
           {activePaper && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-sky-50/70 dark:bg-slate-800/40 p-4 rounded-2xl text-xs">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Paper Name</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Paper Name</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{lang === 'np' ? activePaper.nameNp : activePaper.name}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Full Marks</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Full Marks</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{activePaper.fullMarks} Marks (Pass: {activePaper.passMarks})</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Time Duration</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Time Duration</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">{activePaper.timeDurationMinutes} Minutes</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Exam Format</span>
+                <span className="text-slate-400 block text-[10px] font-semibold">Exam Format</span>
                 <span className="font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
                   {activePaper.paperType === 'objective_mcq' ? '1st Phase MCQ (0.20 Neg)' : '2nd Phase Subjective Written'}
                 </span>
@@ -344,7 +344,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                       key={chapter.id}
                       className={`border rounded-2xl transition overflow-hidden ${
                         isExpanded
-                          ? 'border-blue-300 dark:border-blue-800/80 bg-blue-50/20 dark:bg-blue-950/10'
+                          ? 'bg-blue-50/20 dark:bg-blue-950/10'
                           : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 hover:border-slate-300 dark:hover:border-slate-700'
                       }`}
                     >
@@ -380,7 +380,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
 
                         <div className="flex items-center gap-2">
                           {chapter.practiceQuizSetId && (
-                            <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
                               <Sparkles className="w-3 h-3" />
                               Drill Linked
                             </span>
@@ -405,10 +405,10 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                               </span>
                               <button
                                 onClick={() => handleDownloadNotes(chapter)}
-                                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition ${
+                                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition ${
                                   isPro
                                     ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300'
-                                    : 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                    : 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
                                 }`}
                               >
                                 {isPro ? (
@@ -432,7 +432,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                           {/* Key Constitutional / Legal Articles */}
                           {chapter.keyArticles && chapter.keyArticles.length > 0 && (
                             <div className="space-y-1.5">
-                              <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                              <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px] flex items-center gap-1">
                                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                                 Relevant Legal & Constitutional Provisions
                               </span>
@@ -451,14 +451,14 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
 
                           {/* Sub-Topics Breakdown */}
                           <div className="space-y-2">
-                            <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider">
+                            <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
                               Sub-Topic Syllabus Items
                             </span>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                               {chapter.topics.map((top) => (
                                 <div
                                   key={top.id}
-                                  className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80 space-y-1.5"
+                                  className="p-3 bg-sky-50/70 dark:bg-slate-800/50 rounded-xl space-y-1.5"
                                 >
                                   <div className="font-bold text-slate-900 dark:text-slate-100">
                                     {lang === 'np' ? top.titleNp : top.title}
@@ -482,7 +482,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                               <button
                                 type="button"
                                 onClick={() => onLaunchQuiz(chapter.practiceQuizSetId!)}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold text-xs shadow-sm hover:from-emerald-500 hover:to-teal-500 transition"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs shadow-sm transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                               >
                                 <Sparkles className="w-3.5 h-3.5" />
                                 <span>{lang === 'np' ? 'यस अध्यायको मोडल क्विज सुरु गर्नुहोस्' : 'Launch Chapter Practice Drill'}</span>
@@ -494,7 +494,7 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
                               <button
                                 type="button"
                                 onClick={() => onOpenSubjective(activePost.name)}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-xs shadow-sm hover:from-purple-500 hover:to-indigo-500 transition"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs shadow-sm transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                               >
                                 <FileText className="w-3.5 h-3.5" />
                                 <span>{lang === 'np' ? 'AI लिखित उत्तर परीक्षकमा जानुहोस्' : 'Practice Subjective Written Evaluation'}</span>

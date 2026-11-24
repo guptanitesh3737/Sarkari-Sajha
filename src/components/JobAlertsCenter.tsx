@@ -278,7 +278,6 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          toEmail: userProfile.email || 'candidate@sarkarisajha.com',
           subject: 'Sample Notice: Section Officer Vacancy Announcement',
           bodyHtml: `
             <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
@@ -359,15 +358,15 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       {/* ------------------------------------------------------------- */}
       {/* 1. HEADER HERO BANNER & QUICK CONTROLS */}
       {/* ------------------------------------------------------------- */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xs relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 relative overflow-hidden shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300">
                 <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 {lang === 'np' ? 'स्वचालित विज्ञापन अलर्ट इन्जिन' : 'Smart Vacancy Match & Reminder Engine'}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400">
                 <ShieldCheck className="w-3 h-3 text-emerald-600" />
                 {lang === 'np' ? 'गोप्य तथा सुरक्षित' : 'Private & Anti-Spam'}
               </span>
@@ -387,7 +386,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             <button
               onClick={handleRunScanner}
               disabled={isScanning}
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2"
+              className="px-5 py-3 rounded-full font-bold text-xs transition flex items-center justify-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               {isScanning ? (
                 <>
@@ -406,7 +405,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
         {/* Scan Feedback Box */}
         {scanResultSummary && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-300 flex items-center justify-between gap-3">
+          <div className="mt-4 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-xs text-emerald-900 dark:text-emerald-300 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
               <span className="font-semibold">{scanResultSummary}</span>
@@ -424,7 +423,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
         {/* KEY STATS COUNTERS */}
         {/* ------------------------------------------------------------- */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+          <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-white/5">
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
               <span>{lang === 'np' ? 'नपढिएका सूचना' : 'Unread Alerts'}</span>
               <Bell className="w-4 h-4 text-blue-600" />
@@ -435,7 +434,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+          <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-white/5">
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
               <span>{lang === 'np' ? 'अलर्ट स्थिति' : 'Alert Engine'}</span>
               <Sliders className="w-4 h-4 text-indigo-600" />
@@ -453,7 +452,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+          <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-white/5">
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
               <span>{lang === 'np' ? 'प्रवाह माध्यम' : 'Channels'}</span>
               <Send className="w-4 h-4 text-purple-600" />
@@ -465,7 +464,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+          <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-white/5">
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
               <span>{lang === 'np' ? 'म्याद राडार' : 'Closing Soon'}</span>
               <Clock className="w-4 h-4 text-amber-600" />
@@ -486,9 +485,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab('feed')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'feed'
-              ? 'bg-blue-600 text-white shadow-xs'
+              ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 border border-slate-200 dark:border-slate-800'
           }`}
         >
@@ -503,9 +502,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
         <button
           onClick={() => setActiveTab('preferences')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'preferences'
-              ? 'bg-blue-600 text-white shadow-xs'
+              ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 border border-slate-200 dark:border-slate-800'
           }`}
         >
@@ -515,9 +514,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
         <button
           onClick={() => setActiveTab('deadline_radar')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'deadline_radar'
-              ? 'bg-blue-600 text-white shadow-xs'
+              ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 border border-slate-200 dark:border-slate-800'
           }`}
         >
@@ -527,9 +526,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
         <button
           onClick={() => setActiveTab('channels')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
             activeTab === 'channels'
-              ? 'bg-blue-600 text-white shadow-xs'
+              ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 border border-slate-200 dark:border-slate-800'
           }`}
         >
@@ -543,12 +542,12 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       {/* ------------------------------------------------------------- */}
       {activeTab === 'feed' && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             {/* Filter Pills */}
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setFeedFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
                   feedFilter === 'all'
                     ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
@@ -558,9 +557,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </button>
               <button
                 onClick={() => setFeedFilter('job_match')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
                   feedFilter === 'job_match'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                 }`}
               >
@@ -568,9 +567,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </button>
               <button
                 onClick={() => setFeedFilter('deadline_reminder')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
                   feedFilter === 'deadline_reminder'
-                    ? 'bg-amber-600 text-white'
+                    ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                 }`}
               >
@@ -578,9 +577,9 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </button>
               <button
                 onClick={() => setFeedFilter('unread')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
                   feedFilter === 'unread'
-                    ? 'bg-emerald-600 text-white'
+                    ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                 }`}
               >
@@ -602,12 +601,12 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
           {/* List of Notification Cards */}
           {loadingFeed ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-200 dark:border-slate-800 text-center">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <Loader2 className="w-6 h-6 animate-spin text-blue-600 mx-auto" />
               <p className="text-xs text-slate-500 mt-2">Loading notifications...</p>
             </div>
           ) : filteredFeed.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-12 text-center space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
                 <Bell className="w-6 h-6" />
               </div>
@@ -633,7 +632,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                     className={`p-4 sm:p-5 rounded-2xl border transition-all relative overflow-hidden ${
                       notif.isRead
                         ? 'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
-                        : 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50 shadow-xs'
+                        : 'bg-blue-50/40 dark:bg-blue-950/20 shadow-xs'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -661,7 +660,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                         <div className="space-y-1.5 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span
-                              className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                                 isMatch
                                   ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
                                   : 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300'
@@ -677,7 +676,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                             </span>
 
                             {isUrgent && (
-                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 animate-pulse">
+                              <span className="text-[10px] font-black px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300">
                                 {lang === 'np' ? 'अति जरुरी' : 'Urgent'}
                               </span>
                             )}
@@ -732,7 +731,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                           <button
                             onClick={() => handleMarkAsRead(notif.id)}
                             title="Mark as read"
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                            className="p-1.5 rounded-full text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                           >
                             <Check className="w-4 h-4" />
                           </button>
@@ -740,7 +739,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                         <button
                           onClick={() => handleDeleteNotification(notif.id)}
                           title="Delete notification"
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                          className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -758,7 +757,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       {/* TAB 2: PREFERENCES CONFIGURATOR */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'preferences' && (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-8 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-8 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
             <div>
               <h3 className="text-lg font-black text-slate-900 dark:text-white">
@@ -798,7 +797,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               <select
                 value={prefs.qualification}
                 onChange={e => setPrefs({ ...prefs, qualification: e.target.value as any })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                className="w-full px-3.5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-sky-300 outline-hidden"
               >
                 <option value="All">All Qualifications (कुनै पनि तह)</option>
                 <option value="SEE/SLC">SEE / SLC (माध्यमिक तह)</option>
@@ -818,7 +817,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               <select
                 value={prefs.jobLevel || 'All Levels (सबै तह)'}
                 onChange={e => setPrefs({ ...prefs, jobLevel: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                className="w-full px-3.5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-sky-300 outline-hidden"
               >
                 {PSC_JOB_LEVELS.map(lvl => (
                   <option key={lvl} value={lvl}>
@@ -837,7 +836,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               <select
                 value={prefs.province || 'All Nepal'}
                 onChange={e => setPrefs({ ...prefs, province: e.target.value as Province, district: 'All Districts' })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                className="w-full px-3.5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-sky-300 outline-hidden"
               >
                 {NEPAL_PROVINCES.map(p => (
                   <option key={p.id} value={p.id}>
@@ -856,7 +855,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               <select
                 value={prefs.district || 'All Districts'}
                 onChange={e => setPrefs({ ...prefs, district: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-hidden"
+                className="w-full px-3.5 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-sky-300 outline-hidden"
               >
                 <option value="All Districts">All Districts (सबै जिल्ला)</option>
                 {availableDistricts.map(d => (
@@ -887,10 +886,10 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                     key={f}
                     type="button"
                     onClick={() => toggleArrayItem('interestedFields', f)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition border flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition border flex items-center gap-1.5 ${
                       selected
-                        ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700'
-                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                        ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300'
+                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5 text-purple-600" />}
@@ -920,10 +919,10 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                     key={org}
                     type="button"
                     onClick={() => toggleArrayItem('organizations', org)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition border flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition border flex items-center gap-1.5 ${
                       selected
-                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
-                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5 text-blue-600" />}
@@ -953,10 +952,10 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                     key={subj}
                     type="button"
                     onClick={() => toggleArrayItem('subjects', subj)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition border flex items-center gap-1.5 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition border flex items-center gap-1.5 ${
                       selected
-                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5 text-amber-600" />}
@@ -984,7 +983,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               <button
                 onClick={() => handleSavePreferences(prefs)}
                 disabled={isSavingPrefs}
-                className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2"
+                className="px-6 py-3 rounded-full font-bold text-xs transition flex items-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {isSavingPrefs ? (
                   <>
@@ -1009,7 +1008,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       {activeTab === 'deadline_radar' && (
         <div className="space-y-6">
           {/* Reminder Interval Switches Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -1026,7 +1025,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 7 Days */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-slate-900 dark:text-white block">
                     {lang === 'np' ? '७ दिन अगाडि' : '7 Days Before'}
@@ -1048,7 +1047,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </div>
 
               {/* 2 Days */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-slate-900 dark:text-white block">
                     {lang === 'np' ? '२ दिन अगाडि' : '2 Days Before'}
@@ -1070,7 +1069,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </div>
 
               {/* 1 Day */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-slate-900 dark:text-white block">
                     {lang === 'np' ? '१ दिन अगाडि' : '1 Day Before'}
@@ -1092,7 +1091,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
               </div>
 
               {/* Deadline Day */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-slate-900 dark:text-white block">
                     {lang === 'np' ? 'अन्तिम दिन (० दिन)' : 'Deadline Day'}
@@ -1116,7 +1115,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
           </div>
 
           {/* Live Deadline Radar List */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-black text-slate-900 dark:text-white">
@@ -1140,7 +1139,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-900 dark:text-slate-200">
-                  <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] font-mono border-b border-slate-200 dark:border-slate-700">
+                  <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-mono border-b">
                     <tr>
                       <th className="p-3.5">Position / Organization</th>
                       <th className="p-3.5">Level</th>
@@ -1172,7 +1171,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                             <span
                               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black ${
                                 isUrgent
-                                  ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 animate-pulse'
+                                  ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
                                   : isWeek
                                   ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
                                   : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
@@ -1207,7 +1206,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                             {targetVac && onSelectVacancy && (
                               <button
                                 onClick={() => onSelectVacancy(targetVac)}
-                                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-xs font-bold transition inline-flex items-center gap-1"
+                                className="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/40 text-slate-700 dark:text-slate-300 hover:text-blue-600 text-xs font-bold transition inline-flex items-center gap-1"
                               >
                                 <span>Apply</span>
                                 <ChevronRight className="w-3.5 h-3.5" />
@@ -1231,13 +1230,13 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
       {activeTab === 'channels' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Channel Settings Card */}
-          <div className="lg:col-span-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-6 shadow-xs">
+          <div className="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <h3 className="text-base font-black text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
               {lang === 'np' ? 'प्रवाह च्यानल सेटिङहरू' : 'Dispatch Channels'}
             </h3>
 
             {/* In-App */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600">
                   <Bell className="w-4 h-4" />
@@ -1259,7 +1258,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
 
             {/* Email */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600">
                   <Mail className="w-4 h-4" />
@@ -1283,7 +1282,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
 
             {/* Push */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-purple-600">
                   <Smartphone className="w-4 h-4" />
@@ -1311,14 +1310,14 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                 <button
                   onClick={handleTestEmail}
                   disabled={testingEmail}
-                  className="py-2 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold hover:bg-emerald-100 transition"
+                  className="py-2 px-3 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100 transition"
                 >
                   {testingEmail ? 'Sending...' : 'Test Email'}
                 </button>
                 <button
                   onClick={handleTestPush}
                   disabled={testingPush}
-                  className="py-2 px-3 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold hover:bg-purple-100 transition"
+                  className="py-2 px-3 rounded-full bg-purple-50 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-xs font-bold hover:bg-purple-100 transition"
                 >
                   {testingPush ? 'Sending...' : 'Test Push'}
                 </button>
@@ -1327,7 +1326,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
           </div>
 
           {/* Email Preview Frame */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <Mail className="w-4 h-4 text-emerald-600" />
@@ -1339,7 +1338,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
             </div>
 
             {/* Email Container Mockup */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-6 text-slate-800 dark:text-slate-200 space-y-4 max-w-xl mx-auto shadow-inner">
+            <div className="rounded-2xl bg-sky-50/70 dark:bg-slate-950 p-6 text-slate-800 dark:text-slate-200 space-y-4 max-w-xl mx-auto shadow-inner">
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-sm">
@@ -1363,7 +1362,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
 
                 <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">
                       Level 7 Officer
                     </span>
                     <span className="text-[10px] font-bold text-rose-600">7 Days Remaining</span>
@@ -1381,7 +1380,7 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
                 </div>
 
                 <div className="pt-2 text-center">
-                  <button className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition">
+                  <button className="px-5 py-2.5 rounded-full font-bold text-xs transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink">
                     View Complete Syllabus & Apply
                   </button>
                 </div>

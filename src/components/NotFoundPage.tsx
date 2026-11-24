@@ -60,7 +60,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ lang, onNavigateHome
   return (
     <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 text-center">
       {/* 404 Visual badge */}
-      <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 font-black text-3xl mb-6 shadow-sm">
+      <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-black text-3xl mb-6 shadow-sm">
         404
       </div>
 
@@ -82,11 +82,11 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ lang, onNavigateHome
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={lang === 'np' ? 'सरकारी पद वा विज्ञापन खोज्नुहोस्...' : 'Search vacancies, syllabus, or quizzes...'}
-            className="w-full pl-10 pr-24 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-sm"
+            className="w-full pl-10 pr-24 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-sky-300 shadow-sm"
           />
           <button
             type="submit"
-            className="absolute right-1.5 top-1.5 bottom-1.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition cursor-pointer"
+            className="absolute right-1.5 top-1.5 bottom-1.5 px-4 text-xs font-bold rounded-full transition cursor-pointer bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             {lang === 'np' ? 'खोज्नुहोस्' : 'Search'}
           </button>
@@ -101,7 +101,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ lang, onNavigateHome
             <button
               key={item.id}
               onClick={() => onNavigateTab(item.id)}
-              className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition flex items-center gap-3.5 group cursor-pointer text-left"
+              className="p-4 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 transition flex items-center gap-3.5 group cursor-pointer text-left"
             >
               <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
                 <Icon className="w-5 h-5" />
@@ -122,7 +122,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ lang, onNavigateHome
       {/* Return Home Button */}
       <button
         onClick={onNavigateHome}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition cursor-pointer"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition cursor-pointer"
       >
         <Home className="w-4 h-4" />
         <span>{lang === 'np' ? 'गृहपृष्ठमा फर्कनुहोस्' : 'Return to Home'}</span>

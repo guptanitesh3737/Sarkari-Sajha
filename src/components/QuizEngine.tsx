@@ -429,17 +429,17 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   return (
     <div className="space-y-6">
       {/* Quiz Engine Top Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs text-slate-900 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="hero-panel pb-2">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200 mb-2">
-              <Trophy className="w-3.5 h-3.5 text-amber-600" /> Lok Sewa Exam Prep & Model Sets
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-ink mb-2">
+              <Trophy className="w-3.5 h-3.5 text-ink" /> Lok Sewa Exam Prep & Model Sets
             </span>
             <h2 className="text-2xl font-black font-sans text-slate-900">
-              {lang === 'np' ? 'लोक सेवा नमुना परीक्षा तथा एआई मोक टेस्ट' : 'Lok Sewa AI Exam Preparation Platform'}
+              {lang === 'np' ? 'लोक सेवा नमुना परीक्षा' : 'Practice for Lok Sewa'}
             </h2>
             <p className="text-xs text-slate-500 mt-1 max-w-xl">
-              Real PSC-format practice tests with 20% negative marking penalty, bilingual questions, topic breakdowns, and instant AI explanations.
+              Real PSC-format mock tests with negative marking and instant explanations.
             </p>
           </div>
 
@@ -449,31 +449,31 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                 setQuizState('idle');
                 setSelectedSet(null);
               }}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl border border-slate-200 transition flex items-center gap-2 self-start sm:self-center"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-full border border-slate-200 transition flex items-center gap-2 self-start sm:self-center"
             >
               <RotateCcw className="w-4 h-4 text-slate-600" />
               <span>Back to Quiz Sets</span>
             </button>
           ) : (
-            <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 self-start sm:self-center gap-1">
+            <div className="flex items-center p-1 bg-white/70 rounded-full ring-1 ring-black/[0.04] self-start sm:self-auto gap-1">
               <button
                 onClick={() => setSubTab('quizzes')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                   subTab === 'quizzes'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-ink text-white'
+                    : 'text-ink-soft hover:text-ink'
                 }`}
               >
-                <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+                <BookOpen className="w-3.5 h-3.5 text-ink" />
                 <span>{lang === 'np' ? 'अभ्यास सेटहरू' : 'Model Sets'}</span>
               </button>
 
               <button
                 onClick={() => setSubTab('ai_drill')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                   subTab === 'ai_drill'
-                    ? 'bg-purple-600 text-white shadow-xs'
-                    : 'text-purple-700 hover:text-purple-900'
+                    ? 'bg-ink text-white'
+                    : 'text-ink-soft hover:text-ink'
                 }`}
               >
                 <BrainCircuit className="w-3.5 h-3.5" />
@@ -482,13 +482,13 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
               <button
                 onClick={() => setSubTab('leaderboard')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                   subTab === 'leaderboard'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-ink text-white'
+                    : 'text-ink-soft hover:text-ink'
                 }`}
               >
-                <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                <Trophy className="w-3.5 h-3.5 text-ink" />
                 <span>{lang === 'np' ? 'शीर्ष नतिजा' : 'Rankings'}</span>
               </button>
             </div>
@@ -511,9 +511,9 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
             />
           ) : subTab === 'ai_drill' ? (
             /* AI PERSONALIZED DIAGNOSTIC DRILL BUILDER */
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-900 space-y-6 shadow-xs">
+            <div className="bg-white rounded-2xl p-6 text-slate-900 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
               <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
                   <BrainCircuit className="w-5 h-5" />
                 </div>
                 <div>
@@ -535,7 +535,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   <select
                     value={aiDrillTopic}
                     onChange={(e) => setAiDrillTopic(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-purple-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-300 font-medium"
                   >
                     <option value="Nepal Constitution & Governance">Nepal Constitution & Governance (संविधान र शासन)</option>
                     <option value="Nepal Geography & Environment">Nepal Geography & Climate (भूगोल र वातावरण)</option>
@@ -552,7 +552,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   <select
                     value={aiDrillExam}
                     onChange={(e) => setAiDrillExam(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-purple-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-300 font-medium"
                   >
                     <option value="Section Officer (Sakha Adhikrit)">Section Officer (Sakha Adhikrit)</option>
                     <option value="Nayab Subba (NaSu)">Nayab Subba (NaSu)</option>
@@ -568,7 +568,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   <select
                     value={aiDrillDifficulty}
                     onChange={(e) => setAiDrillDifficulty(e.target.value as any)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-purple-500 font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full p-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-300 font-medium"
                   >
                     <option value="medium">Medium (Lok Sewa Standard)</option>
                     <option value="easy">Easy (Foundational Review)</option>
@@ -577,7 +577,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                 </div>
               </div>
 
-              <div className="bg-purple-50/60 border border-purple-200 rounded-xl p-3.5 text-xs text-purple-900 flex items-start gap-2">
+              <div className="bg-purple-50/60 rounded-xl p-3.5 text-xs text-purple-900 flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
                 <div>
                   <strong>Official Rule Applied:</strong> The generated drill enforces Lok Sewa 20% negative penalty (-0.20 marks per incorrect choice). All questions are vetted for single-correct answer validity.
@@ -587,7 +587,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               <button
                 onClick={() => handleGenerateAiDrill()}
                 disabled={generatingDrill}
-                className="w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 shadow-xs"
+                className="w-full py-3.5 font-bold text-xs rounded-full transition flex items-center justify-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {generatingDrill ? (
                   <>
@@ -606,10 +606,10 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
             /* STANDARD MODEL SETS BROWSER */
             <div className="space-y-5">
               {/* Category & Exam Filter Bar */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-xs">
+              <div className="bg-white rounded-2xl p-4 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 text-slate-700 font-bold">
-                    <Filter className="w-4 h-4 text-amber-600" />
+                    <Filter className="w-4 h-4 text-ink" />
                     <span>Filter Practice Sets:</span>
                   </div>
 
@@ -618,7 +618,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                     <select
                       value={selectedCategoryFilter}
                       onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                      className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-300"
                     >
                       <option value="all">All Categories ({categories.length || '19+'})</option>
                       {categories.map(c => (
@@ -630,7 +630,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                     <select
                       value={selectedExamFilter}
                       onChange={(e) => setSelectedExamFilter(e.target.value)}
-                      className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-300"
                     >
                       <option value="all">All Exam Profiles</option>
                       {examProfiles.map(e => (
@@ -644,7 +644,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                           setSelectedCategoryFilter('all');
                           setSelectedExamFilter('all');
                         }}
-                        className="text-amber-700 hover:text-amber-900 font-bold text-xs underline"
+                        className="text-ink hover:text-ink font-bold text-xs underline"
                       >
                         Reset
                       </button>
@@ -661,7 +661,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                         type="checkbox"
                         checked={randomizeQuestions}
                         onChange={(e) => setRandomizeQuestions(e.target.checked)}
-                        className="rounded text-amber-600 focus:ring-amber-500 w-3.5 h-3.5"
+                        className="rounded text-ink focus:ring-sky-300 w-3.5 h-3.5"
                       />
                       <span>Randomize Questions</span>
                     </label>
@@ -671,7 +671,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                         type="checkbox"
                         checked={randomizeOptions}
                         onChange={(e) => setRandomizeOptions(e.target.checked)}
-                        className="rounded text-amber-600 focus:ring-amber-500 w-3.5 h-3.5"
+                        className="rounded text-ink focus:ring-sky-300 w-3.5 h-3.5"
                       />
                       <span>Randomize Options</span>
                     </label>
@@ -688,19 +688,19 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                 {filteredSets.map((qs) => (
                   <div
                     key={qs.id}
-                    className="bg-white border border-slate-200 hover:border-amber-400 rounded-2xl p-6 text-slate-900 transition shadow-xs hover:shadow-md flex flex-col justify-between group"
+                    className="bg-white hover:ring-sky-300 rounded-2xl p-6 text-slate-900 transition hover:shadow-md flex flex-col justify-between group shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="bg-amber-50 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold">
+                        <span className="bg-sky-100 text-ink px-2.5 py-0.5 rounded text-[10px] font-mono font-bold">
                           {qs.category}
                         </span>
                         <span className="text-slate-500 text-xs font-mono flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-amber-600" /> {qs.timeLimitMinutes} Mins
+                          <Clock className="w-3.5 h-3.5 text-ink" /> {qs.timeLimitMinutes} Mins
                         </span>
                       </div>
 
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-700 transition font-sans">
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-ink transition font-sans">
                         {lang === 'np' ? qs.titleNp : qs.title}
                       </h3>
 
@@ -710,13 +710,13 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
                       <div className="pt-2 flex items-center justify-between text-xs text-slate-600 font-semibold border-t border-slate-100">
                         <span>Level: {qs.level}</span>
-                        <span className="text-amber-700">{qs.totalQuestions} Questions</span>
+                        <span className="text-ink">{qs.totalQuestions} Questions</span>
                       </div>
                     </div>
 
                     <button
                       onClick={() => handleStartQuiz(qs)}
-                      className="w-full mt-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2"
+                      className="w-full mt-5 py-2.5 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                     >
                       <span>{t('startQuiz', lang)}</span>
                       <ChevronRight className="w-4 h-4" />
@@ -740,18 +740,18 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
             const percent = Math.round((answeredCount / totalQ) * 100);
 
             return (
-              <div id="active-quiz-score-summary" className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3.5">
+              <div id="active-quiz-score-summary" className="bg-white rounded-2xl p-4 space-y-3.5 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="p-2 rounded-xl bg-amber-500/10 text-amber-700 border border-amber-300/40">
-                      <BarChart2 className="w-5 h-5 text-amber-600" />
+                    <span className="p-2 rounded-xl bg-sky-100 text-ink border border-sky-200">
+                      <BarChart2 className="w-5 h-5 text-ink" />
                     </span>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="text-xs font-bold text-slate-900 font-sans uppercase tracking-wide">
+                        <h4 className="text-xs font-bold text-slate-900 font-sans">
                           {lang === 'np' ? 'वास्तविक समय नतिजा र प्रश्न प्रगति' : 'Real-Time Score & Questions Summary'}
                         </h4>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200 animate-pulse">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-100 text-ink border border-sky-200">
                           LIVE
                         </span>
                       </div>
@@ -765,17 +765,17 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
                   {/* Real-time score summary badges */}
                   <div className="flex items-center gap-2 sm:gap-2.5 text-xs font-mono font-bold flex-wrap">
-                    <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs flex items-center gap-1.5">
+                    <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 shadow-2xs flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{lang === 'np' ? 'हल गरिएको:' : 'Answered:'} {answeredCount}/{totalQ}</span>
                     </span>
 
-                    <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="px-3 py-1.5 rounded-xl bg-sky-100 text-ink shadow-2xs flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5 text-ink" />
                       <span>{lang === 'np' ? 'बाँकी प्रश्न:' : 'Remaining:'} {remainingCount}</span>
                     </span>
 
-                    <span className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs flex items-center gap-1.5">
+                    <span className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 shadow-2xs flex items-center gap-1.5">
                       <Award className="w-3.5 h-3.5 text-blue-600" />
                       <span>{percent}% {lang === 'np' ? 'सम्पन्न' : 'Complete'}</span>
                     </span>
@@ -788,14 +788,14 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                     <span>
                       {lang === 'np' ? `प्रगति: ${answeredCount}/${totalQ} प्रश्नहरू` : `Progress: ${answeredCount}/${totalQ} Questions`}
                     </span>
-                    <span className="text-amber-800 font-bold">
+                    <span className="text-ink font-bold">
                       {lang === 'np' ? `${remainingCount} प्रश्नहरू बाँकी (${100 - percent}%)` : `${remainingCount} Questions Remaining (${100 - percent}%)`}
                     </span>
                   </div>
 
                   <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/80 p-0.5 relative">
                     <div
-                      className="bg-gradient-to-r from-blue-600 via-amber-500 to-emerald-500 h-full rounded-full transition-all duration-300 ease-out shadow-xs"
+                      className="bg-ink h-full rounded-full transition-all duration-300 ease-out shadow-xs"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -808,7 +808,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
             {/* Main Question Panel */}
             <div className="lg:col-span-2 space-y-5">
               {/* Exam Header Bar */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between text-slate-900 shadow-xs">
+              <div className="bg-white rounded-2xl p-4 flex items-center justify-between text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                 <div className="flex items-center gap-2">
                   <span className="bg-slate-900 text-white font-mono font-bold text-xs px-2.5 py-1 rounded-lg">
                     Q {currentQuestionIndex + 1} of {questions.length}
@@ -844,11 +844,11 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   <div
                     className={`px-3 py-1.5 rounded-xl font-mono font-extrabold text-sm flex items-center gap-2 border ${
                       timeLeft < 120
-                        ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
-                        : 'bg-slate-50 text-amber-800 border-slate-200'
+                        ? 'bg-rose-50 text-rose-700'
+                        : 'bg-slate-50 text-ink'
                     }`}
                   >
-                    <Clock className="w-4 h-4 text-amber-600" />
+                    <Clock className="w-4 h-4 text-ink" />
                     <span>{formatTime(timeLeft)}</span>
                   </div>
                 </div>
@@ -861,7 +861,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                 const isFlagged = flaggedQuestions[q.id];
 
                 return (
-                  <div ref={questionCardRef} className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-900 space-y-6 shadow-xs scroll-mt-24">
+                  <div ref={questionCardRef} className="bg-white rounded-2xl p-6 text-slate-900 space-y-6 scroll-mt-24 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-2 flex-1">
                         {/* Display based on language mode */}
@@ -879,21 +879,21 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
                       <button
                         onClick={() => toggleFlagQuestion(q.id)}
-                        className={`p-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
+                        className={`p-2 rounded-full border text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
                           isFlagged
-                            ? 'bg-amber-100 text-amber-900 border-amber-300'
-                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                            ? 'bg-sky-100 text-ink border-sky-200'
+                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                         }`}
                         title="Mark question to review before final submission"
                       >
-                        <Bookmark className={`w-4 h-4 ${isFlagged ? 'fill-amber-600 text-amber-600' : ''}`} />
+                        <Bookmark className={`w-4 h-4 ${isFlagged ? 'fill-ink text-ink' : ''}`} />
                         <span>{isFlagged ? 'Flagged' : 'Review'}</span>
                       </button>
                     </div>
 
                     {/* Question Type Badge & Instruction */}
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
                         {q.questionType === 'multiple_select'
                           ? 'Multiple Select (Select all that apply)'
                           : q.questionType === 'true_false'
@@ -911,10 +911,10 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                             <button
                               key={String(val)}
                               onClick={() => handleSelectTrueFalse(q.id, val)}
-                              className={`p-6 rounded-2xl text-center text-sm font-bold transition border flex flex-col items-center justify-center gap-2 ${
+                              className={`p-6 rounded-full text-center text-sm font-bold transition border flex flex-col items-center justify-center gap-2 ${
                                 isSelected
-                                  ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-500 text-amber-950 shadow-sm'
-                                  : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'
+                                  ? 'bg-sky-100 ring-2 ring-ink text-ink shadow-sm'
+                                  : 'bg-slate-50 hover:bg-slate-100 text-slate-800'
                               }`}
                             >
                               <span className="text-xl">{val ? '✓' : '✕'}</span>
@@ -925,7 +925,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       </div>
                     ) : q.questionType === 'multiple_select' ? (
                       <div className="space-y-3">
-                        <p className="text-[11px] text-amber-800 font-semibold bg-amber-50 p-2 rounded-lg border border-amber-200">
+                        <p className="text-[11px] text-ink font-semibold bg-sky-100 p-2 rounded-lg">
                           ℹ️ Select all correct choices that apply, then click Next or navigate with palette.
                         </p>
                         {q.options.map((opt, optIdx) => {
@@ -937,15 +937,15 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                             <button
                               key={optIdx}
                               onClick={() => handleToggleMultiSelect(q.id, optIdx)}
-                              className={`w-full p-4 rounded-xl text-left text-xs transition border flex items-center justify-between ${
+                              className={`w-full p-4 rounded-full text-left text-xs transition border flex items-center justify-between ${
                                 isSelected
-                                  ? 'bg-amber-50 border-amber-500 ring-1 ring-amber-500 font-bold text-amber-950'
-                                  : 'bg-slate-50/60 border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
+                                  ? 'bg-sky-100 ring-1 ring-ink font-bold text-ink'
+                                  : 'bg-slate-50/60 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
                               }`}
                             >
                               <div className="flex items-center gap-3">
                                 <div className={`w-5 h-5 rounded flex items-center justify-center text-xs font-bold border ${
-                                  isSelected ? 'bg-amber-500 border-amber-600 text-slate-950' : 'bg-white border-slate-300'
+                                  isSelected ? 'bg-ink border-ink text-white' : 'bg-white border-slate-300'
                                 }`}>
                                   {isSelected ? '✓' : ''}
                                 </div>
@@ -972,15 +972,15 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                             <button
                               key={optIdx}
                               onClick={() => handleSelectOption(q.id, optIdx)}
-                              className={`w-full p-4 rounded-xl text-left text-xs transition border flex items-center justify-between ${
+                              className={`w-full p-4 rounded-full text-left text-xs transition border flex items-center justify-between ${
                                 isSelected
-                                  ? 'bg-amber-50 border-amber-500 ring-1 ring-amber-500 font-bold text-amber-950'
-                                  : 'bg-slate-50/60 border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
+                                  ? 'bg-sky-100 ring-1 ring-ink font-bold text-ink'
+                                  : 'bg-slate-50/60 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
                               }`}
                             >
                               <div className="flex items-center gap-3">
                                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                  isSelected ? 'bg-amber-500 text-slate-950' : 'bg-slate-200 text-slate-700'
+                                  isSelected ? 'bg-ink text-white' : 'bg-slate-200 text-slate-700'
                                 }`}>
                                   {String.fromCharCode(65 + optIdx)}
                                 </span>
@@ -993,7 +993,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                                   )}
                                 </div>
                               </div>
-                              {isSelected && <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />}
+                              {isSelected && <CheckCircle2 className="w-4 h-4 text-ink shrink-0" />}
                             </button>
                           );
                         })}
@@ -1005,7 +1005,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       <button
                         onClick={() => navigateQuestion(Math.max(0, currentQuestionIndex - 1))}
                         disabled={currentQuestionIndex === 0}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-full text-xs font-bold transition flex items-center gap-1.5"
                       >
                         <ChevronLeft className="w-4 h-4" /> Previous
                       </button>
@@ -1017,7 +1017,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       <button
                         onClick={() => navigateQuestion(Math.min(questions.length - 1, currentQuestionIndex + 1))}
                         disabled={currentQuestionIndex === questions.length - 1}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-full text-xs font-bold transition flex items-center gap-1.5"
                       >
                         Next <ChevronRight className="w-4 h-4" />
                       </button>
@@ -1029,8 +1029,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
             {/* Right Sidebar: Question Palette Grid */}
             <div className="space-y-4">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 text-slate-900 space-y-4 shadow-xs">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Question Palette</h4>
+              <div className="bg-white rounded-2xl p-5 text-slate-900 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
+                <h4 className="text-xs font-bold text-slate-500">Question Palette</h4>
 
                 <div className="grid grid-cols-5 gap-2">
                   {questions.map((q, idx) => {
@@ -1042,19 +1042,19 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       <button
                         key={q.id}
                         onClick={() => navigateQuestion(idx)}
-                        className={`h-9 rounded-lg font-mono font-bold text-xs flex items-center justify-center relative transition ${
+                        className={`h-9 rounded-full font-mono font-bold text-xs flex items-center justify-center relative transition ${
                           isCurrent
-                            ? 'ring-2 ring-slate-900 bg-blue-600 text-white'
+                            ? 'ring-2 ring-slate-900 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                             : isFlagged
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                            ? 'bg-sky-100 text-ink border border-sky-200'
                             : isAnswered
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            ? 'bg-emerald-50 text-emerald-700'
                             : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
                         }`}
                       >
                         {idx + 1}
                         {isFlagged && (
-                          <span className="w-2 h-2 rounded-full bg-amber-500 absolute -top-1 -right-1" />
+                          <span className="w-2 h-2 rounded-full bg-sky-500 absolute -top-1 -right-1" />
                         )}
                       </button>
                     );
@@ -1067,7 +1067,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                     <span>Answered ({Object.keys(userAnswers).length})</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded bg-amber-100 border border-amber-300" />
+                    <span className="w-3 h-3 rounded bg-sky-100 border border-sky-200" />
                     <span>Flagged for Review ({Object.values(flaggedQuestions).filter(Boolean).length})</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1078,7 +1078,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
                 <button
                   onClick={handleSubmitQuiz}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs"
+                  className="w-full py-3 font-bold text-xs rounded-full transition shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   Finish & Submit Paper
                 </button>
@@ -1092,8 +1092,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
       {quizState === 'completed' && attemptResult && (
         <div className="space-y-6">
           {/* Scorecard Hero Banner */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-900 text-center space-y-5 shadow-xs">
-            <div className="inline-flex p-3 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200">
+          <div className="bg-white rounded-2xl p-6 text-slate-900 text-center space-y-5 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
+            <div className="inline-flex p-3 rounded-2xl bg-sky-100 text-ink">
               <Trophy className="w-10 h-10" />
             </div>
 
@@ -1120,41 +1120,41 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
             {/* Score Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-sm max-w-4xl mx-auto">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Net Score</span>
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Net Score</span>
                 <span className="text-lg font-bold font-mono text-emerald-700">
                   {attemptResult.score.toFixed(2)} / {attemptResult.totalQuestions}
                 </span>
                 <span className="text-[10px] text-slate-400 block mt-0.5">Final Mark</span>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Correct</span>
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Correct</span>
                 <span className="text-lg font-bold font-mono text-emerald-600">
                   {attemptResult.correctCount}
                 </span>
                 <span className="text-[10px] text-emerald-600 block mt-0.5">+{attemptResult.correctCount}.0</span>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Incorrect</span>
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Incorrect</span>
                 <span className="text-lg font-bold font-mono text-rose-600">
                   {attemptResult.incorrectCount}
                 </span>
                 <span className="text-[10px] text-rose-600 block mt-0.5">-{attemptResult.negativeMarksDeducted?.toFixed(2) || '0.00'}</span>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Skipped</span>
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Skipped</span>
                 <span className="text-lg font-bold font-mono text-slate-600">
                   {attemptResult.skippedCount ?? (attemptResult.totalQuestions - attemptResult.correctCount - attemptResult.incorrectCount)}
                 </span>
                 <span className="text-[10px] text-slate-400 block mt-0.5">0 penalty</span>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Accuracy</span>
-                <span className="text-lg font-bold font-mono text-amber-700">
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Accuracy</span>
+                <span className="text-lg font-bold font-mono text-ink">
                   {attemptResult.percentage}%
                 </span>
                 <span className="text-[10px] text-slate-400 block mt-0.5">
@@ -1162,8 +1162,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                 </span>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <span className="text-[10px] text-slate-500 uppercase block font-semibold">Time Taken</span>
+              <div className="bg-sky-50/70 p-3 rounded-xl">
+                <span className="text-[10px] text-slate-500 block font-semibold">Time Taken</span>
                 <span className="text-lg font-bold font-mono text-blue-700">
                   {formatTime(attemptResult.timeTakenSeconds)}
                 </span>
@@ -1189,10 +1189,10 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               if (subjectList.length === 0) return null;
 
               return (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
+                <div className="bg-sky-50/70 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
                   <div className="flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-amber-600" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    <BarChart2 className="w-4 h-4 text-ink" />
+                    <h4 className="text-xs font-bold text-slate-800">
                       Subject Performance Breakdown
                     </h4>
                   </div>
@@ -1240,10 +1240,10 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               if (topicList.length === 0) return null;
 
               return (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
+                <div className="bg-sky-50/70 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
                   <div className="flex items-center gap-2">
                     <Target className="w-4 h-4 text-purple-600" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    <h4 className="text-xs font-bold text-slate-800">
                       Topic Mastery Breakdown
                     </h4>
                   </div>
@@ -1270,7 +1270,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
             {/* AI Study Recommendations Card */}
             {attemptResult.recommendations && (
-              <div className="bg-purple-50/80 border border-purple-200 rounded-2xl p-5 text-left text-xs text-purple-950 space-y-3 max-w-3xl mx-auto">
+              <div className="bg-purple-50/80 rounded-2xl p-5 text-left text-xs text-purple-950 space-y-3 max-w-3xl mx-auto">
                 <div className="flex items-center gap-2 font-bold text-purple-900">
                   <Sparkles className="w-4 h-4 text-purple-600" />
                   <span>AI Diagnostic Recommendations & Study Plan</span>
@@ -1305,7 +1305,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       setQuizState('idle');
                       setAiDrillTopic(attemptResult.recommendations!.weakAreas[0]);
                     }}
-                    className="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition flex items-center gap-1.5"
+                    className="py-2 px-4 rounded-full font-bold transition flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     <Zap className="w-3.5 h-3.5" />
                     <span>Launch AI Diagnostic Drill for Weak Topics</span>
@@ -1320,7 +1320,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   setQuizState('idle');
                   setSelectedSet(null);
                 }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl border border-slate-200 transition flex items-center gap-2"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-full border border-slate-200 transition flex items-center gap-2"
               >
                 <RotateCcw className="w-4 h-4 text-slate-600" />
                 <span>{lang === 'np' ? 'अर्को अभ्यास परीक्षा' : 'Take Another Quiz'}</span>
@@ -1332,7 +1332,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   setSelectedSet(null);
                   setSubTab('leaderboard');
                 }}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-xs"
+                className="px-4 py-2 text-xs font-bold rounded-full transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <Trophy className="w-4 h-4" />
                 <span>{lang === 'np' ? 'शीर्ष स्थान नतिजा हेर्नुहोस्' : 'View Merit Leaderboard'}</span>
@@ -1343,7 +1343,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
           {/* Question Breakdown with AI Explanations & Citations */}
           <div className="space-y-4">
             <h4 className="text-base font-bold text-slate-900 font-sans flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-amber-600" /> Question-by-Question Review & Source Citations
+              <BookOpen className="w-4 h-4 text-ink" /> Question-by-Question Review & Source Citations
             </h4>
 
             {questions.map((q, idx) => {
@@ -1369,12 +1369,12 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               return (
                 <div
                   key={q.id}
-                  className={`bg-white border rounded-2xl p-5 text-slate-900 space-y-3 transition shadow-xs ${
+                  className={`bg-white rounded-2xl p-5 text-slate-900 space-y-3 transition shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 ${
                     isCorrect
-                      ? 'border-emerald-200 bg-emerald-50/20'
+                      ? 'bg-emerald-50/20'
                       : isUnanswered
-                      ? 'border-slate-200 bg-slate-50/30'
-                      : 'border-rose-200 bg-rose-50/20'
+                      ? 'bg-slate-50/30'
+                      : 'bg-rose-50/20'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -1385,13 +1385,13 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       <span className="text-xs text-slate-500 font-medium">
                         {q.subject || q.category} • {q.topic}
                       </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-600 uppercase">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-600">
                         {q.questionType || 'multiple_choice'}
                       </span>
                     </div>
 
                     {isCorrect ? (
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
+                      <span className="bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Correct (+1.0)
                       </span>
                     ) : isUnanswered ? (
@@ -1399,7 +1399,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                         <HelpCircle className="w-3.5 h-3.5 text-slate-500" /> Unattempted (0.0)
                       </span>
                     ) : (
-                      <span className="bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
+                      <span className="bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
                         <XCircle className="w-3.5 h-3.5 text-rose-600" /> Incorrect (-{(attemptResult.negativeMarkRate || 0.20).toFixed(2)})
                       </span>
                     )}
@@ -1478,9 +1478,9 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                   )}
 
                   {/* Static Explanation & Syllabus Citation */}
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1.5">
+                  <div className="bg-sky-50/70 p-3 rounded-xl text-xs text-slate-700 space-y-1.5">
                     {q.explanation && (
-                      <p><strong className="text-amber-800">Explanation:</strong> {q.explanation}</p>
+                      <p><strong className="text-ink">Explanation:</strong> {q.explanation}</p>
                     )}
                     {q.mnemonicTip && (
                       <p className="text-purple-800 flex items-center gap-1">
@@ -1505,7 +1505,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                     <button
                       onClick={() => handleGenerateAiExplanation(q)}
                       disabled={isLoadingExplain}
-                      className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl transition flex items-center gap-2 shadow-xs"
+                      className="px-3.5 py-2 font-bold text-xs rounded-full transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                     >
                       {isLoadingExplain ? (
                         <>
@@ -1520,14 +1520,14 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
                       )}
                     </button>
                   ) : (
-                    <div className="bg-amber-50/80 border border-amber-200 p-3.5 rounded-xl text-xs text-amber-950 space-y-2">
-                      <div className="flex items-center gap-1.5 font-bold text-amber-900">
-                        <Sparkles className="w-4 h-4 text-amber-600" /> Gemini AI Deep Breakdown
+                    <div className="bg-sky-100/80 p-3.5 rounded-xl text-xs text-ink space-y-2">
+                      <div className="flex items-center gap-1.5 font-bold text-ink">
+                        <Sparkles className="w-4 h-4 text-ink" /> Gemini AI Deep Breakdown
                       </div>
                       <p className="leading-relaxed">{aiExplain.explanationEn}</p>
-                      <p className="leading-relaxed text-amber-900 font-sans">{aiExplain.explanationNp}</p>
+                      <p className="leading-relaxed text-ink font-sans">{aiExplain.explanationNp}</p>
                       {aiExplain.mnemonicTip && (
-                        <div className="bg-amber-100 p-2 rounded-lg font-mono text-[11px] text-amber-900">
+                        <div className="bg-sky-100 p-2 rounded-lg font-mono text-[11px] text-ink">
                           💡 Memory Trick: {aiExplain.mnemonicTip}
                         </div>
                       )}

@@ -241,7 +241,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
       .style('stroke-width', '2px')
       .style('cursor', 'pointer')
       .on('mouseenter', (event, d) => {
-        d3.select(event.currentTarget).transition().duration(150).attr('d', hoverArc);
+        d3.select(event.currentTarget as SVGPathElement).transition().duration(150).attr('d', hoverArc);
         const [mx, my] = d3.pointer(event, categoryDonutContainerRef.current);
         setTooltip({
           visible: true,
@@ -251,7 +251,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
         });
       })
       .on('mouseleave', (event, d) => {
-        d3.select(event.currentTarget).transition().duration(150).attr('d', arc);
+        d3.select(event.currentTarget as SVGPathElement).transition().duration(150).attr('d', arc);
         setTooltip({ visible: false, x: 0, y: 0, content: '' });
       });
 
@@ -303,7 +303,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
   return (
     <div className="space-y-6">
       {/* Top Header & Range Controls */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
+      <div className="hero-panel p-5 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
@@ -327,9 +327,9 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
               <button
                 key={r}
                 onClick={() => setTimeRange(r)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+                className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                   timeRange === r
-                    ? 'bg-blue-600 text-white shadow-xs'
+                    ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -341,7 +341,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
           <button
             onClick={fetchAnalytics}
             disabled={loading}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700"
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-slate-700"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Refresh</span>
@@ -349,7 +349,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
 
           <button
             onClick={handleExportReportCSV}
-            className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-800/80 shadow-xs"
+            className="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-emerald-800/80 shadow-xs"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
@@ -438,9 +438,9 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
             <button
               key={tab.id}
               onClick={() => setActiveMetricTab(tab.id as any)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
                 activeMetricTab === tab.id
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                   : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
@@ -621,7 +621,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
 
       {/* TAB 4: AI CAREER ASSISTANT USAGE */}
       {activeMetricTab === 'ai_assistant' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-white space-y-6">
+        <div className="hero-panel p-5 space-y-6">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <BrainCircuit className="w-4 h-4 text-purple-400" /> AI Career Assistant Telemetry & Grounding Performance
@@ -677,7 +677,7 @@ export const AdminAnalyticsDashboard: React.FC<AdminAnalyticsDashboardProps> = (
 
       {/* TAB 5: NOTIFICATION ENGAGEMENT & ANTI-DUPLICATION ENGINE */}
       {activeMetricTab === 'notifications' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-white space-y-6">
+        <div className="hero-panel p-5 space-y-6">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Bell className="w-4 h-4 text-amber-400" /> Multi-Channel Notification Dispatch & Anti-Duplicate Engine

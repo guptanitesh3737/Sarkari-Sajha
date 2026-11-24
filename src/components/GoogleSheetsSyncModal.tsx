@@ -387,11 +387,11 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 bg-ink/30 backdrop-blur-sm">
       {/* Confirmation Modal for Overwriting Data */}
       {showConfirmDialog && (
         <div className="absolute inset-0 z-60 bg-slate-950/70 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 text-slate-900 shadow-2xl border border-slate-200">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
             <div className="flex items-center gap-2 text-amber-600">
               <AlertCircle className="w-5 h-5" />
               <h4 className="font-bold text-sm">Confirm Google Sheet Update</h4>
@@ -403,7 +403,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                   setShowConfirmDialog(false);
                   setPendingAction(null);
                 }}
-                className="px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                className="px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-full transition"
               >
                 Cancel
               </button>
@@ -415,7 +415,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                     setPendingAction(null);
                   }
                 }}
-                className="px-4 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl shadow-xs transition"
+                className="px-4 py-2 text-xs font-bold rounded-full shadow-xs transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 Confirm Sync
               </button>
@@ -424,7 +424,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden relative">
+      <div className="bg-white rounded-[2rem] w-full max-w-lg overflow-hidden relative shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Header */}
         <div className="bg-emerald-900 text-white p-6 relative">
           <button
@@ -438,7 +438,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
             <span className="p-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               <FileSpreadsheet className="w-4 h-4" />
             </span>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 font-mono">
+            <span className="text-[11px] font-bold text-emerald-300 font-mono">
               Google Workspace Integration
             </span>
           </div>
@@ -456,21 +456,21 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
         <div className="p-6 space-y-5">
           {/* Messages */}
           {errorMsg && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs flex items-start gap-2 animate-in fade-in">
+            <div className="p-3 bg-rose-50 text-rose-800 rounded-2xl text-xs flex items-start gap-2 animate-in fade-in">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs flex items-start gap-2 animate-in fade-in">
+            <div className="p-3 bg-emerald-50 text-emerald-800 rounded-2xl text-xs flex items-start gap-2 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>{successMsg}</span>
             </div>
           )}
 
           {/* Connection Status Box */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3">
+          <div className="p-4 bg-sky-50/70 rounded-2xl flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${accessToken ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
                 {accessToken ? '✓' : <Lock className="w-4 h-4" />}
@@ -493,7 +493,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
               <button
                 onClick={handleConnectGoogle}
                 disabled={loading}
-                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 shrink-0"
+                className="px-3 py-2 disabled:opacity-50 text-xs font-bold rounded-full shadow-xs transition flex items-center gap-1.5 shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {loading ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -509,7 +509,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
 
           {/* Created Sheet Banner if active */}
           {createdSheetUrl && (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2 text-emerald-950 animate-in fade-in">
+            <div className="p-4 bg-emerald-50 rounded-2xl space-y-2 text-emerald-950 animate-in fade-in">
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="flex items-center gap-1.5 text-emerald-800">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -526,7 +526,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                 href={createdSheetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-2xs mt-1"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-full transition shadow-2xs mt-1 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 <span>Open in Google Sheets</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -538,7 +538,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
           <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
             <button
               onClick={() => setActiveTab('export')}
-              className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 ${
+              className={`py-2 rounded-full transition flex items-center justify-center gap-1.5 ${
                 activeTab === 'export' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -547,7 +547,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('import')}
-              className={`py-2 rounded-lg transition flex items-center justify-center gap-1.5 ${
+              className={`py-2 rounded-full transition flex items-center justify-center gap-1.5 ${
                 activeTab === 'import' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -559,7 +559,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
           {/* EXPORT CONTENT */}
           {activeTab === 'export' && (
             <div className="space-y-3">
-              <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-xs">
+              <div className="p-4 bg-white rounded-2xl space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">
@@ -579,7 +579,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                       )
                     }
                     disabled={loading || !accessToken}
-                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5"
+                    className="px-3.5 py-2 disabled:opacity-40 text-xs font-bold rounded-full transition shadow-xs flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     {loading ? (
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -593,7 +593,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                 </div>
               </div>
 
-              <div className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-xs">
+              <div className="p-4 bg-white rounded-2xl space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">
@@ -608,7 +608,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                   <button
                     onClick={handleExportQuizScores}
                     disabled={loading || !accessToken}
-                    className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5"
+                    className="px-3.5 py-2 disabled:opacity-40 text-xs font-bold rounded-full transition shadow-xs flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     {loading ? (
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -627,7 +627,7 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
           {/* IMPORT CONTENT */}
           {activeTab === 'import' && (
             <div className="space-y-3">
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+              <div className="p-4 bg-sky-50/70 rounded-2xl space-y-3">
                 <label className="block text-xs font-bold text-slate-800">
                   {lang === 'np' ? 'गूगल शीट्स ID वा URL प्रविष्ट गर्नुहोस्:' : 'Google Spreadsheet ID or URL:'}
                 </label>
@@ -636,12 +636,12 @@ export const GoogleSheetsSyncModal: React.FC<GoogleSheetsSyncModalProps> = ({
                   value={existingSheetIdInput}
                   onChange={(e) => setExistingSheetIdInput(e.target.value)}
                   placeholder="https://docs.google.com/spreadsheets/d/1abc123... or ID"
-                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-full text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
                 />
                 <button
                   onClick={handleImportFromSheet}
                   disabled={loading || !accessToken}
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 disabled:opacity-40 text-xs font-bold rounded-full shadow-xs transition flex items-center justify-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   {loading ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />

@@ -57,13 +57,13 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto my-8 p-6 sm:p-8 bg-white border-2 border-amber-300 rounded-3xl shadow-xl space-y-6">
+    <div className="max-w-3xl mx-auto my-8 p-6 sm:p-8 bg-white border-2 border-amber-300 rounded-[2rem] space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
       <div className="flex items-start gap-4">
         <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl shrink-0">
           <ShieldAlert className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-800 rounded-full text-xs font-bold">
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>{lang === 'np' ? 'सुरक्षा प्रतिबन्ध' : 'Verification Required'}</span>
           </div>
@@ -84,8 +84,8 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
         <div
           className={`p-4 rounded-2xl border text-xs font-medium flex items-center gap-3 ${
             msg.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-emerald-50 text-emerald-800'
+              : 'bg-red-50 text-red-800'
           }`}
         >
           {msg.type === 'success' ? (
@@ -97,7 +97,7 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
         </div>
       )}
 
-      <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs text-slate-600">
+      <div className="p-4 bg-sky-50/70 rounded-2xl space-y-2 text-xs text-slate-600">
         <div className="font-bold text-slate-800 flex items-center justify-between">
           <span>{lang === 'np' ? 'इमेल ठेगाना:' : 'Account Email:'}</span>
           <span className="font-mono text-slate-900 bg-white px-2 py-1 rounded border border-slate-200">
@@ -116,7 +116,7 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
         <button
           onClick={handleResendEmail}
           disabled={loading}
-          className="flex-1 py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+          className="flex-1 py-3 px-4 font-bold text-xs rounded-full shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
         >
           <Mail className="w-4 h-4" />
           <span>
@@ -129,7 +129,7 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
         <button
           onClick={handleRefresh}
           disabled={loading}
-          className="flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+          className="flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-full shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           <span>
@@ -142,7 +142,7 @@ export const UnverifiedEmailGuard: React.FC<UnverifiedEmailGuardProps> = ({
         <button
           onClick={onSignOut}
           disabled={loading}
-          className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition flex items-center justify-center gap-2 border border-slate-200"
+          className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-full transition flex items-center justify-center gap-2 border border-slate-200"
         >
           <LogOut className="w-4 h-4" />
           <span>{lang === 'np' ? 'साइन आउट' : 'Sign Out'}</span>

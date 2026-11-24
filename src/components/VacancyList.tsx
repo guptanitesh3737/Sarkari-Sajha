@@ -1,35 +1,28 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Search,
-  Filter,
   MapPin,
-  Calendar,
-  Users,
-  Award,
-  Sparkles,
-  ExternalLink,
-  Bookmark,
-  CheckCircle,
   Clock,
-  Building2,
-  FileText,
   AlertCircle,
-  DollarSign,
   Mic,
   MicOff,
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  RotateCcw,
   SlidersHorizontal,
   X,
-  Eye,
   Check,
-  TrendingUp,
-  Briefcase,
+  Bookmark,
   GraduationCap,
-  BookOpen
+  ArrowUpRight,
+  Landmark,
+  School,
+  Banknote,
+  Shield,
+  HeartPulse,
+  Map as MapIcon,
+  Building2,
+  Factory,
+  Cpu
 } from 'lucide-react';
 import {
   Vacancy,
@@ -44,6 +37,7 @@ import {
   PaginatedVacancyResponse
 } from '../types';
 import { t } from '../utils/translations';
+import { tintFor } from '../utils/tints';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { setPageSEO, setWebSiteSearchSchema } from '../utils/seo';
 
@@ -98,9 +92,27 @@ const JOB_LEVEL_OPTIONS = [
   { id: 'Uniformed', labelEn: 'Security & Uniformed Forces (ASI/Inspector)', labelNp: 'सुरक्षा तथा प्रहरी निरीक्षक/असई' }
 ];
 
-const POPULAR_PRESETS = [
-  { label: 'Lok Sewa (PSC)', category: 'Lok Sewa (PSC)', search: '' },
-  { label: 'Banking Jobs', category: 'Banking & Finance', search: '' },
+// Vacancy types shown as "Browse by type" tiles on the home page.
+const VACANCY_TYPES: { id: VacancyCategory; en: string; np: string; icon: React.ElementType }[] = [
+  { id: 'Lok Sewa (PSC)', en: 'Lok Sewa', np: 'लोक सेवा', icon: Landmark },
+  { id: 'Teacher Service (TSC)', en: 'Teaching', np: 'शिक्षक सेवा', icon: School },
+  { id: 'Banking & Finance', en: 'Banking', np: 'बैंकिङ', icon: Banknote },
+  { id: 'Security Forces', en: 'Security forces', np: 'सुरक्षा निकाय', icon: Shield },
+  { id: 'Health Services', en: 'Health', np: 'स्वास्थ्य', icon: HeartPulse },
+  { id: 'Provincial Lok Sewa', en: 'Provincial', np: 'प्रदेश लोक सेवा', icon: MapIcon },
+  { id: 'Local Level (Nagarpalika)', en: 'Local level', np: 'स्थानीय तह', icon: Building2 },
+  { id: 'Public Corporation', en: 'Corporations', np: 'संस्थान', icon: Factory },
+  { id: 'IT & Engineering', en: 'IT & Engineering', np: 'आईटी तथा इन्जिनियरिङ', icon: Cpu }
+];
+
+const POPULAR_PRESETS: {
+  label: string;
+  search?: string;
+  category?: string;
+  deadline?: VacancyDeadlineFilter;
+  province?: string;
+  qualification?: string;
+}[] = [
   { label: 'Statistical Assistant', search: 'Statistical Assistant' },
   { label: 'Computer / IT Officer', search: 'Computer' },
   { label: 'Closing This Week', deadline: 'week' as VacancyDeadlineFilter },
@@ -330,121 +342,124 @@ export const VacancyList: React.FC<VacancyListProps> = ({
     return isQualMet && isProvMet && isAgeMet;
   };
 
+  const np = lang === 'np';
+
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    initialVacancies.forEach((v) => {
+      counts[v.category] = (counts[v.category] || 0) + 1;
+    });
+    return counts;
+  }, [initialVacancies]);
+
+  const listTopRef = useRef<HTMLDivElement>(null);
+  const pickType = (id: string) => {
+    setSelectedCategory((cur) => (cur === id ? 'All' : id));
+    setPage(1);
+    requestAnimationFrame(() => listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
+  const selectClass =
+    'w-full h-11 px-4 rounded-full bg-slate-50 dark:bg-white/5 ring-1 ring-black/[0.06] dark:ring-white/10 text-sm text-ink dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-300';
+  const labelClass = 'block text-xs text-ink-soft dark:text-slate-400 mb-1.5 pl-1';
+
+  const SORTS = [
+    { id: 'newest', labelEn: 'Newest', labelNp: 'नयाँ' },
+    { id: 'deadline_soonest', labelEn: 'Closing soon', labelNp: 'छिटो म्याद' },
+    { id: 'most_viewed', labelEn: 'Popular', labelNp: 'लोकप्रिय' },
+    { id: 'most_saved', labelEn: 'Most saved', labelNp: 'धेरै सुरक्षित' }
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* 1. HERO SEARCH & DISCOVERY ENGINE */}
-      <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-sm transition-all">
-        <div className="space-y-5">
-          {/* Header Title & Counter */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
-                <span>{lang === 'np' ? 'सरकारी सूचना तथा दरखास्त आव्हान' : 'Government Vacancies & Official Notices'}</span>
-                <span className="inline-flex items-center gap-1 text-xs font-mono font-bold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {totalCount} {lang === 'np' ? 'विज्ञापन' : 'Notices'}
-                </span>
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                {lang === 'np'
-                  ? 'लोक सेवा आयोग, शिक्षक सेवा, बैंक तथा प्रादेशिक निकायका आधिकारिक विज्ञापनहरू छिटो र प्रभावकारी खोज्नुहोस्।'
-                  : 'Fast vacancy discovery across Lok Sewa, Teachers Service, Banking institutions, and Provincial Services in Nepal.'}
-              </p>
-            </div>
+    <div>
+      {/* HERO */}
+      <section className="pt-10 sm:pt-16 pb-12 sm:pb-16 text-center">
+        <span className="inline-flex items-center gap-2 pl-2 pr-3.5 py-1.5 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 text-xs text-ink-soft dark:text-slate-300">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          {totalCount} {np ? 'सक्रिय विज्ञापन · दैनिक अपडेट' : 'live notices · updated daily'}
+        </span>
 
-            {/* Quick Actions (Reset & Filter Toggle) */}
-            <div className="flex items-center gap-2 shrink-0">
-              {activeFiltersCount > 0 && (
-                <button
-                  onClick={handleResetFilters}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-800 rounded-xl transition"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>{lang === 'np' ? 'सबै रिसेट' : 'Clear All'}</span>
-                </button>
-              )}
+        <h1 className="mt-6 font-display font-semibold text-ink dark:text-white text-[2.4rem] leading-[1.05] sm:text-6xl sm:leading-[1.02] tracking-tight">
+          {np ? (
+            <>
+              सरकारी जागिर खोज्नुहोस्।
+              <br />
+              तयारी गर्नुहोस्, सफल हुनुहोस्।
+            </>
+          ) : (
+            <>
+              Find your government job.
+              <br />
+              Prepare smarter. Get selected.
+            </>
+          )}
+        </h1>
 
-              <button
-                onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition ${
-                  isAdvancedFiltersOpen || activeFiltersCount > 0
-                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-800'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>{lang === 'np' ? 'फिल्टरहरू' : 'Filters'}</span>
-                {activeFiltersCount > 0 && (
-                  <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
-                    {activeFiltersCount}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
+        <p className="mt-5 max-w-xl mx-auto text-[15px] sm:text-base text-ink-soft dark:text-slate-400 leading-relaxed">
+          {np
+            ? 'लोक सेवा, शिक्षक सेवा, बैंक र प्रदेशका प्रमाणित विज्ञापनहरू, पाठ्यक्रम र अभ्यास क्विजसहित एकै ठाउँमा।'
+            : 'Verified vacancies from Lok Sewa, TSC, banks and provinces, with syllabus, practice quizzes and eligibility in one place.'}
+        </p>
 
-          {/* Search Input Bar with Speech-to-Text */}
-          <div className="relative flex items-center">
-            <Search className="absolute left-4 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none" />
+        {/* Search pill */}
+        <div className="mt-9 max-w-2xl mx-auto">
+          <div className="flex items-center gap-2 h-14 sm:h-16 pl-5 pr-2 rounded-full bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10 focus-within:ring-2 focus-within:ring-sky-300">
+            <Search className="w-5 h-5 text-slate-400 shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={
-                lang === 'np'
-                  ? 'पद, कार्यालय, योग्यता, विषय, प्रदेश वा जिल्ला खोज्नुहोस्... (प्रेस /)'
-                  : 'Search vacancy title, position, organization, qualification, subject, province, or district... (Press /)'
-              }
-              className="w-full pl-12 pr-28 py-3.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-inner"
+              aria-label={np ? 'विज्ञापन खोज्नुहोस्' : 'Search vacancies'}
+              placeholder={np ? 'पद, कार्यालय वा जिल्ला खोज्नुहोस्…' : 'Search position, office or district…'}
+              className="flex-1 min-w-0 bg-transparent text-[15px] text-ink dark:text-white placeholder:text-slate-400 focus:outline-none"
             />
-            <div className="absolute right-3 flex items-center gap-1.5">
-              {searchTerm && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchTerm('');
-                    searchInputRef.current?.focus();
-                  }}
-                  className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-                  title="Clear search"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-
+            {searchTerm && (
               <button
                 type="button"
-                onClick={toggleListening}
-                title={lang === 'np' ? 'नेपाली/अंग्रेजीमा बोलेर खोज्नुहोस्' : 'Voice Search (Nepali/English)'}
-                className={`p-2 rounded-xl text-xs font-semibold transition flex items-center justify-center ${
-                  isListening
-                    ? 'bg-rose-500 text-white animate-pulse shadow-md'
-                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                }`}
+                onClick={() => {
+                  setSearchTerm('');
+                  searchInputRef.current?.focus();
+                }}
+                className="w-9 h-9 inline-flex items-center justify-center rounded-full text-slate-400 hover:text-ink hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                title="Clear search"
               >
-                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
+                <X className="w-4 h-4" />
               </button>
-            </div>
+            )}
+            <button
+              type="button"
+              onClick={toggleListening}
+              title={np ? 'बोलेर खोज्नुहोस्' : 'Voice search'}
+              className={`w-10 h-10 inline-flex items-center justify-center rounded-full transition ${
+                isListening ? 'bg-rose-500 text-white' : 'text-slate-500 hover:text-ink hover:bg-slate-100 dark:hover:bg-white/10'
+              }`}
+            >
+              {isListening ? <MicOff className="w-[18px] h-[18px]" /> : <Mic className="w-[18px] h-[18px]" />}
+            </button>
+            <button
+              onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
+              aria-expanded={isAdvancedFiltersOpen}
+              className="h-10 sm:h-12 px-4 sm:px-5 inline-flex items-center gap-2 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill hover:bg-black transition"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="hidden sm:inline">{np ? 'फिल्टर' : 'Filters'}</span>
+              {activeFiltersCount > 0 && (
+                <span className="min-w-5 h-5 px-1 rounded-full bg-white text-ink dark:bg-ink dark:text-white text-[11px] inline-flex items-center justify-center">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
           </div>
 
           {isListening && (
-            <div className="bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 p-2.5 rounded-xl flex items-center gap-2 text-xs text-rose-700 dark:text-rose-300 font-medium animate-pulse">
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-              <span>
-                {lang === 'np'
-                  ? 'सुन्दैछ... नेपाली वा अंग्रेजीमा पद वा कार्यालयको नाम बोल्नुहोस् (उदा. तथ्याङ्क सहायक, नेपाल राष्ट्र बैंक)'
-                  : 'Listening... Speak vacancy or position name in Nepali or English (e.g. Statistical Assistant, Lok Sewa)'}
-              </span>
-            </div>
+            <p className="mt-3 text-xs text-rose-600 dark:text-rose-400">
+              {np ? 'सुन्दैछ… पद वा कार्यालयको नाम भन्नुहोस्' : 'Listening… say a position or office name'}
+            </p>
           )}
 
-          {/* Quick Preset Filter Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-            <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              {lang === 'np' ? 'लोकप्रिय:' : 'Quick:'}
-            </span>
+          {/* Quick presets */}
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
             {POPULAR_PRESETS.map((preset, idx) => {
               const isActive =
                 (preset.search && debouncedSearch.includes(preset.search)) ||
@@ -452,7 +467,6 @@ export const VacancyList: React.FC<VacancyListProps> = ({
                 (preset.deadline && selectedDeadline === preset.deadline) ||
                 (preset.province && selectedProvince === preset.province) ||
                 (preset.qualification && selectedQualification === preset.qualification);
-
               return (
                 <button
                   key={idx}
@@ -464,10 +478,10 @@ export const VacancyList: React.FC<VacancyListProps> = ({
                     if (preset.qualification) setSelectedQualification(preset.qualification);
                     setPage(1);
                   }}
-                  className={`px-3 py-1.5 rounded-full font-medium shrink-0 transition cursor-pointer border ${
+                  className={`px-3.5 py-1.5 rounded-full text-[13px] transition ${
                     isActive
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      ? 'bg-ink text-white dark:bg-white dark:text-ink'
+                      : 'bg-white/60 dark:bg-white/5 text-ink-soft dark:text-slate-300 ring-1 ring-black/[0.04] dark:ring-white/10 hover:bg-white dark:hover:bg-white/10'
                   }`}
                 >
                   {preset.label}
@@ -475,551 +489,387 @@ export const VacancyList: React.FC<VacancyListProps> = ({
               );
             })}
           </div>
-
-          {/* 2. ADVANCED MULTI-FACETED FILTER MATRIX */}
-          {isAdvancedFiltersOpen && (
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-4 animate-in fade-in duration-200">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                {/* Province Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-blue-500" />
-                    {lang === 'np' ? 'प्रदेश (Province)' : 'Province'}
-                  </label>
-                  <select
-                    value={selectedProvince}
-                    onChange={(e) => {
-                      setSelectedProvince(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    {PROVINCES.map((prov) => (
-                      <option key={prov} value={prov}>
-                        {prov}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* District Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <Building2 className="w-3 h-3 text-emerald-500" />
-                    {lang === 'np' ? 'जिल्ला (District)' : 'District'}
-                  </label>
-                  <select
-                    value={selectedDistrict}
-                    onChange={(e) => {
-                      setSelectedDistrict(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    <option value="All">{lang === 'np' ? 'सबै जिल्ला' : 'All Districts'}</option>
-                    <option value="Kathmandu">Kathmandu</option>
-                    <option value="Pokhara">Pokhara / Kaski</option>
-                    <option value="Biratnagar">Biratnagar / Morang</option>
-                    <option value="Lalitpur">Lalitpur</option>
-                    <option value="Chitwan">Chitwan</option>
-                    <option value="Butwal">Butwal / Rupandehi</option>
-                    <option value="Janakpur">Janakpur / Dhanusha</option>
-                    {availableDistricts.map((d, i) => (
-                      <option key={i} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Qualification Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <GraduationCap className="w-3 h-3 text-purple-500" />
-                    {lang === 'np' ? 'न्यूनतम योग्यता (Qualification)' : 'Min Qualification'}
-                  </label>
-                  <select
-                    value={selectedQualification}
-                    onChange={(e) => {
-                      setSelectedQualification(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    {QUALIFICATIONS.map((q) => (
-                      <option key={q} value={q}>
-                        {q}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Subject / Study Field Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <BookOpen className="w-3 h-3 text-amber-500" />
-                    {lang === 'np' ? 'विषय / संकाय (Subject)' : 'Subject / Discipline'}
-                  </label>
-                  <select
-                    value={selectedSubject}
-                    onChange={(e) => {
-                      setSelectedSubject(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    {SUBJECT_OPTIONS.map((sub) => (
-                      <option key={sub.id} value={sub.id}>
-                        {lang === 'np' ? sub.labelNp : sub.labelEn}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Job Level Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <Award className="w-3 h-3 text-indigo-500" />
-                    {lang === 'np' ? 'तह / श्रेणी (Job Level)' : 'Job Level'}
-                  </label>
-                  <select
-                    value={selectedJobLevel}
-                    onChange={(e) => {
-                      setSelectedJobLevel(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    {JOB_LEVEL_OPTIONS.map((lvl) => (
-                      <option key={lvl.id} value={lvl.id}>
-                        {lang === 'np' ? lvl.labelNp : lvl.labelEn}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Deadline Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-rose-500" />
-                    {lang === 'np' ? 'दरखास्त म्याद (Deadline)' : 'Application Deadline'}
-                  </label>
-                  <select
-                    value={selectedDeadline}
-                    onChange={(e) => {
-                      setSelectedDeadline(e.target.value as VacancyDeadlineFilter);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    <option value="all">{lang === 'np' ? 'सबै म्याद' : 'All Deadlines'}</option>
-                    <option value="active">{lang === 'np' ? 'म्याद बाँकी रहेका (Active Only)' : 'Active (Not Expired)'}</option>
-                    <option value="week">{lang === 'np' ? '७ दिनभित्र सकिने (Next 7 Days)' : 'Ending in 7 Days'}</option>
-                    <option value="month">{lang === 'np' ? '३० दिनभित्र सकिने (Next 30 Days)' : 'Ending in 30 Days'}</option>
-                    <option value="expired">{lang === 'np' ? 'म्याद समाप्त भएका (Expired)' : 'Expired Notices'}</option>
-                  </select>
-                </div>
-
-                {/* Status Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3 text-teal-500" />
-                    {lang === 'np' ? 'स्थिति (Status)' : 'Status'}
-                  </label>
-                  <select
-                    value={selectedStatus}
-                    onChange={(e) => {
-                      setSelectedStatus(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    <option value="all">{lang === 'np' ? 'सबै स्थिति' : 'All Statuses'}</option>
-                    <option value="published">{lang === 'np' ? 'प्रकाशित (Published)' : 'Published'}</option>
-                    <option value="closing_soon">{lang === 'np' ? 'अन्तिम म्याद (Closing Soon)' : 'Closing Soon'}</option>
-                    <option value="expired">{lang === 'np' ? 'म्याद समाप्त (Expired)' : 'Expired'}</option>
-                  </select>
-                </div>
-
-                {/* Organization Direct Filter */}
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <Briefcase className="w-3 h-3 text-cyan-500" />
-                    {lang === 'np' ? 'निकाय (Organization)' : 'Organization'}
-                  </label>
-                  <select
-                    value={selectedOrg}
-                    onChange={(e) => {
-                      setSelectedOrg(e.target.value);
-                      setPage(1);
-                    }}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    <option value="All">{lang === 'np' ? 'सबै निकाय' : 'All Organizations'}</option>
-                    <option value="PSC">Lok Sewa Aayog (PSC)</option>
-                    <option value="TSC">Teachers Service Commission (TSC)</option>
-                    <option value="NRB">Nepal Rastra Bank</option>
-                    <option value="Nepal Bank">Nepal Bank Limited</option>
-                    <option value="Nepal Police">Nepal Police</option>
-                    <option value="Statistics">National Statistics Office</option>
-                    <option value="MoALD">Ministry of Agriculture</option>
-                    <option value="Koshi">Koshi Pradesh PSC</option>
-                    <option value="Madhesh">Madhesh Pradesh PSC</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 3. SORTING AND VIEW CONTROLS */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
-            {/* Active Filter Tags */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-slate-400 font-medium mr-1">
-                {lang === 'np' ? 'क्रमबद्ध:' : 'Sort By:'}
-              </span>
-              {[
-                { id: 'newest', labelEn: 'Newest', labelNp: 'नयाँ' },
-                { id: 'deadline_soonest', labelEn: 'Deadline Soonest', labelNp: 'छिटो म्याद' },
-                { id: 'most_viewed', labelEn: 'Most Viewed', labelNp: 'धेरै हेरिएका' },
-                { id: 'most_saved', labelEn: 'Most Saved', labelNp: 'धेरै सुरक्षित' }
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setSortBy(opt.id as VacancySortOption);
-                    setPage(1);
-                  }}
-                  className={`px-3 py-1 rounded-lg font-semibold transition cursor-pointer ${
-                    sortBy === opt.id
-                      ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {lang === 'np' ? opt.labelNp : opt.labelEn}
-                </button>
-              ))}
-            </div>
-
-            {/* Pagination Size Selector */}
-            <div className="flex items-center gap-2 self-end sm:self-auto text-slate-500 dark:text-slate-400">
-              <span className="text-[11px] font-medium">Per page:</span>
-              {[6, 12, 24].map((size) => (
-                <button
-                  key={size}
-                  onClick={() => {
-                    setLimit(size);
-                    setPage(1);
-                  }}
-                  className={`px-2 py-0.5 rounded-md font-mono text-[11px] ${
-                    limit === size
-                      ? 'bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-white font-bold'
-                      : 'hover:bg-slate-200 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* 4. ERROR STATE BANNER */}
-      {fetchError && (
-        <div className="bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 p-4 rounded-2xl flex items-start justify-between gap-3 text-rose-800 dark:text-rose-200 text-xs">
-          <div className="flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-bold">Error loading live vacancy notices</p>
-              <p className="text-[11px] text-rose-600 dark:text-rose-300 mt-0.5">{fetchError}</p>
+      {/* BROWSE BY TYPE */}
+      <section className="mb-14" aria-labelledby="browse-types">
+        <div className="text-center">
+          <p className="text-sm text-ink-soft">{np ? 'विज्ञापनका प्रकार' : 'Browse by type'}</p>
+          <h2 id="browse-types" className="mt-1 font-display text-3xl sm:text-4xl font-semibold text-ink">
+            {np ? <>तपाईंको <span className="marker">क्षेत्र</span> छान्नुहोस्</> : <>Pick your <span className="marker">sector</span></>}
+          </h2>
+        </div>
+        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+          {VACANCY_TYPES.map((type) => {
+            const Icon = type.icon;
+            const count = typeCounts[type.id] || 0;
+            const active = selectedCategory === type.id;
+            return (
+              <button
+                key={type.id}
+                onClick={() => pickType(type.id)}
+                aria-pressed={active}
+                className={`group relative overflow-hidden text-left rounded-[1.75rem] p-4 sm:p-5 bg-gradient-to-br ${tintFor(type.id)} transition hover:-translate-y-0.5 ${
+                  active ? 'ring-2 ring-ink' : 'ring-1 ring-black/[0.03]'
+                }`}
+              >
+                <span className="w-10 h-10 rounded-full bg-white/80 inline-flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-ink" strokeWidth={1.8} />
+                </span>
+                <span className="mt-6 sm:mt-8 block font-display text-lg sm:text-xl font-medium text-ink leading-tight">{np ? type.np : type.en}</span>
+                <span className="mt-0.5 block text-xs sm:text-sm text-ink-soft">
+                  {count} {np ? 'विज्ञापन' : count === 1 ? 'notice' : 'notices'}
+                </span>
+                <ArrowUpRight className="absolute top-4 right-4 w-4 h-4 text-ink opacity-40 group-hover:opacity-100 transition" />
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* FILTER PANEL */}
+      {isAdvancedFiltersOpen && (
+        <section className="mb-10 p-5 sm:p-7 rounded-[2rem] bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-display text-xl font-semibold text-ink dark:text-white">{np ? 'फिल्टरहरू' : 'Filters'}</h2>
+            <div className="flex items-center gap-2">
+              {activeFiltersCount > 0 && (
+                <button onClick={handleResetFilters} className="px-4 h-9 rounded-full text-sm text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white transition">
+                  {np ? 'सबै हटाउनुहोस्' : 'Clear all'}
+                </button>
+              )}
+              <button
+                onClick={() => setIsAdvancedFiltersOpen(false)}
+                className="w-9 h-9 inline-flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 text-ink dark:text-white"
+                aria-label="Close filters"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           </div>
-          <button
-            onClick={fetchVacancies}
-            className="px-3 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700 transition shrink-0"
-          >
-            Retry
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className={labelClass}>{np ? 'प्रदेश' : 'Province'}</label>
+              <select value={selectedProvince} onChange={(e) => { setSelectedProvince(e.target.value); setPage(1); }} className={selectClass}>
+                {PROVINCES.map((prov) => (
+                  <option key={prov} value={prov}>{prov}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'जिल्ला' : 'District'}</label>
+              <select value={selectedDistrict} onChange={(e) => { setSelectedDistrict(e.target.value); setPage(1); }} className={selectClass}>
+                <option value="All">{np ? 'सबै जिल्ला' : 'All districts'}</option>
+                <option value="Kathmandu">Kathmandu</option>
+                <option value="Pokhara">Pokhara / Kaski</option>
+                <option value="Biratnagar">Biratnagar / Morang</option>
+                <option value="Lalitpur">Lalitpur</option>
+                <option value="Chitwan">Chitwan</option>
+                <option value="Butwal">Butwal / Rupandehi</option>
+                <option value="Janakpur">Janakpur / Dhanusha</option>
+                {availableDistricts.map((d, i) => (
+                  <option key={i} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'न्यूनतम योग्यता' : 'Qualification'}</label>
+              <select value={selectedQualification} onChange={(e) => { setSelectedQualification(e.target.value); setPage(1); }} className={selectClass}>
+                {QUALIFICATIONS.map((q) => (
+                  <option key={q} value={q}>{q}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'विषय' : 'Subject'}</label>
+              <select value={selectedSubject} onChange={(e) => { setSelectedSubject(e.target.value); setPage(1); }} className={selectClass}>
+                {SUBJECT_OPTIONS.map((sub) => (
+                  <option key={sub.id} value={sub.id}>{np ? sub.labelNp : sub.labelEn}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'तह / श्रेणी' : 'Job level'}</label>
+              <select value={selectedJobLevel} onChange={(e) => { setSelectedJobLevel(e.target.value); setPage(1); }} className={selectClass}>
+                {JOB_LEVEL_OPTIONS.map((lvl) => (
+                  <option key={lvl.id} value={lvl.id}>{np ? lvl.labelNp : lvl.labelEn}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'म्याद' : 'Deadline'}</label>
+              <select value={selectedDeadline} onChange={(e) => { setSelectedDeadline(e.target.value as VacancyDeadlineFilter); setPage(1); }} className={selectClass}>
+                <option value="all">{np ? 'सबै म्याद' : 'Any deadline'}</option>
+                <option value="active">{np ? 'म्याद बाँकी' : 'Still open'}</option>
+                <option value="week">{np ? '७ दिनभित्र' : 'Closing in 7 days'}</option>
+                <option value="month">{np ? '३० दिनभित्र' : 'Closing in 30 days'}</option>
+                <option value="expired">{np ? 'म्याद समाप्त' : 'Expired'}</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'स्थिति' : 'Status'}</label>
+              <select value={selectedStatus} onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }} className={selectClass}>
+                <option value="all">{np ? 'सबै स्थिति' : 'Any status'}</option>
+                <option value="published">{np ? 'प्रकाशित' : 'Published'}</option>
+                <option value="closing_soon">{np ? 'अन्तिम म्याद' : 'Closing soon'}</option>
+                <option value="expired">{np ? 'म्याद समाप्त' : 'Expired'}</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClass}>{np ? 'निकाय' : 'Organization'}</label>
+              <select value={selectedOrg} onChange={(e) => { setSelectedOrg(e.target.value); setPage(1); }} className={selectClass}>
+                <option value="All">{np ? 'सबै निकाय' : 'All organizations'}</option>
+                <option value="PSC">Lok Sewa Aayog (PSC)</option>
+                <option value="TSC">Teachers Service Commission (TSC)</option>
+                <option value="NRB">Nepal Rastra Bank</option>
+                <option value="Nepal Bank">Nepal Bank Limited</option>
+                <option value="Nepal Police">Nepal Police</option>
+                <option value="Statistics">National Statistics Office</option>
+                <option value="MoALD">Ministry of Agriculture</option>
+                <option value="Koshi">Koshi Pradesh PSC</option>
+                <option value="Madhesh">Madhesh Pradesh PSC</option>
+              </select>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* SECTION HEADING + SORT */}
+      <div ref={listTopRef} className="scroll-mt-28 flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+        <div>
+          <p className="text-sm text-ink-soft dark:text-slate-400">{np ? 'नयाँ सूचनाहरू' : 'Latest notices'}</p>
+          <h2 className="mt-1 font-display text-3xl sm:text-4xl font-semibold text-ink dark:text-white">
+            {np ? (
+              <>खुला <span className="marker">विज्ञापनहरू</span></>
+            ) : (
+              <>Open <span className="marker">vacancies</span></>
+            )}
+          </h2>
+          {selectedCategory !== 'All' && (
+            <button
+              onClick={() => {
+                setSelectedCategory('All');
+                setPage(1);
+              }}
+              className="mt-3 h-8 pl-3.5 pr-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink text-white text-[13px]"
+              title={np ? 'फिल्टर हटाउनुहोस्' : 'Clear sector filter'}
+            >
+              {(() => {
+                const type = VACANCY_TYPES.find((v) => v.id === selectedCategory);
+                return type ? (np ? type.np : type.en) : selectedCategory;
+              })()}
+              <X className="w-3.5 h-3.5 opacity-70" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1 p-1 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 overflow-x-auto no-scrollbar max-w-full self-start sm:self-auto">
+          {SORTS.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => {
+                setSortBy(opt.id as VacancySortOption);
+                setPage(1);
+              }}
+              className={`px-3.5 h-9 rounded-full text-[13px] whitespace-nowrap transition ${
+                sortBy === opt.id
+                  ? 'bg-ink text-white dark:bg-white dark:text-ink'
+                  : 'text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white'
+              }`}
+            >
+              {np ? opt.labelNp : opt.labelEn}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ERROR */}
+      {fetchError && (
+        <div className="mb-6 px-5 py-4 rounded-3xl bg-white dark:bg-slate-900 ring-1 ring-rose-200 dark:ring-rose-900 flex items-center justify-between gap-3 text-sm">
+          <span className="flex items-center gap-2 text-ink-soft dark:text-slate-300">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+            {np ? 'प्रत्यक्ष सूचना लोड हुन सकेन।' : 'Couldn’t load live notices. Showing saved data.'}
+          </span>
+          <button onClick={fetchVacancies} className="px-4 h-9 rounded-full bg-ink text-white text-sm shrink-0">
+            {np ? 'पुनः प्रयास' : 'Retry'}
           </button>
         </div>
       )}
 
-      {/* 5. LOADING SKELETON STATE */}
+      {/* LIST */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {Array.from({ length: limit > 6 ? 6 : limit }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-xs animate-pulse space-y-4"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-md w-24" />
-                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-md w-16" />
+            <div key={i} className="rounded-[1.75rem] bg-white dark:bg-slate-900 shadow-soft overflow-hidden animate-pulse">
+              <div className="h-28 bg-slate-100 dark:bg-white/5" />
+              <div className="p-5 space-y-3">
+                <div className="h-5 bg-slate-100 dark:bg-white/5 rounded-full w-4/5" />
+                <div className="h-4 bg-slate-100 dark:bg-white/5 rounded-full w-3/5" />
+                <div className="h-10 bg-slate-100 dark:bg-white/5 rounded-full mt-6" />
               </div>
-              <div className="space-y-2">
-                <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-md w-4/5" />
-                <div className="h-3.5 bg-slate-100 dark:bg-slate-800/60 rounded-md w-3/5" />
-              </div>
-              <div className="h-20 bg-slate-100 dark:bg-slate-800/40 rounded-2xl" />
-              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-xl" />
             </div>
           ))}
         </div>
       ) : items.length === 0 ? (
-        /* 6. EMPTY SEARCH STATE */
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 sm:p-14 text-center text-slate-500 dark:text-slate-400 space-y-4 shadow-sm">
-          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto text-slate-400 dark:text-slate-500">
-            <Search className="w-8 h-8" />
+        <div className="py-16 px-6 text-center rounded-[2rem] bg-white dark:bg-slate-900 shadow-soft">
+          <div className="w-14 h-14 mx-auto rounded-full bg-sky-100 dark:bg-white/10 flex items-center justify-center">
+            <Search className="w-6 h-6 text-ink dark:text-white" />
           </div>
-          <div className="max-w-md mx-auto space-y-1">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              {lang === 'np' ? 'कुनै पनि विज्ञापन भेटिएन' : 'No government vacancies match your search'}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {lang === 'np'
-                ? 'कृपया फरक शब्दहरू, "All Nepal" वा न्यूनतम योग्यता परिवर्तन गरी पुनः प्रयास गर्नुहोस्।'
-                : 'Try adjusting your search terms, removing filters, or selecting "All Nepal" to view active postings.'}
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-            <button
-              onClick={handleResetFilters}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>{lang === 'np' ? 'सबै फिल्टर हटाउनुहोस्' : 'Reset All Filters'}</span>
-            </button>
-          </div>
+          <h3 className="mt-5 font-display text-2xl font-semibold text-ink dark:text-white">
+            {np ? 'कुनै विज्ञापन भेटिएन' : 'No vacancies found'}
+          </h3>
+          <p className="mt-2 text-sm text-ink-soft dark:text-slate-400 max-w-sm mx-auto">
+            {np ? 'फरक शब्द प्रयोग गर्नुहोस् वा फिल्टर हटाउनुहोस्।' : 'Try different words or clear your filters.'}
+          </p>
+          <button onClick={handleResetFilters} className="mt-6 px-5 h-11 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill">
+            {np ? 'फिल्टर हटाउनुहोस्' : 'Clear filters'}
+          </button>
         </div>
       ) : (
-        /* 7. VACANCY CARDS GRID */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {items.map((vacancy) => {
             const isEligible = checkQuickEligibility(vacancy);
             const isBookmarked = bookmarkedIds.includes(vacancy.id);
             const isClosingSoon = vacancy.status === 'closing_soon' || vacancy.status === ('closing' as any);
             const isExpired = vacancy.status === 'expired';
+            const posts = vacancy.number_of_posts || vacancy.posts || 1;
+            const applyHref = vacancy.official_source_url || vacancy.applyUrl;
 
             return (
-              <div
+              <article
                 key={vacancy.id}
                 onClick={() => onSelectVacancy(vacancy)}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 hover:border-blue-400 dark:hover:border-blue-700 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between group relative overflow-hidden cursor-pointer"
+                className="group flex flex-col rounded-[1.75rem] bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 overflow-hidden cursor-pointer transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-20px_rgb(11_18_32/0.25)]"
               >
-                {/* Top Accent Strip */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1.5 ${
-                    isExpired
-                      ? 'bg-slate-300 dark:bg-slate-700'
-                      : isClosingSoon
-                      ? 'bg-amber-500'
-                      : 'bg-emerald-500'
-                  }`}
-                />
-
-                <div className="space-y-3.5">
-                  {/* Category, Notice Number & Save Button */}
+                {/* Pastel band */}
+                <div className={`relative h-32 p-4 bg-gradient-to-b ${tintFor(vacancy.category || '')}`}>
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/90 px-2.5 py-0.5 rounded-lg text-[10px] font-bold font-mono">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs text-ink dark:text-slate-100">
                         {vacancy.category}
                       </span>
-                      {vacancy.noticeNumber && (
-                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-lg text-[10px] font-mono border border-slate-200 dark:border-slate-700 truncate max-w-[130px]">
-                          #{vacancy.noticeNumber}
-                        </span>
-                      )}
+                      <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs text-ink dark:text-slate-100">
+                        {isExpired ? (np ? 'समाप्त' : 'Closed') : isClosingSoon ? (np ? 'छिट्टै बन्द' : 'Closing soon') : np ? 'खुला' : 'Open'}
+                      </span>
                     </div>
-
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onBookmark(vacancy);
                       }}
-                      title="Save / Bookmark Vacancy"
-                      className={`p-2 rounded-xl border transition cursor-pointer ${
-                        isBookmarked
-                          ? 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                          : 'bg-slate-50 dark:bg-slate-800/80 text-slate-400 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-slate-700 dark:hover:text-slate-200'
+                      title={np ? 'सुरक्षित गर्नुहोस्' : 'Save vacancy'}
+                      aria-pressed={isBookmarked}
+                      className={`w-9 h-9 shrink-0 inline-flex items-center justify-center rounded-full transition ${
+                        isBookmarked ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'bg-white/80 dark:bg-white/10 text-ink dark:text-white hover:bg-white'
                       }`}
                     >
-                      <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-amber-500 text-amber-500' : ''}`} />
+                      <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
                     </button>
                   </div>
-
-                  {/* Title & Organization */}
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition font-sans leading-snug line-clamp-2">
-                      {lang === 'np' && vacancy.titleNp ? vacancy.titleNp : vacancy.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5 mt-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
-                      <span className="truncate">{vacancy.organization || vacancy.org}</span>
-                    </p>
-                  </div>
-
-                  {/* Key Stats Pill Box */}
-                  <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <div>
-                        <span className="text-[9px] text-slate-400 uppercase font-semibold block leading-none">
-                          {t('posts', lang)}
-                        </span>
-                        <span className="font-bold text-slate-900 dark:text-slate-100 text-xs">
-                          {vacancy.number_of_posts || vacancy.posts || 1} Seats
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                      <div>
-                        <span className="text-[9px] text-slate-400 uppercase font-semibold block leading-none">
-                          {t('deadline', lang)}
-                        </span>
-                        <span className={`font-bold text-xs ${isClosingSoon ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'}`}>
-                          {vacancy.application_deadline || vacancy.deadline || 'Ongoing'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-                      <div>
-                        <span className="text-[9px] text-slate-400 uppercase font-semibold block leading-none">
-                          {lang === 'np' ? 'प्रदेश' : 'Province'}
-                        </span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300 text-xs truncate max-w-[90px] block">
-                          {vacancy.province}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
-                      <div>
-                        <span className="text-[9px] text-slate-400 uppercase font-semibold block leading-none">
-                          {lang === 'np' ? 'तह/श्रेणी' : 'Level'}
-                        </span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300 text-xs truncate max-w-[90px] block">
-                          {vacancy.job_level || vacancy.level || 'Assistant'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Qualification & Live Engagement Badges */}
-                  <div className="space-y-2 pt-0.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-500 dark:text-slate-400 text-[11px] flex items-center gap-1">
-                        <GraduationCap className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                        <strong className="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-[130px]">
-                          {vacancy.qualification || vacancy.qualifications?.minLevel}
-                        </strong>
-                      </span>
-
-                      {/* Eligibility Badge */}
-                      {isEligible ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 px-2 py-0.5 rounded-full">
-                          <CheckCircle className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Eligible
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-                          Check Fit
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Engagement Metric Indicators */}
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
-                      <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        <span>{vacancy.viewsCount || 120} views</span>
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Bookmark className="w-3 h-3" />
-                        <span>{vacancy.savesCount || 24} saved</span>
-                      </span>
-                    </div>
+                  <div className="absolute left-4 bottom-3 flex items-baseline gap-1.5 text-ink dark:text-white">
+                    <span className="font-display text-4xl font-semibold leading-none">{posts}</span>
+                    <span className="text-xs text-ink-soft dark:text-slate-300">{posts === 1 ? (np ? 'पद' : 'post') : np ? 'पदहरू' : 'posts'}</span>
                   </div>
                 </div>
 
-                {/* Footer Action Buttons */}
-                <div className="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => onSelectVacancy(vacancy)}
-                    className="flex-1 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700 cursor-pointer"
-                  >
-                    <span>{t('viewDetails', lang)}</span>
-                  </button>
+                {/* Body */}
+                <div className="flex-1 flex flex-col p-5">
+                  <h3 className="font-display text-[1.2rem] leading-snug font-medium text-ink dark:text-white line-clamp-2">
+                    {np && vacancy.titleNp ? vacancy.titleNp : vacancy.title}
+                  </h3>
+                  <p className="mt-1.5 text-sm text-ink-soft dark:text-slate-400 truncate">{vacancy.organization || vacancy.org}</p>
 
-                  <a
-                    href={vacancy.official_source_url || vacancy.applyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 shadow-xs"
-                  >
-                    <span>{t('applyNow', lang)}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-ink dark:text-slate-200">
+                    <span className={`inline-flex items-center gap-1.5 ${isClosingSoon ? 'text-rose-600 dark:text-rose-400' : ''}`}>
+                      <Clock className="w-3.5 h-3.5 opacity-60" />
+                      {vacancy.application_deadline || vacancy.deadline || (np ? 'चालु' : 'Ongoing')}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 opacity-60" />
+                      {vacancy.province}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 min-w-0">
+                      <GraduationCap className="w-3.5 h-3.5 opacity-60 shrink-0" />
+                      <span className="truncate max-w-[9rem]">{vacancy.qualification || vacancy.qualifications?.minLevel}</span>
+                    </span>
+                  </div>
+
+                  <div className="mt-auto pt-5">
+                    <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-3">
+                      <span className={`text-xs whitespace-nowrap ${isEligible ? 'text-emerald-600 dark:text-emerald-400' : 'text-ink-soft dark:text-slate-400'} inline-flex items-center gap-1`}>
+                        {isEligible ? <Check className="w-3.5 h-3.5" /> : null}
+                        {isEligible ? (np ? 'योग्य' : 'Eligible') : np ? 'योग्यता जाँच' : 'Check fit'}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {applyHref && (
+                          <a
+                            href={applyHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="h-9 px-3.5 inline-flex items-center gap-1 whitespace-nowrap rounded-full ring-1 ring-slate-200 dark:ring-white/15 text-[13px] text-ink dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition"
+                          >
+                            {np ? 'आवेदन' : 'Apply'}
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectVacancy(vacancy);
+                          }}
+                          className="h-9 px-4 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-[13px] font-medium group-hover:shadow-pill transition"
+                        >
+                          {np ? 'हेर्नुहोस्' : 'View'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
       )}
 
-      {/* 8. PAGINATION CONTROLS */}
+      {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-            Showing <strong className="text-slate-900 dark:text-white font-bold">{(page - 1) * limit + 1}</strong> to{' '}
-            <strong className="text-slate-900 dark:text-white font-bold">
-              {Math.min(page * limit, totalCount)}
-            </strong>{' '}
-            of <strong className="text-slate-900 dark:text-white font-bold">{totalCount}</strong> government notices
-          </div>
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-ink-soft dark:text-slate-400">
+            {(page - 1) * limit + 1}–{Math.min(page * limit, totalCount)} {np ? 'मध्ये' : 'of'} {totalCount}
+          </p>
 
-          <div className="flex items-center gap-1">
-            {/* First Page */}
-            <button
-              onClick={() => setPage(1)}
-              disabled={page <= 1}
-              className="p-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition"
-              title="First Page"
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </button>
-
-            {/* Previous Page */}
+          <div className="flex items-center gap-1 p-1 rounded-full bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition flex items-center gap-1"
+              className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Prev</span>
             </button>
-
-            {/* Page Number Buttons */}
             {Array.from({ length: totalPages }, (_, idx) => idx + 1)
               .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
               .map((p, idx, arr) => {
                 const prevP = arr[idx - 1];
                 const showEllipsis = prevP && p - prevP > 1;
-
                 return (
                   <React.Fragment key={p}>
-                    {showEllipsis && <span className="px-1 text-slate-400 text-xs">...</span>}
+                    {showEllipsis && <span className="px-1 text-slate-400 text-sm">…</span>}
                     <button
                       onClick={() => setPage(p)}
-                      className={`w-8 h-8 rounded-xl text-xs font-bold transition ${
-                        page === p
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      aria-current={page === p ? 'page' : undefined}
+                      className={`w-9 h-9 rounded-full text-sm transition ${
+                        page === p ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                       }`}
                     >
                       {p}
@@ -1027,27 +877,31 @@ export const VacancyList: React.FC<VacancyListProps> = ({
                   </React.Fragment>
                 );
               })}
-
-            {/* Next Page */}
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition flex items-center gap-1"
+              className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Next page"
             >
-              <span className="hidden sm:inline">Next</span>
               <ChevronRight className="w-4 h-4" />
             </button>
-
-            {/* Last Page */}
-            <button
-              onClick={() => setPage(totalPages)}
-              disabled={page >= totalPages}
-              className="p-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition"
-              title="Last Page"
-            >
-              <ChevronsRight className="w-4 h-4" />
-            </button>
           </div>
+
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(Number(e.target.value));
+              setPage(1);
+            }}
+            aria-label="Results per page"
+            className="h-9 px-3 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 text-sm text-ink-soft dark:text-slate-300 focus:outline-none"
+          >
+            {[6, 12, 24].map((size) => (
+              <option key={size} value={size}>
+                {size} {np ? 'प्रति पृष्ठ' : 'per page'}
+              </option>
+            ))}
+          </select>
         </div>
       )}
     </div>

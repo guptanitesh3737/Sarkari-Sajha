@@ -139,10 +139,10 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl transition-all my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-[2rem] w-full max-w-2xl overflow-hidden transition-all my-8 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Header */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
+        <div className="p-5 border-b flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-sm">
               <MessageSquare className="w-5 h-5" />
@@ -152,7 +152,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                 <h3 className="text-base font-black text-slate-900 dark:text-white">
                   {lang === 'np' ? 'निजी बिटा प्रतिक्रिया केन्द्र' : 'Private Beta Feedback Center'}
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
                   Beta v1.0
                 </span>
               </div>
@@ -166,14 +166,14 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 px-5 pt-2">
+        <div className="flex border-b bg-slate-50 dark:bg-slate-950/80 px-5 pt-2">
           <button
             onClick={() => setActiveTab('feedback')}
             className={`pb-3 px-4 text-xs font-bold transition border-b-2 flex items-center gap-2 ${
@@ -220,7 +220,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
               <form onSubmit={handleFeedbackSubmit} className="space-y-4">
                 {/* Category Grid */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
                     {lang === 'np' ? 'प्रतिक्रियाको प्रकार छान्नुहोस्:' : 'Select Feedback Category:'}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -232,9 +232,9 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                           key={item.type}
                           type="button"
                           onClick={() => setFeedbackType(item.type)}
-                          className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition text-xs font-semibold ${
+                          className={`p-2.5 rounded-full border text-left flex items-center gap-2 transition text-xs font-semibold ${
                             isSelected
-                              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-400 dark:border-rose-700 text-rose-700 dark:text-rose-300 shadow-xs'
+                              ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 shadow-xs'
                               : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                           }`}
                         >
@@ -248,7 +248,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
 
                 {/* Rating */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                     {lang === 'np' ? 'समग्र प्लेटफर्म अनुभव मूल्याङ्कन:' : 'Overall Platform Experience Rating:'}
                   </label>
                   <div className="flex items-center space-x-1.5">
@@ -276,7 +276,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
 
                 {/* Title */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'np' ? 'शीर्षक / विषय:' : 'Summary / Title:'}
                   </label>
                   <input
@@ -289,13 +289,13 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                         ? 'जस्तै: अधिकृत पाठ्यक्रम पिडिएफ डाउनलोडमा समस्या...'
                         : 'e.g. Broken link on Section Officer official notice or Mobile layout issue...'
                     }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300"
                   />
                 </div>
 
                 {/* Detailed Description */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'np' ? 'विस्तृत विवरण:' : 'Detailed Description & Steps to Reproduce:'}
                   </label>
                   <textarea
@@ -308,7 +308,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                         ? 'कृपया के समस्या आयो वा के सुधार चाहनुहुन्छ स्पष्ट लेख्नुहोस्...'
                         : 'Please describe what happened, what was expected, and how we can improve this for all candidates...'
                     }
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full px-3.5 py-2.5 bg-sky-50/70 dark:bg-slate-950 rounded-2xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300"
                   />
                 </div>
 
@@ -322,7 +322,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <button
                     type="submit"
                     disabled={submittingFeedback || !title.trim() || !description.trim()}
-                    className="py-2.5 px-5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-sm"
+                    className="py-2.5 px-5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-bold rounded-full transition flex items-center gap-2 shadow-sm"
                   >
                     {submittingFeedback ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -354,7 +354,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
               </div>
             ) : (
               <form onSubmit={handleSurveySubmit} className="space-y-5">
-                <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl text-xs text-blue-800 dark:text-blue-300">
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl text-xs text-blue-800 dark:text-blue-300">
                   <p className="font-semibold">
                     📋 SarkariSajha Candidate Launch Survey (10 Questions)
                   </p>
@@ -374,7 +374,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q1_purpose}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q1_purpose: e.target.value })}
                     placeholder="e.g. Lok Sewa Section Officer preparation, daily vacancy tracking, syllabus checking..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -389,7 +389,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q2_most_useful_feature}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q2_most_useful_feature: e.target.value })}
                     placeholder="e.g. AI Career Assistant, Timed Mock Exam with Negative Marking, Gazette Verification..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -403,7 +403,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q3_confusing_parts}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q3_confusing_parts: e.target.value })}
                     placeholder="e.g. Navigating between provincial and federal notices, timer interface..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -415,7 +415,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <select
                     value={surveyAnswers.q4_found_relevant_vacancy}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q4_found_relevant_vacancy: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   >
                     <option value="Yes - Matched perfectly">Yes - Matched perfectly (हो, सजिलै भेटियो)</option>
                     <option value="Yes - But needed manual searching">Yes - But needed manual searching (भेटियो तर खोज्नुपर्‍यो)</option>
@@ -431,7 +431,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <select
                     value={surveyAnswers.q5_used_quiz}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q5_used_quiz: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   >
                     <option value="Yes - Completed full timed sets">Yes - Completed full timed sets (हो, समयसीमासहित पूरा गरें)</option>
                     <option value="Yes - Tested a few questions">Yes - Tested a few questions (केही प्रश्न अभ्यास गरें)</option>
@@ -447,7 +447,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <select
                     value={surveyAnswers.q6_ai_assistant_helpful}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q6_ai_assistant_helpful: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   >
                     <option value="Very helpful - Accurate citations">Very helpful - Accurate citations (धेरै उपयोगी)</option>
                     <option value="Moderately helpful">Moderately helpful (ठीकै)</option>
@@ -466,7 +466,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q7_weekly_return_reason}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q7_weekly_return_reason: e.target.value })}
                     placeholder="e.g. Weekly updated model sets, instant deadline alerts, current affairs summary..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -481,7 +481,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q8_biggest_problem}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q8_biggest_problem: e.target.value })}
                     placeholder="e.g. Need more provincial model sets, offline mode support..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -493,7 +493,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <select
                     value={surveyAnswers.q9_recommend_rating}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q9_recommend_rating: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   >
                     <option value="10 - Extremely Likely">10 / 10 - Extremely Likely (अवश्य गर्नेछु)</option>
                     <option value="8 - Likely">8 / 10 - Likely (सम्भवतः गर्नेछु)</option>
@@ -513,7 +513,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                     value={surveyAnswers.q10_improve_first}
                     onChange={(e) => setSurveyAnswers({ ...surveyAnswers, q10_improve_first: e.target.value })}
                     placeholder="e.g. Add offline study notes, audio explanation for constitution, more banking mock tests..."
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full text-xs"
                   />
                 </div>
 
@@ -521,7 +521,7 @@ export const BetaFeedbackModal: React.FC<BetaFeedbackModalProps> = ({
                   <button
                     type="submit"
                     disabled={submittingSurvey}
-                    className="py-2.5 px-6 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-sm"
+                    className="py-2.5 px-6 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-bold rounded-full transition flex items-center gap-2 shadow-sm"
                   >
                     {submittingSurvey ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     <span>Submit 10-Question Survey</span>

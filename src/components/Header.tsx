@@ -1,28 +1,17 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Briefcase,
-  LayoutDashboard,
-  Sparkles,
-  Award,
   Bell,
-  BookmarkCheck,
-  ShieldAlert,
-  Globe,
-  User,
-  CheckCircle2,
-  Lock,
-  Phone,
-  ShieldCheck,
-  FileSpreadsheet,
-  Sun,
-  Moon,
-  GraduationCap,
+  ChevronDown,
+  Sparkles,
   FileText,
   Trophy,
+  BookmarkCheck,
+  ShieldAlert,
   Crown,
-  Bot,
   Download,
-  MessageSquarePlus
+  MessageSquarePlus,
+  FileSpreadsheet,
+  UserRound
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { Language, UserProfile, NotificationLog, Theme, UserSubscription } from '../types';
@@ -51,6 +40,19 @@ interface HeaderProps {
   subscription?: UserSubscription;
 }
 
+/** Four-petal brand mark, echoing the reference logo. */
+export const BrandMark: React.FC<{ className?: string }> = ({ className = 'w-7 h-7' }) => (
+  <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
+    <g fill="#3b8fd6">
+      <circle cx="16" cy="8.5" r="6.5" />
+      <circle cx="16" cy="23.5" r="6.5" />
+      <circle cx="8.5" cy="16" r="6.5" />
+      <circle cx="23.5" cy="16" r="6.5" />
+    </g>
+    <circle cx="16" cy="16" r="3.2" fill="#fff" />
+  </svg>
+);
+
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
@@ -73,238 +75,203 @@ export const Header: React.FC<HeaderProps> = ({
   unreadInAppCount = 0,
   subscription
 }) => {
-  const unreadCount = (notifications.filter(n => n.status === 'sent').length) + unreadInAppCount;
-  const isPro = subscription?.tier === 'pro' || subscription?.tier === 'yearly_pro';
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
 
-  const navItems = [
-    { id: 'vacancies', label: t('navVacancies', lang), icon: Briefcase },
-    { id: 'dashboard', label: t('navDashboard', lang), icon: LayoutDashboard },
-    { id: 'syllabus', label: t('navSyllabus', lang), icon: GraduationCap },
-    { id: 'ai_assistant', label: t('navAiAssistant', lang), icon: Bot, badge: 'AI Bot' },
-    { id: 'subjective', label: t('navSubjective', lang), icon: FileText, badge: 'Phase 2' },
-    { id: 'matcher', label: t('navMatcher', lang), icon: Sparkles, badge: 'AI' },
-    { id: 'quizzes', label: t('navQuiz', lang), icon: Award },
-    { id: 'leaderboard', label: t('navLeaderboard', lang), icon: Trophy },
-    { id: 'alerts', label: t('navAlerts', lang), icon: Bell, count: unreadCount },
-    { id: 'tracker', label: t('navTracker', lang), icon: BookmarkCheck }
+  const unreadCount = notifications.filter((n) => n.status === 'sent').length + unreadInAppCount;
+  const isPro = subscription?.tier === 'pro' || subscription?.tier === 'yearly_pro';
+  const canAdmin = isAdmin || (userRole && ['editor', 'admin', 'super_admin'].includes(userRole));
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [moreOpen]);
+
+  const primary = [
+    { id: 'vacancies', label: lang === 'np' ? 'विज्ञापन' : 'Vacancies' },
+    { id: 'syllabus', label: lang === 'np' ? 'पाठ्यक्रम' : 'Syllabus' },
+    { id: 'quizzes', label: lang === 'np' ? 'क्विज' : 'Quiz' },
+    { id: 'ai_assistant', label: lang === 'np' ? 'एआई सहायक' : 'AI Assistant' },
+    { id: 'dashboard', label: lang === 'np' ? 'ड्यासबोर्ड' : 'Dashboard' }
   ];
 
-  // Only show Admin Control Panel link if user is verified editor/admin/super_admin
-  if (isAdmin || (userRole && ['editor', 'admin', 'super_admin'].includes(userRole))) {
-    navItems.push({ id: 'admin', label: t('navAdmin', lang), icon: ShieldAlert });
-  }
+  const secondary = [
+    { id: 'tracker', label: t('navTracker', lang), icon: BookmarkCheck },
+    { id: 'matcher', label: t('navMatcher', lang), icon: Sparkles },
+    { id: 'subjective', label: t('navSubjective', lang), icon: FileText },
+    { id: 'leaderboard', label: t('navLeaderboard', lang), icon: Trophy },
+    { id: 'alerts', label: t('navAlerts', lang), icon: Bell },
+    ...(canAdmin ? [{ id: 'admin', label: t('navAdmin', lang), icon: ShieldAlert }] : [])
+  ];
+
+  const utilities = [
+    onOpenSubscription && {
+      label: isPro ? (lang === 'np' ? 'प्रो सदस्य' : 'Pro membership') : lang === 'np' ? 'प्रो सदस्यता' : 'Upgrade to Pro',
+      icon: Crown,
+      onClick: onOpenSubscription
+    },
+    onOpenInstallPrompt && { label: lang === 'np' ? 'एप इन्स्टल' : 'Install app', icon: Download, onClick: onOpenInstallPrompt },
+    onOpenSheetsModal && { label: 'Google Sheets sync', icon: FileSpreadsheet, onClick: onOpenSheetsModal },
+    onOpenBetaFeedback && {
+      label: lang === 'np' ? 'प्रतिक्रिया' : 'Send feedback',
+      icon: MessageSquarePlus,
+      onClick: onOpenBetaFeedback
+    },
+    firebaseUser && { label: lang === 'np' ? 'खाता' : 'Account & sign-in', icon: UserRound, onClick: onOpenAuth }
+  ].filter(Boolean) as { label: string; icon: React.ElementType; onClick: () => void }[];
+
+  const secondaryActive = secondary.some((s) => s.id === activeTab);
+  const initial = (userProfile.name || firebaseUser?.displayName || firebaseUser?.email || 'U').trim().charAt(0).toUpperCase();
+
+  // No `display` here so callers can choose `inline-flex` or `hidden sm:inline-flex` without a conflict.
+  const iconBtn =
+    'relative w-9 h-9 items-center justify-center rounded-full text-ink-soft hover:text-ink hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition';
 
   return (
-    <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
-      {/* Top utility bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between border-b border-slate-100 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-400">
-        <div className="flex items-center space-x-3">
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
-            Live Updates (२०८३/२०८४)
+    <header className="sticky top-0 z-40 px-3 sm:px-6 pt-3 sm:pt-4">
+      <div className="max-w-6xl mx-auto h-14 sm:h-16 pl-4 sm:pl-5 pr-2 flex items-center justify-between gap-3 rounded-full bg-white/90 dark:bg-slate-900/85 backdrop-blur-md shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10">
+        {/* Brand */}
+        <button
+          onClick={() => setActiveTab('vacancies')}
+          className="flex items-center gap-2 shrink-0"
+          aria-label="SarkariSajha home"
+        >
+          <BrandMark />
+          <span className="font-display text-lg sm:text-xl font-semibold tracking-tight text-ink dark:text-white">
+            {lang === 'np' ? 'सरकारी साझा' : 'SarkariSajha'}
           </span>
-          <span className="hidden md:inline text-slate-500 dark:text-slate-400">
-            Lok Sewa Aayog, TSC, Banking, Security & Provincial Vacancies
-          </span>
-        </div>
+        </button>
 
-        <div className="flex items-center space-x-2 sm:space-x-2.5 flex-wrap gap-y-1">
-          {/* SarkariSajha Pro Membership Button */}
-          {onOpenSubscription && (
+        {/* Primary nav */}
+        <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
+          {primary.map((item) => {
+            const active = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                aria-current={active ? 'page' : undefined}
+                className={`px-3 xl:px-3.5 py-2 rounded-full text-[15px] whitespace-nowrap transition ${
+                  active
+                    ? 'text-ink dark:text-white font-medium'
+                    : 'text-slate-500 hover:text-ink dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+
+          <div className="relative" ref={moreRef}>
             <button
-              onClick={onOpenSubscription}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition border shadow-xs ${
-                isPro
-                  ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                  : 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 border-amber-400'
+              onClick={() => setMoreOpen((o) => !o)}
+              aria-expanded={moreOpen}
+              className={`px-3 xl:px-3.5 py-2 rounded-full text-[15px] whitespace-nowrap inline-flex items-center gap-1 transition ${
+                secondaryActive
+                  ? 'text-ink dark:text-white font-medium'
+                  : 'text-slate-500 hover:text-ink dark:text-slate-400 dark:hover:text-white'
               }`}
             >
-              <Crown className={`w-3.5 h-3.5 ${isPro ? 'text-amber-500' : 'text-slate-950'}`} />
-              <span>{isPro ? (lang === 'np' ? 'प्रो सदस्य' : 'Pro Active') : (lang === 'np' ? 'प्रो सदस्यता' : 'Upgrade Pro')}</span>
+              {lang === 'np' ? 'थप' : 'More'}
+              <ChevronDown className={`w-4 h-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
             </button>
-          )}
 
-          {/* PWA Install Button */}
-          {onOpenInstallPrompt && (
-            <button
-              onClick={onOpenInstallPrompt}
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-800 dark:text-blue-300 transition text-xs font-bold border border-blue-200 dark:border-blue-800/80 shadow-xs"
-              title="Install SarkariSajha App to Home Screen"
-            >
-              <Download className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              <span className="hidden sm:inline">{lang === 'np' ? 'एप इन्स्टल' : 'Install App'}</span>
-            </button>
-          )}
-
-          {/* Beta Feedback & Bug Report Button */}
-          {onOpenBetaFeedback && (
-            <button
-              onClick={onOpenBetaFeedback}
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 transition text-xs font-bold border border-rose-200 dark:border-rose-800/80 shadow-xs"
-              title="Report an issue or submit beta feedback"
-            >
-              <MessageSquarePlus className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-              <span className="hidden sm:inline">{lang === 'np' ? 'प्रतिक्रिया' : 'Beta Feedback'}</span>
-            </button>
-          )}
-
-          {/* Theme Toggle Button */}
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition text-xs font-medium border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer"
-            title={theme === 'dark' ? t('themeLight', lang) : t('themeDark', lang)}
-            aria-label={t('themeToggle', lang)}
-          >
-            {theme === 'dark' ? (
-              <>
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[11px] font-semibold">{lang === 'np' ? 'लाइट' : 'Light'}</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                <span className="text-[11px] font-semibold">{lang === 'np' ? 'डार्क' : 'Dark'}</span>
-              </>
+            {moreOpen && (
+              <div className="absolute right-0 mt-3 w-64 p-2 rounded-3xl bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/5 dark:ring-white/10">
+                {secondary.map((item) => {
+                  const Icon = item.icon;
+                  const active = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setMoreOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-left transition ${
+                        active
+                          ? 'bg-sky-100 text-ink dark:bg-white/10 dark:text-white'
+                          : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 opacity-70" />
+                      <span className="flex-1">{item.label}</span>
+                      {item.id === 'alerts' && unreadCount > 0 && (
+                        <span className="text-[11px] font-medium text-ink-soft dark:text-slate-400">{unreadCount}</span>
+                      )}
+                    </button>
+                  );
+                })}
+                {utilities.length > 0 && <div className="my-2 h-px bg-slate-100 dark:bg-white/10" />}
+                {utilities.map((u) => {
+                  const Icon = u.icon;
+                  return (
+                    <button
+                      key={u.label}
+                      onClick={() => {
+                        u.onClick();
+                        setMoreOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm text-left text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5 transition"
+                    >
+                      <Icon className="w-4 h-4 opacity-70" />
+                      <span>{u.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             )}
-          </button>
+          </div>
+        </nav>
 
-          {onOpenSheetsModal && (
-            <button
-              onClick={onOpenSheetsModal}
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 transition text-xs font-bold border border-emerald-200 dark:border-emerald-800/80 shadow-xs"
-              title="Sync vacancies and application tracker with Google Sheets"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">Google Sheets</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={onOpenAuth}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg transition text-xs font-bold border shadow-xs cursor-pointer shrink-0 ${
-              firebaseUser
-                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
-                : 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500'
-            }`}
-            title={
-              firebaseUser
-                ? `Signed in as ${firebaseUser.email || firebaseUser.phoneNumber || 'User'} (Click to manage or switch account)`
-                : 'Sign in with Email, Google, or Phone'
-            }
-          >
-            {firebaseUser ? (
-              <>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="truncate max-w-[110px]">
-                  {firebaseUser.displayName || firebaseUser.email?.split('@')[0] || firebaseUser.phoneNumber || (lang === 'np' ? 'लगइन भएको' : 'Account')}
-                </span>
-              </>
-            ) : (
-              <>
-                <Lock className="w-3.5 h-3.5 shrink-0" />
-                <span>{lang === 'np' ? 'लगइन गर्नुहोस्' : 'Sign In'}</span>
-              </>
-            )}
-          </button>
-
+        {/* Actions */}
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => setLang(lang === 'en' ? 'np' : 'en')}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition text-xs font-medium border border-slate-200 dark:border-slate-700 shadow-xs"
+            className={`${iconBtn} hidden sm:inline-flex lg:hidden xl:inline-flex text-[13px] font-medium`}
+            title={lang === 'en' ? 'नेपालीमा हेर्नुहोस्' : 'View in English'}
           >
-            <Globe className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>{t('languageToggle', lang)}</span>
+            {lang === 'en' ? 'ने' : 'EN'}
           </button>
-
-          {/* Notification Center Trigger */}
           {onOpenNotificationCenter && (
-            <button
-              onClick={onOpenNotificationCenter}
-              className="relative flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer"
-              title="Open Notification Center"
-            >
-              <Bell className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              <span className="hidden sm:inline">{lang === 'np' ? 'सूचनाहरू' : 'Notices'}</span>
+            <button onClick={onOpenNotificationCenter} className={`${iconBtn} inline-flex`} title={lang === 'np' ? 'सूचनाहरू' : 'Notifications'}>
+              <Bell className="w-[18px] h-[18px]" />
               {unreadInAppCount > 0 && (
-                <span className="ml-1 bg-rose-500 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full animate-pulse">
-                  {unreadInAppCount}
-                </span>
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900" />
               )}
             </button>
           )}
 
-          <button
-            onClick={onOpenProfile}
-            className="flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition text-xs font-medium border border-slate-200 dark:border-slate-700 shadow-xs"
-          >
-            <User className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span className="truncate max-w-[120px] font-semibold">{userProfile.name}</span>
-            <span className="bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] text-slate-700 dark:text-slate-300 font-mono">
-              {userProfile.province}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Header Brand & Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          {/* Logo Brand */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('vacancies')}>
-            <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-blue-600 p-0.5 flex items-center justify-center shadow-sm">
-              <span className="text-lg font-black text-white tracking-wider">
-                SS
-              </span>
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white font-sans">
-                  {lang === 'np' ? 'सरकारी साझा' : 'SarkariSajha'}
-                </h1>
-                <span className="bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/80 text-[10px] px-2 py-0.5 rounded font-mono font-bold">
-                  NEPAL
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                {t('tagline', lang)}
-              </p>
-            </div>
-          </div>
-
-          {/* Navigation Tabs */}
-          <nav className="flex items-center space-x-1 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-black text-[9px] px-1.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
-                      {item.badge}
-                    </span>
-                  )}
-                  {item.count !== undefined && item.count > 0 && (
-                    <span className="ml-1 bg-red-600 text-white font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+          {firebaseUser ? (
+            <button
+              onClick={onOpenProfile}
+              className="ml-1 w-10 h-10 rounded-full bg-ink dark:bg-white text-white dark:text-ink font-display font-semibold inline-flex items-center justify-center shadow-pill"
+              title={firebaseUser.email || firebaseUser.phoneNumber || 'Profile'}
+            >
+              {initial}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={onOpenAuth}
+                className="hidden sm:inline-flex lg:hidden xl:inline-flex px-3 py-2 text-[15px] whitespace-nowrap text-ink dark:text-white hover:opacity-70 transition"
+              >
+                {lang === 'np' ? 'लगइन' : 'Login'}
+              </button>
+              <button
+                onClick={onOpenAuth}
+                className="ml-1 whitespace-nowrap px-4 sm:px-5 h-10 sm:h-11 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm sm:text-[15px] font-medium shadow-pill hover:bg-black transition"
+              >
+                {lang === 'np' ? 'सुरु गर्नुहोस्' : 'Get started'}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </header>
   );
 };
-

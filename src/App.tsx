@@ -72,38 +72,18 @@ import { INITIAL_USER_PROFILE, INITIAL_APPLICATIONS, INITIAL_QUIZ_ATTEMPTS } fro
 import { recordRecentlyViewed } from './utils/userDashboardUtils';
 
 export default function App() {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    try {
-      const saved = localStorage.getItem('sarkarisajha_theme');
-      if (saved === 'light' || saved === 'dark') {
-        return saved;
-      }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-    } catch (e) {
-      console.warn('LocalStorage error reading theme:', e);
-    }
-    return 'light';
-  });
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    try {
-      localStorage.setItem('sarkarisajha_theme', newTheme);
-    } catch (e) {
-      console.warn('LocalStorage error saving theme:', e);
-    }
-  };
+  // The site is light-only by design. `theme`/`setTheme` stay so existing props keep compiling.
+  const theme: Theme = 'light';
+  const setTheme = (_newTheme: Theme) => {};
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    document.documentElement.classList.remove('dark');
+    try {
+      localStorage.removeItem('sarkarisajha_theme');
+    } catch {
+      // Storage can be unavailable (private mode); nothing to clean up then.
     }
-  }, [theme]);
+  }, []);
 
   const [activeTab, setActiveTabState] = useState<string>(() => {
     const path = window.location.pathname.toLowerCase();
@@ -207,6 +187,17 @@ export default function App() {
         else if (path.includes('settings')) setAdminSubTab('settings');
       }
       else if (path.startsWith('/dashboard') || path.startsWith('/user')) setActiveTabState('dashboard');
+      else if (path.startsWith('/vacancies/') || path.startsWith('/vacancy/')) {
+        // Back/forward onto a vacancy URL: reload that vacancy instead of falling through to 404.
+        const slug = path.split('/')[2];
+        setActiveTabState('vacancy_detail');
+        if (slug) {
+          fetch(`/api/vacancies/${encodeURIComponent(slug)}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((v) => setActiveDetailVacancy(v || null))
+            .catch(() => setActiveDetailVacancy(null));
+        }
+      }
       else if (path.startsWith('/ai-assistant') || path.startsWith('/assistant')) setActiveTabState('ai_assistant');
       else if (path.startsWith('/syllabus')) setActiveTabState('syllabus');
       else if (path.startsWith('/subjective') || path.startsWith('/written')) setActiveTabState('subjective');
@@ -664,7 +655,7 @@ export default function App() {
   const isUnverifiedEmail = !!(firebaseUser && firebaseUser.email && !firebaseUser.emailVerified);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white pb-12 transition-colors duration-200">
+    <div className="sky-canvas min-h-screen text-ink dark:text-slate-100 font-sans antialiased selection:bg-sky-200 selection:text-ink transition-colors duration-200">
       {/* Dynamic Offline / Connection Status Banner */}
       <OfflineStatusBar lang={lang} />
 
@@ -715,11 +706,11 @@ export default function App() {
       )}
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 lg:pb-12">
         {loading ? (
-          <div className="py-20 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-slate-400 font-mono">Connecting to SarkariSajha Server...</p>
+          <div className="py-32 text-center space-y-3">
+            <div className="w-7 h-7 border-2 border-ink/80 dark:border-white/80 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-ink-soft dark:text-slate-400">Loading…</p>
           </div>
         ) : (
           <>
@@ -792,6 +783,8 @@ export default function App() {
                 subscription={subscription}
                 onOpenSubscription={() => setShowSubscriptionModal(true)}
                 onUpdateProfile={handleUpdateProfile}
+                onUpdateApplicationStatus={handleUpdateApplicationStatus}
+                onRemoveApplication={handleRemoveApplication}
               />
             )}
 

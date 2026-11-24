@@ -111,10 +111,10 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-slate-900">
+      <div className="bg-white p-6 rounded-2xl text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800">
               <BookmarkCheck className="w-3.5 h-3.5 text-blue-600" /> Career Application Pipeline
             </span>
             <h2 className="text-2xl font-black font-sans text-slate-900">
@@ -129,7 +129,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
             {onOpenGoogleSheetsSync && (
               <button
                 onClick={onOpenGoogleSheetsSync}
-                className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 whitespace-nowrap border border-emerald-600"
+                className="px-4 py-2.5 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 whitespace-nowrap border border-emerald-600 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 title="Sync and export applications directly to Google Sheets"
               >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
@@ -140,7 +140,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
             <button
               onClick={handleExportCSV}
               disabled={applications.length === 0}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 whitespace-nowrap border border-slate-200"
+              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-xs rounded-full transition flex items-center justify-center gap-2 whitespace-nowrap border border-slate-200"
               title="Export all tracked application history to CSV file"
             >
               <Download className="w-4 h-4" />
@@ -170,7 +170,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
             {onOpenAuth && (
               <button
                 onClick={onOpenAuth}
-                className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs transition shrink-0"
+                className="px-4 py-2 font-bold text-xs rounded-full shadow-xs transition shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {lang === 'np' ? 'साइन इन / लगइन गर्नुहोस्' : 'Sign In / Register'}
               </button>
@@ -182,9 +182,9 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
         <div className="flex items-center space-x-2 overflow-x-auto pt-4 border-t border-slate-100 mt-4 scrollbar-none">
           <button
             onClick={() => setActiveFilter('All')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+            className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition ${
               activeFilter === 'All'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }`}
           >
@@ -197,9 +197,9 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
               <button
                 key={st}
                 onClick={() => setActiveFilter(st)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ${
                   activeFilter === st
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
@@ -217,7 +217,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
 
       {/* Applications Cards Grid */}
       {filteredApps.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 space-y-3 shadow-sm">
+        <div className="bg-white rounded-2xl p-12 text-center text-slate-500 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <BookmarkCheck className="w-12 h-12 mx-auto text-slate-300" />
           <h3 className="text-lg font-bold text-slate-800">No vacancies saved in this pipeline stage</h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
@@ -233,12 +233,12 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
             return (
               <div
                 key={app.id}
-                className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-5 text-slate-900 transition shadow-sm space-y-4"
+                className="bg-white hover:border-slate-300 rounded-2xl p-5 text-slate-900 transition space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
+                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
                         {vac.category}
                       </span>
                       <span className="text-slate-500 text-xs font-mono">{vac.province}</span>
@@ -257,7 +257,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                       onChange={(e) =>
                         onUpdateStatus(app.id, e.target.value as ApplicationStatus, app.notes, app.feePaid)
                       }
-                      className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-sky-300 focus:outline-none"
                     >
                       {pipelineStatuses.map((st) => (
                         <option key={st} value={st}>
@@ -268,7 +268,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
 
                     <button
                       onClick={() => onRemoveApp(app.id)}
-                      className="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition border border-slate-200"
+                      className="p-2 rounded-full bg-sky-50/70 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition"
                       title="Remove Bookmark"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -278,7 +278,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
 
                 {/* Voucher Payment & Notes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                  <div className="bg-sky-50/70 p-3 rounded-xl flex items-center justify-between">
                     <span className="text-slate-600 flex items-center gap-1.5">
                       <DollarSign className="w-4 h-4 text-emerald-600" /> Voucher Fee (NPR {vac.fee}):
                     </span>
@@ -286,17 +286,17 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                       onClick={() =>
                         onUpdateStatus(app.id, app.status, app.notes, !app.feePaid)
                       }
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition border ${
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition border ${
                         app.feePaid
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-rose-50 text-rose-700 border-rose-200'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-rose-50 text-rose-700'
                       }`}
                     >
                       {app.feePaid ? '✓ Fee Paid' : '✗ Unpaid'}
                     </button>
                   </div>
 
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                  <div className="bg-sky-50/70 p-3 rounded-xl flex items-center justify-between">
                     <span className="text-slate-600 flex items-center gap-1.5">
                       <Calendar className="w-4 h-4 text-amber-600" /> Deadline:
                     </span>
@@ -317,7 +317,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                       onUpdateStatus(app.id, app.status, e.target.value, app.feePaid)
                     }
                     placeholder="Add personal notes e.g. Submitted citizenship voucher, exam center Kathmandu..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-300"
                   />
                 </div>
 
@@ -329,7 +329,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
 
                   <button
                     onClick={() => onSelectVacancy(vac)}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center gap-1 shadow-xs"
+                    className="px-3 py-1.5 font-semibold rounded-full transition flex items-center gap-1 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     <span>View Spec & Syllabus</span>
                     <ExternalLink className="w-3.5 h-3.5" />

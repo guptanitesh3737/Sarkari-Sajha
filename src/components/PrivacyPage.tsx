@@ -20,13 +20,13 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ lang, onNavigateHome }
       </button>
 
       {/* Header Banner */}
-      <div className="rounded-3xl bg-slate-900 text-white p-6 sm:p-8 mb-8 border border-slate-800 shadow-md">
+      <div className="hero-panel p-6 sm:p-8 mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-blue-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-blue-400">
               {lang === 'np' ? 'गोपनीयता नीति' : 'User Privacy & Data Protection'}
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold mt-0.5">
@@ -41,7 +41,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ lang, onNavigateHome }
 
       {/* Policy Sections */}
       <div className="space-y-6">
-        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-[2rem] bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Eye className="w-4 h-4 text-blue-500" />
             1. Information We Collect & Voluntary Candidate Data
@@ -58,7 +58,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ lang, onNavigateHome }
           </ul>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-[2rem] bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Database className="w-4 h-4 text-emerald-500" />
             2. How We Use Candidate Information
@@ -71,7 +71,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ lang, onNavigateHome }
           </ul>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-[2rem] bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Lock className="w-4 h-4 text-purple-500" />
             3. Security, Payment Safeguards & Cloud Storage
@@ -89,7 +89,7 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({ lang, onNavigateHome }
           </div>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div className="p-6 rounded-[2rem] bg-white dark:bg-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-amber-500" />
             4. Candidate Data Rights, Export & Account Deletion

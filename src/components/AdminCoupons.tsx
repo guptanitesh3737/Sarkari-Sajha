@@ -170,7 +170,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
         <button
           id="btn-create-coupon"
           onClick={handleOpenCreate}
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md transition-all shrink-0"
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-full font-bold text-sm transition-all shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
         >
           <Plus className="w-4 h-4" />
           <span>New Coupon</span>
@@ -222,13 +222,13 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                 <div className="flex items-center space-x-2 shrink-0">
                   <button
                     onClick={() => handleOpenEdit(c)}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200"
+                    className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(c.id, c.coupon_code)}
-                    className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
+                    className="p-2 rounded-full bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -255,12 +255,12 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
             placeholder="Enter coupon code (e.g. LOKSEWA20)..."
             value={testCode}
             onChange={(e) => setTestCode(e.target.value)}
-            className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl focus:border-emerald-500 focus:outline-none uppercase font-mono"
+            className="flex-1 bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full focus:border-emerald-500 focus:outline-none uppercase font-mono"
           />
           <select
             value={testPlan}
             onChange={(e) => setTestPlan(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-xl"
+            className="bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-full"
           >
             <option value="MONTHLY">Monthly Pro Pass (NPR 299)</option>
             <option value="QUARTERLY">Quarterly Exam Sprint (NPR 699)</option>
@@ -269,7 +269,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
           <button
             type="submit"
             disabled={testing}
-            className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl shrink-0"
+            className="px-5 py-2 text-sm font-bold rounded-full shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
           >
             {testing ? 'Testing...' : 'Test Code'}
           </button>
@@ -293,7 +293,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
 
       {/* CREATE / EDIT MODAL */}
       {isModalOpen && editingCoupon && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl p-6 space-y-4">
             <h3 className="text-lg font-bold text-white">
               {editingCoupon.createdAt ? 'Edit Coupon' : 'Create New Coupon'}
@@ -308,7 +308,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                   value={editingCoupon.coupon_code || ''}
                   onChange={(e) => setEditingCoupon({ ...editingCoupon, coupon_code: e.target.value.toUpperCase() })}
                   placeholder="e.g. LOKSEWA25"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl uppercase font-mono"
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full uppercase font-mono"
                 />
               </div>
 
@@ -318,7 +318,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                   <select
                     value={editingCoupon.discount_type || 'percentage'}
                     onChange={(e) => setEditingCoupon({ ...editingCoupon, discount_type: e.target.value as any })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3 py-2 rounded-full"
                   >
                     <option value="percentage">Percentage (%)</option>
                     <option value="fixed">Fixed Amount (NPR)</option>
@@ -332,7 +332,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                     min={1}
                     value={editingCoupon.discount_value || ''}
                     onChange={(e) => setEditingCoupon({ ...editingCoupon, discount_value: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                   />
                 </div>
               </div>
@@ -345,7 +345,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                     min={1}
                     value={editingCoupon.maximum_uses || 100}
                     onChange={(e) => setEditingCoupon({ ...editingCoupon, maximum_uses: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                   />
                 </div>
                 <div>
@@ -354,7 +354,7 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                     type="date"
                     value={editingCoupon.expiry_date || ''}
                     onChange={(e) => setEditingCoupon({ ...editingCoupon, expiry_date: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                   />
                 </div>
               </div>
@@ -373,14 +373,14 @@ export const AdminCoupons: React.FC<AdminCouponsProps> = ({ user, adminRole }) =
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-xl bg-slate-800"
+                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-full bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 text-sm text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold"
+                  className="px-5 py-2 text-sm rounded-full font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   {saving ? 'Saving...' : 'Save Coupon'}
                 </button>

@@ -166,7 +166,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
         <button
           id="btn-create-knowledge"
           onClick={handleOpenCreate}
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md transition-all shrink-0"
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-full font-bold text-sm transition-all shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
         >
           <Plus className="w-4 h-4" />
           <span>Add Verified Rule / Syllabus</span>
@@ -200,7 +200,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
             placeholder="Search verified syllabus, acts, rules, age ceilings..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm pl-9 pr-3 py-2 rounded-full focus:outline-none focus:border-indigo-500"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -208,7 +208,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-sm px-3 py-2 rounded-full focus:outline-none focus:border-indigo-500"
           >
             <option value="ALL">All Categories</option>
             <option value="Syllabus">Syllabus</option>
@@ -273,14 +273,14 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleOpenEdit(item)}
-                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+                    className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300"
                     title="Edit Record"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(item.id, item.title)}
-                    className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
+                    className="p-1.5 rounded-full bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40"
                     title="Delete Record"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -294,7 +294,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
 
       {/* CREATE / EDIT MODAL */}
       {isModalOpen && editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-ink/30 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl p-6 space-y-4">
             <h3 className="text-lg font-bold text-white">
               {editingItem.createdAt ? 'Edit Knowledge Record' : 'Add Official Rule / Syllabus Record'}
@@ -309,7 +309,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                   value={editingItem.title || ''}
                   onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                   placeholder="e.g. Lok Sewa Aayog 20% Negative Marking Deduction Rule"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-indigo-500 focus:outline-none"
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-full focus:border-indigo-500 focus:outline-none"
                 />
               </div>
 
@@ -319,7 +319,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                   <select
                     value={editingItem.category || 'Exam Rules'}
                     onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value as any })}
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                   >
                     <option value="Syllabus">Syllabus</option>
                     <option value="Eligibility">Eligibility</option>
@@ -336,7 +336,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                     value={editingItem.organization || ''}
                     onChange={(e) => setEditingItem({ ...editingItem, organization: e.target.value })}
                     placeholder="e.g. Public Service Commission / MoFAGA"
-                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                    className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                   />
                 </div>
               </div>
@@ -351,7 +351,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                   value={editingItem.content || ''}
                   onChange={(e) => setEditingItem({ ...editingItem, content: e.target.value })}
                   placeholder="Official formulation, calculation rules, statutory provisions, or syllabus outlines..."
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-xl focus:border-indigo-500 focus:outline-none"
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2.5 rounded-2xl focus:border-indigo-500 focus:outline-none"
                 />
               </div>
 
@@ -364,7 +364,7 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                   value={Array.isArray(editingItem.official_sources) ? editingItem.official_sources.join(', ') : (editingItem.official_sources || '')}
                   onChange={(e) => setEditingItem({ ...editingItem, official_sources: e.target.value.split(',').map(s => s.trim()) })}
                   placeholder="e.g. Civil Service Act 2049 Rule 18, Nepal Gazette Vol 74"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-xl"
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm px-3.5 py-2 rounded-full"
                 />
               </div>
 
@@ -372,14 +372,14 @@ export const AdminAiKnowledge: React.FC<AdminAiKnowledgeProps> = ({ user, adminR
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-xl bg-slate-800"
+                  className="px-4 py-2 text-sm text-slate-300 hover:text-white rounded-full bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold"
+                  className="px-5 py-2 text-sm rounded-full font-bold bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                 >
                   {saving ? 'Saving...' : 'Save Knowledge Item'}
                 </button>

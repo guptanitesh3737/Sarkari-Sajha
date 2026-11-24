@@ -119,7 +119,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
+      <div className="hero-panel p-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
             <FileText className="w-5 h-5" />
@@ -138,7 +138,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
           <button
             onClick={loadLogs}
             disabled={loading}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700"
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-slate-700"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
@@ -146,7 +146,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
 
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-800 shadow-xs"
+            className="px-3.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-emerald-800 shadow-xs"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV Audit</span>
@@ -173,9 +173,9 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition whitespace-nowrap ${
                 selectedCategory === cat.id
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                   : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
@@ -194,12 +194,12 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search audit trail by admin name, action, or target keywords..."
-                className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl pl-9 pr-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                className="w-full bg-slate-950 border border-slate-800 text-white rounded-full pl-9 pr-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
               />
             </div>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition"
+              className="px-4 py-2 rounded-full text-xs font-bold transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
             >
               Search
             </button>
@@ -210,7 +210,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
             <select
               value={selectedSeverity}
               onChange={(e) => setSelectedSeverity(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+              className="bg-slate-950 border border-slate-800 text-white rounded-full px-3 py-2 text-xs focus:ring-2 focus:ring-sky-300 focus:outline-hidden"
             >
               <option value="ALL">All Severities</option>
               <option value="info">Info</option>
@@ -258,7 +258,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
                           {log.action}
                         </span>
                         {log.severity && log.severity !== 'info' && (
-                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
                             log.severity === 'critical' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-amber-950 text-amber-300 border border-amber-800'
                           }`}>
                             {log.severity}
@@ -278,7 +278,7 @@ export const AdminActivityLogsView: React.FC<AdminActivityLogsViewProps> = ({ la
                     {log.targetName && (
                       <button
                         onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
-                        className="p-1 text-slate-400 hover:text-white rounded-lg"
+                        className="p-1 text-slate-400 hover:text-white rounded-full"
                       >
                         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </button>

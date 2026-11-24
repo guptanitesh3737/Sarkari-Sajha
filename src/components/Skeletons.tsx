@@ -15,7 +15,7 @@ export const VacancyCardSkeleton: React.FC<{ count?: number }> = ({ count = 6 })
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-xs animate-pulse space-y-4 relative overflow-hidden"
+          className="bg-white dark:bg-slate-900 rounded-[2rem] p-5 animate-pulse space-y-4 relative overflow-hidden shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
         >
           <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full mb-2" />
           <div className="flex items-center justify-between">
@@ -26,7 +26,7 @@ export const VacancyCardSkeleton: React.FC<{ count?: number }> = ({ count = 6 })
             <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-md w-4/5" />
             <div className="h-3.5 bg-slate-100 dark:bg-slate-800/60 rounded-md w-3/5" />
           </div>
-          <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl">
+          <div className="grid grid-cols-2 gap-2 bg-sky-50/70 dark:bg-slate-800/40 p-3 rounded-2xl">
             <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16" />
             <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-20" />
             <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-14" />
@@ -51,7 +51,7 @@ export const VacancyDetailSkeleton: React.FC = () => {
         <div className="h-8 w-32 bg-slate-200 dark:bg-slate-800 rounded-xl" />
         <div className="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-full" />
       </div>
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4" />
         <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/2" />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -77,7 +77,7 @@ export const QuizCardSkeleton: React.FC<{ count?: number }> = ({ count = 4 }) =>
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-4 animate-pulse"
+          className="bg-white dark:bg-slate-900 rounded-[2rem] p-5 space-y-4 animate-pulse shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
         >
           <div className="flex justify-between">
             <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-20" />
@@ -97,7 +97,7 @@ export const TabLoadingFallback: React.FC<{ label?: string }> = ({ label = 'Load
     <div
       role="status"
       aria-live="polite"
-      className="py-16 text-center space-y-4 animate-pulse max-w-xl mx-auto"
+      className="py-16 text-center space-y-4 max-w-xl mx-auto"
     >
       <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
       <div className="space-y-1.5">

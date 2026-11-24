@@ -145,9 +145,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
   // Filtered vacancies for the vacancy management tab
   const getAdminHeaders = () => ({
-    'Content-Type': 'application/json',
-    'x-admin-role': userRole,
-    'x-user-email': user?.email || ''
+    'Content-Type': 'application/json'
   });
 
   const filteredVacancies = vacancies.filter((v) => {
@@ -468,7 +466,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <Users className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-mono">Total Candidates</p>
+                <p className="text-[10px] text-slate-400 font-mono">Total Candidates</p>
                 <p className="text-xl font-black text-white">{metrics?.totalUsers || userRole === 'super_admin' ? 128 : 24}</p>
               </div>
             </div>
@@ -479,14 +477,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-mono">Total Vacancies</p>
+                  <p className="text-[10px] text-slate-400 font-mono">Total Vacancies</p>
                   <p className="text-xl font-black text-white">{vacancies.length}</p>
                 </div>
               </div>
               <button
                 onClick={() => handleExportCSV(vacancies, 'All')}
                 title="Export all vacancies as CSV file"
-                className="p-2 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/80 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                className="p-2 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/80 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Export CSV</span>
@@ -498,7 +496,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <ListPlus className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-mono">Quiz Attempts</p>
+                <p className="text-[10px] text-slate-400 font-mono">Quiz Attempts</p>
                 <p className="text-xl font-black text-white">{metrics?.quizAttemptsCount || 42}</p>
               </div>
             </div>
@@ -508,7 +506,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 uppercase font-mono">Current Admin Role</p>
+                <p className="text-[10px] text-slate-400 font-mono">Current Admin Role</p>
                 <p className="text-sm font-black text-rose-400 uppercase">{userRole}</p>
               </div>
             </div>
@@ -533,7 +531,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       {/* 2. VACANCIES TAB */}
       {activeTab === 'vacancies' && (
         <div className="space-y-6">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+          <div className="hero-panel p-6 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <PlusCircle className="w-4 h-4 text-rose-400" /> Government Vacancy Management
             </h3>
@@ -548,7 +546,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowPdfModal(true)}
-                    className="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition"
+                    className="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 rounded-full text-[11px] font-bold flex items-center gap-1.5 transition"
                   >
                     <Upload className="w-3.5 h-3.5" />
                     <span>Upload PDF Notice</span>
@@ -559,12 +557,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   value={rawNoticeText}
                   onChange={(e) => setRawNoticeText(e.target.value)}
                   placeholder="Paste government advertisement notice text..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500 font-mono"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-300 font-mono"
                 />
                 <button
                   onClick={handleIngestNotice}
                   disabled={ingesting}
-                  className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-full transition flex items-center justify-center gap-2"
                 >
                   {ingesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                   <span>Parse Notice with Gemini AI</span>
@@ -575,7 +573,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <p className="font-bold text-emerald-400">{extractedVacancy.title}</p>
                     <button
                       onClick={handlePublishExtracted}
-                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition"
+                      className="w-full py-2 font-bold text-xs rounded-full transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                     >
                       Publish Extracted Notice
                     </button>
@@ -597,7 +595,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="flex flex-wrap items-center gap-2 pt-2">
                   <button
                     onClick={() => setEditorVacancy(null)}
-                    className="py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm"
+                    className="py-2.5 px-4 font-bold text-xs rounded-full transition flex items-center gap-1.5 shadow-sm bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     <PlusCircle className="w-4 h-4" />
                     <span>Create Full Vacancy Notice</span>
@@ -605,7 +603,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
                   <button
                     onClick={() => setShowPdfModal(true)}
-                    className="py-2.5 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5"
+                    className="py-2.5 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-full border border-slate-700 transition flex items-center gap-1.5"
                   >
                     <FileText className="w-4 h-4 text-purple-400" />
                     <span>Scan PDF Notice</span>
@@ -631,7 +629,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   {vacancySearch.trim() && (
                     <button
                       onClick={() => handleExportCSV(filteredVacancies, 'Filtered')}
-                      className="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                      className="py-1.5 px-3 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                       title="Export only currently searched/filtered vacancies"
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -641,7 +639,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
                   <button
                     onClick={() => handleExportCSV(vacancies, 'All')}
-                    className="py-1.5 px-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                    className="py-1.5 px-3.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                     title="Export complete database of vacancies as RFC 4180 CSV with UTF-8 BOM"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -665,9 +663,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <button
                       key={st}
                       onClick={() => setVacancyStatusFilter(st)}
-                      className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition border ${
+                      className={`px-2.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition border ${
                         vacancyStatusFilter === st
-                          ? 'bg-blue-600 text-white border-blue-500 shadow-xs'
+                          ? 'border-blue-500 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-slate-200'
                       }`}
                     >
@@ -683,7 +681,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     value={vacancySearch}
                     onChange={(e) => setVacancySearch(e.target.value)}
                     placeholder="Filter by title, org, province, category, level, or notice #..."
-                    className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-full text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-300"
                   />
                   {vacancySearch && (
                     <button
@@ -712,7 +710,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                             <p className="font-bold text-white truncate text-sm">{v.title}</p>
                             
                             {/* Status badge */}
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                               currentStatus === 'published' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
                               currentStatus === 'draft' ? 'bg-slate-800 text-slate-300 border border-slate-700' :
                               currentStatus === 'pending_review' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
@@ -740,7 +738,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                         <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
                           <button
                             onClick={() => setEditorVacancy(v)}
-                            className="px-2.5 py-1.5 bg-blue-950 hover:bg-blue-900 text-blue-300 rounded-lg border border-blue-800 text-xs font-bold transition flex items-center gap-1"
+                            className="px-2.5 py-1.5 bg-blue-950 hover:bg-blue-900 text-blue-300 rounded-full border border-blue-800 text-xs font-bold transition flex items-center gap-1"
                             title="Edit full vacancy metadata"
                           >
                             <Edit className="w-3 h-3" />
@@ -750,7 +748,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           {currentStatus !== 'published' ? (
                             <button
                               onClick={() => handleQuickStatusChange(v, 'published')}
-                              className="px-2.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-lg border border-emerald-800 text-xs font-bold transition flex items-center gap-1"
+                              className="px-2.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-300 rounded-full border border-emerald-800 text-xs font-bold transition flex items-center gap-1"
                               title="Approve and publish publicly"
                             >
                               <Globe className="w-3 h-3" />
@@ -759,7 +757,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           ) : (
                             <button
                               onClick={() => handleQuickStatusChange(v, 'draft')}
-                              className="px-2 py-1.5 bg-amber-950 hover:bg-amber-900 text-amber-300 rounded-lg border border-amber-800 text-xs font-bold transition"
+                              className="px-2 py-1.5 bg-amber-950 hover:bg-amber-900 text-amber-300 rounded-full border border-amber-800 text-xs font-bold transition"
                               title="Unpublish to Draft"
                             >
                               <span>Unpublish</span>
@@ -769,7 +767,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           {currentStatus !== 'archived' && (
                             <button
                               onClick={() => handleQuickStatusChange(v, 'archived')}
-                              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg border border-slate-700 transition"
+                              className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-full border border-slate-700 transition"
                               title="Archive vacancy"
                             >
                               <Archive className="w-3.5 h-3.5" />
@@ -779,7 +777,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           <button
                             onClick={() => handleExportCSV([v], v.shortOrg || 'Single')}
                             title="Export this single vacancy as CSV"
-                            className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition"
+                            className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full border border-slate-700 transition"
                           >
                             <Download className="w-3.5 h-3.5" />
                           </button>
@@ -787,7 +785,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           <button
                             onClick={() => onDeleteVacancy(v.id)}
                             title="Delete vacancy"
-                            className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/20 transition"
+                            className="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/20 transition"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -836,7 +834,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               <span className="text-xs font-mono font-bold text-slate-400 px-2">AI Tools:</span>
               <button
                 onClick={() => setAiSubTool('vacancy_extractor')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-2 ${
                   aiSubTool === 'vacancy_extractor' || activeTab === 'ai_vacancy_extractor'
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -851,7 +849,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
               <button
                 onClick={() => setAiSubTool('quiz_generator')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-2 ${
                   aiSubTool === 'quiz_generator' || activeTab === 'ai_quiz_generator'
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -917,7 +915,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
       {/* 8. SETTINGS TAB */}
       {activeTab === 'settings' && (
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+        <div className="hero-panel p-6 space-y-4">
           <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
             <SettingsIcon className="w-4 h-4 text-purple-400" /> System & App Backend Configuration
           </h3>

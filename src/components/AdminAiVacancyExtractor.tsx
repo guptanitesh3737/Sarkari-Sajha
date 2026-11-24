@@ -344,7 +344,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
   return (
     <div className="space-y-6">
       {/* Top Banner & Navigation */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+      <div className="hero-panel p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -365,7 +365,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
           <div className="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800 shrink-0">
             <button
               onClick={() => setActiveView('extractor')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                 activeView === 'extractor' ? 'bg-rose-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -377,7 +377,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                 setActiveView('queue');
                 loadReviewQueue();
               }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                 activeView === 'queue' ? 'bg-rose-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -439,7 +439,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
       {activeView === 'extractor' && (
         <div className="space-y-6">
           {/* Document Ingestion & Sample Picker Box */}
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+          <div className="hero-panel p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Upload className="w-4 h-4 text-rose-400" />
@@ -462,7 +462,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                     <button
                       key={sample.id}
                       onClick={() => handleSelectSample(sample)}
-                      className={`p-3 rounded-xl border text-left text-xs transition space-y-1 ${
+                      className={`p-3 rounded-full border text-left text-xs transition space-y-1 ${
                         isSelected
                           ? 'bg-rose-950/50 border-rose-500 text-white shadow-sm'
                           : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
@@ -512,7 +512,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   value={documentText}
                   onChange={(e) => setDocumentText(e.target.value)}
                   placeholder="Paste official recruitment notice text here..."
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-rose-500 placeholder-slate-600"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-sky-300 placeholder-slate-600"
                 />
               </div>
             </div>
@@ -526,7 +526,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
               <button
                 onClick={handleExtractDocument}
                 disabled={isExtracting || !documentText.trim()}
-                className="py-2.5 px-6 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-900/30 transition flex items-center justify-center gap-2"
+                className="py-2.5 px-6 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs rounded-full shadow-rose-900/30 transition flex items-center justify-center gap-2"
               >
                 {isExtracting ? (
                   <>
@@ -547,7 +547,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
           {currentDocument && (
             <div className="space-y-6">
               {/* Review & Status Action Bar */}
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="hero-panel p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono font-bold text-slate-400">Document ID: {currentDocument.id}</span>
@@ -565,7 +565,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => setShowRefinementModal(true)}
-                    className="py-2 px-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+                    className="py-2 px-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs rounded-full transition flex items-center gap-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
                     <span>Regenerate</span>
@@ -574,7 +574,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   <button
                     onClick={() => handleUpdateDocumentStatus('DRAFT')}
                     disabled={isSaving}
-                    className="py-2 px-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+                    className="py-2 px-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs rounded-full transition flex items-center gap-1.5"
                   >
                     <Save className="w-3.5 h-3.5 text-slate-400" />
                     <span>Save Draft</span>
@@ -582,7 +582,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
 
                   <button
                     onClick={() => setShowRejectModal(true)}
-                    className="py-2 px-3.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+                    className="py-2 px-3.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 font-bold text-xs rounded-full transition flex items-center gap-1.5"
                   >
                     <XCircle className="w-3.5 h-3.5 text-rose-400" />
                     <span>Reject</span>
@@ -591,7 +591,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   <button
                     onClick={() => handleUpdateDocumentStatus('APPROVED')}
                     disabled={isSaving}
-                    className="py-2 px-4 bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-700/60 text-emerald-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+                    className="py-2 px-4 bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-700/60 text-emerald-300 font-bold text-xs rounded-full transition flex items-center gap-1.5"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Approve</span>
@@ -600,7 +600,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   <button
                     onClick={handlePublishDocument}
                     disabled={isPublishing}
-                    className="py-2 px-5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-900/40 transition flex items-center gap-1.5"
+                    className="py-2 px-5 font-bold text-xs rounded-full transition flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                   >
                     {isPublishing ? (
                       <>
@@ -632,7 +632,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   {onViewLiveVacancy && (
                     <button
                       onClick={() => onViewLiveVacancy(publishedVacancy.id)}
-                      className="py-2 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center gap-1.5 shrink-0"
+                      className="py-2 px-4 font-bold text-xs rounded-full transition flex items-center gap-1.5 shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>View Live Vacancy Page</span>
@@ -656,7 +656,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
 
               {/* 6-POINT AI VALIDATION AUDIT SCORECARD */}
               {currentDocument.validationReport && (
-                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+                <div className="hero-panel p-6 space-y-4">
                   <div
                     className="flex items-center justify-between cursor-pointer"
                     onClick={() => toggleSection('audit')}
@@ -773,7 +773,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
               {/* DUAL PANE: (LEFT: Raw Document Text, RIGHT: 14 Extracted Fields with Citations) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* LEFT PANE: Source Document Inspector */}
-                <div className="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3 h-[850px] flex flex-col">
+                <div className="hero-panel lg:col-span-5 p-5 space-y-3 h-[850px] flex flex-col">
                   <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                     <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-rose-400" />
@@ -797,7 +797,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                 {/* RIGHT PANE: Extracted 14 Fields Accordions with Inline Editing & Source Badges */}
                 <div className="lg:col-span-7 space-y-4 h-[850px] overflow-y-auto pr-1">
                   {/* 1. Organization Field */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                         <Building className="w-4 h-4 text-rose-400" />
@@ -817,7 +817,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.organization?.value || ''}
                           onChange={(e) => updateField('organization.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -826,7 +826,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.shortOrg?.value || ''}
                           onChange={(e) => updateField('shortOrg.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -835,7 +835,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.organizationNp?.value || ''}
                           onChange={(e) => updateField('organizationNp.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -843,7 +843,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                         <select
                           value={currentDocument.province?.value || 'All Nepal'}
                           onChange={(e) => updateField('province.value', e.target.value as Province)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         >
                           {['All Nepal', 'Koshi', 'Madhesh', 'Bagmati', 'Gandaki', 'Lumbini', 'Karnali', 'Sudurpashchim'].map(p => (
                             <option key={p} value={p}>{p}</option>
@@ -854,7 +854,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   </div>
 
                   {/* 2. Position & Category */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                         <Briefcase className="w-4 h-4 text-amber-400" />
@@ -874,7 +874,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.position?.value || ''}
                           onChange={(e) => updateField('position.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -883,7 +883,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.positionNp?.value || ''}
                           onChange={(e) => updateField('positionNp.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -892,7 +892,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.level?.value || ''}
                           onChange={(e) => updateField('level.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                       <div>
@@ -900,7 +900,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                         <select
                           value={currentDocument.category?.value || 'Lok Sewa (PSC)'}
                           onChange={(e) => updateField('category.value', e.target.value as VacancyCategory)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         >
                           {['Lok Sewa (PSC)', 'Teacher Service (TSC)', 'Banking & Finance', 'Security Forces', 'Health Services', 'Provincial Lok Sewa', 'Local Level (Nagarpalika)'].map(c => (
                             <option key={c} value={c}>{c}</option>
@@ -911,7 +911,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   </div>
 
                   {/* 3. Number of Posts & Inclusive Quota Breakdown */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-emerald-400" />
@@ -931,7 +931,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="number"
                           value={currentDocument.numberOfPosts?.value || 0}
                           onChange={(e) => updateField('numberOfPosts.value', parseInt(e.target.value) || 0)}
-                          className="w-32 bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-32 bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
 
@@ -1016,7 +1016,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   </div>
 
                   {/* 4 & 5. Qualification, Streams & Experience */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                         <GraduationCap className="w-4 h-4 text-purple-400" />
@@ -1035,7 +1035,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                         <select
                           value={currentDocument.qualificationLevel?.value || 'Bachelor Degree'}
                           onChange={(e) => updateField('qualificationLevel.value', e.target.value as QualificationLevel)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         >
                           {['SEE/SLC', '+2 High School', 'Bachelor Degree', 'Master Degree', 'MPhil/PhD'].map(l => (
                             <option key={l} value={l}>{l}</option>
@@ -1049,7 +1049,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           rows={2}
                           value={currentDocument.qualification?.value || ''}
                           onChange={(e) => updateField('qualification.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white mt-1 text-xs"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-2 text-white mt-1 text-xs"
                         />
                       </div>
 
@@ -1066,14 +1066,14 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           value={currentDocument.experience?.value || ''}
                           onChange={(e) => updateField('experience.value', e.target.value)}
                           placeholder="e.g. No prior experience required for open entry"
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* 7, 8, 9, 10. Age, Fees & Application Deadlines */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-rose-400" />
@@ -1181,7 +1181,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                   </div>
 
                   {/* 12, 13, 14. Salary, Required Documents & Application Procedure */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-white space-y-3">
+                  <div className="hero-panel p-5 space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                       <h4 className="text-xs font-bold text-slate-200 flex items-center gap-2">
                         <FileCheck className="w-4 h-4 text-emerald-400" />
@@ -1201,7 +1201,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           type="text"
                           value={currentDocument.salary?.value || ''}
                           onChange={(e) => updateField('salary.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-bold mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-full p-2 text-white font-bold mt-1"
                         />
                       </div>
 
@@ -1211,7 +1211,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           rows={2}
                           value={Array.isArray(currentDocument.requiredDocuments?.value) ? currentDocument.requiredDocuments.value.join('\n') : (currentDocument.requiredDocuments?.value || '')}
                           onChange={(e) => updateField('requiredDocuments.value', e.target.value.split('\n').filter(Boolean))}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white text-xs mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-2 text-white text-xs mt-1"
                         />
                       </div>
 
@@ -1221,7 +1221,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                           rows={2}
                           value={currentDocument.applicationProcedure?.value || ''}
                           onChange={(e) => updateField('applicationProcedure.value', e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white text-xs mt-1"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-2 text-white text-xs mt-1"
                         />
                       </div>
 
@@ -1256,7 +1256,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
 
       {/* VIEW 2: REVIEW QUEUE */}
       {activeView === 'queue' && (
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+        <div className="hero-panel p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1274,7 +1274,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                 <button
                   key={st}
                   onClick={() => setQueueStatusFilter(st)}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition text-[11px] ${
+                  className={`px-2.5 py-1 rounded-full font-bold transition text-[11px] ${
                     queueStatusFilter === st ? 'bg-rose-600 text-white' : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -1329,7 +1329,7 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
                             setCurrentDocument(doc);
                             setActiveView('extractor');
                           }}
-                          className="py-1.5 px-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg transition flex items-center gap-1"
+                          className="py-1.5 px-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-full transition flex items-center gap-1"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           <span>Review & Edit</span>
@@ -1345,8 +1345,8 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
 
       {/* MODAL: Reject Document Reason */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 animate-scale-up text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel max-w-md w-full p-6 space-y-4 animate-scale-up">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-rose-400 flex items-center gap-2">
                 <XCircle className="w-4 h-4" /> Reject Extracted Vacancy Document
@@ -1363,20 +1363,20 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
               value={rejectionReasonInput}
               onChange={(e) => setRejectionReasonInput(e.target.value)}
               placeholder="e.g. Expired fiscal year notice or contradictory quota numbers."
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 text-xs text-white placeholder-slate-500"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setShowRejectModal(false)}
-                className="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl"
+                className="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-full"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleUpdateDocumentStatus('REJECTED')}
                 disabled={!rejectionReasonInput.trim()}
-                className="py-2 px-5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl"
+                className="py-2 px-5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold text-xs rounded-full"
               >
                 Confirm Rejection
               </button>
@@ -1387,8 +1387,8 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
 
       {/* MODAL: Refine & Re-extract */}
       {showRefinementModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 animate-scale-up text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/30 backdrop-blur-sm">
+          <div className="hero-panel max-w-md w-full p-6 space-y-4 animate-scale-up">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-amber-400 flex items-center gap-2">
                 <RotateCcw className="w-4 h-4" /> Re-extract with Custom Instructions
@@ -1405,20 +1405,20 @@ export function AdminAiVacancyExtractor({ lang, onViewLiveVacancy }: AdminAiVaca
               value={refinementInstruction}
               onChange={(e) => setRefinementInstruction(e.target.value)}
               placeholder="e.g. Pay special attention to Section 2 for inclusive quota counts."
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500"
+              className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 text-xs text-white placeholder-slate-500"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setShowRefinementModal(false)}
-                className="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl"
+                className="py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-full"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRegenerateExtraction}
                 disabled={isReExtracting}
-                className="py-2 px-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl flex items-center gap-1.5"
+                className="py-2 px-5 font-bold text-xs rounded-full flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
               >
                 {isReExtracting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                 <span>Start Re-extraction</span>

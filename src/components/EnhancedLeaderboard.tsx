@@ -53,7 +53,7 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-amber-950 via-yellow-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-amber-200 border border-white/10">
@@ -72,7 +72,7 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
 
           <div className="flex items-center gap-3">
             <div className="px-5 py-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-center">
-              <span className="text-[10px] text-amber-300 uppercase font-mono block">Your Current Province</span>
+              <span className="text-[10px] text-amber-300 font-mono block">Your Current Province</span>
               <span className="text-xs font-bold text-white">{userProfile.province || 'Bagmati Province'}</span>
             </div>
           </div>
@@ -80,14 +80,14 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
       </div>
 
       {/* Filter Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
         {/* Province Filter */}
         <div className="flex items-center gap-2">
           <MapPin className="w-3.5 h-3.5 text-amber-500" />
           <select
             value={selectedProvince}
             onChange={(e) => setSelectedProvince(e.target.value)}
-            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
+            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
           >
             {provinces.map(p => (
               <option key={p.id} value={p.id}>
@@ -103,7 +103,7 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
           <select
             value={selectedSetId}
             onChange={(e) => setSelectedSetId(e.target.value)}
-            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
+            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
           >
             <option value="all">{lang === 'np' ? 'सबै मोक टेस्टहरू' : 'All Mock Test Sets'}</option>
             {quizSets.map(qs => (
@@ -122,13 +122,13 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
           <p className="text-xs text-slate-400">Compiling statewide rankings...</p>
         </div>
       ) : attempts.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3 p-8">
+        <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-[2rem] space-y-3 p-8 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <Trophy className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
           <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">No attempts recorded for this filter yet</h3>
           <p className="text-xs text-slate-500">Be the first candidate to take this mock drill!</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
           <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Flame className="w-4 h-4 text-amber-500" />
@@ -173,7 +173,7 @@ export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLea
                           {attempt.userName}
                         </h4>
                         {isTop3 && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                             Merit Rank #{rank}
                           </span>
                         )}
