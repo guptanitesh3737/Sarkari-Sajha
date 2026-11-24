@@ -145,9 +145,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
   // Filtered vacancies for the vacancy management tab
   const getAdminHeaders = () => ({
-    'Content-Type': 'application/json',
-    'x-admin-role': userRole,
-    'x-user-email': user?.email || ''
+    'Content-Type': 'application/json'
   });
 
   const filteredVacancies = vacancies.filter((v) => {

@@ -32,9 +32,7 @@ export function AdminTeamManagement({ lang, currentRole, userEmail }: AdminTeamM
   const [message, setMessage] = useState<string | null>(null);
 
   const getHeaders = () => ({
-    'Content-Type': 'application/json',
-    'x-admin-role': currentRole || 'admin',
-    'x-user-email': userEmail || 'admin@sarkarisajha.gov.np'
+    'Content-Type': 'application/json'
   });
 
   const loadTeam = () => {

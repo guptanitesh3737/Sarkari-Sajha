@@ -278,7 +278,6 @@ export const JobAlertsCenter: React.FC<JobAlertsCenterProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          toEmail: userProfile.email || 'candidate@sarkarisajha.com',
           subject: 'Sample Notice: Section Officer Vacancy Announcement',
           bodyHtml: `
             <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
