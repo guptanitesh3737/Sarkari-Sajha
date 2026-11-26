@@ -1,19 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Trophy,
-  Medal,
-  Award,
-  Filter,
-  MapPin,
-  Clock,
-  CheckCircle2,
-  TrendingUp,
-  Flame,
-  User,
-  Sparkles,
-  Search
-} from 'lucide-react';
-import { QuizAttempt, QuizSet, Province, Language, UserProfile } from '../types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { QuizAttempt, QuizSet, Language, UserProfile } from '../types';
+import { TINT_HEX } from '../utils/tints';
+import { num, L, H1 } from '../utils/ui';
 
 interface EnhancedLeaderboardProps {
   lang: Language;
@@ -21,197 +9,152 @@ interface EnhancedLeaderboardProps {
   quizSets: QuizSet[];
 }
 
-export function EnhancedLeaderboard({ lang, userProfile, quizSets }: EnhancedLeaderboardProps) {
-  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<string>('all');
-  const [selectedSetId, setSelectedSetId] = useState<string>('all');
-  const [loading, setLoading] = useState<boolean>(true);
+type Range = 'week' | 'all' | 'province';
 
-  const provinces: { id: string; nameEn: string; nameNp: string }[] = [
-    { id: 'all', nameEn: 'All Nepal (राष्ट्रिय स्तर)', nameNp: 'सबै प्रदेश' },
-    { id: 'Bagmati', nameEn: 'Bagmati Province', nameNp: 'बागमती प्रदेश' },
-    { id: 'Koshi', nameEn: 'Koshi Province', nameNp: 'कोशी प्रदेश' },
-    { id: 'Madhesh', nameEn: 'Madhesh Province', nameNp: 'मधेश प्रदेश' },
-    { id: 'Gandaki', nameEn: 'Gandaki Province', nameNp: 'गण्डकी प्रदेश' },
-    { id: 'Lumbini', nameEn: 'Lumbini Province', nameNp: 'लुम्बिनी प्रदेश' },
-    { id: 'Karnali', nameEn: 'Karnali Province', nameNp: 'कर्णाली प्रदेश' },
-    { id: 'Sudurpashchim', nameEn: 'Sudurpashchim Province', nameNp: 'सुदूरपश्चिम प्रदेश' }
-  ];
+interface Row {
+  name: string;
+  city: string;
+  score: number;
+  acc: number;
+}
+
+const initialOf = (name: string) => (name.trim().charAt(0) || '?').toUpperCase();
+
+export function EnhancedLeaderboard({ lang, userProfile }: EnhancedLeaderboardProps) {
+  const tr = L(lang);
+  const [range, setRange] = useState<Range>('all');
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    const url = `/api/quizzes/enhanced-leaderboard?setId=${selectedSetId}&province=${selectedProvince}`;
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setAttempts(data);
-      })
-      .catch(err => console.error('Error fetching leaderboard:', err))
+    const province = range === 'province' ? userProfile.province || 'all' : 'all';
+    fetch(`/api/quizzes/enhanced-leaderboard?setId=all&province=${encodeURIComponent(province)}`)
+      .then((r) => r.json())
+      .then((data) => setAttempts(Array.isArray(data) ? data : []))
+      .catch(() => setAttempts([]))
       .finally(() => setLoading(false));
-  }, [selectedProvince, selectedSetId]);
+  }, [range, userProfile.province]);
+
+  // One row per candidate: best score in the selected range.
+  const rows: Row[] = useMemo(() => {
+    const cutoff = Date.now() - 7 * 864e5;
+    const best = new Map<string, Row>();
+    attempts
+      .filter((a) => range !== 'week' || new Date(a.attemptedAt).getTime() >= cutoff)
+      .forEach((a: any) => {
+        const name = a.userName || tr('Candidate', 'उम्मेदवार');
+        const row: Row = {
+          name,
+          city: a.district || a.city || a.province || '',
+          score: Number(a.score) || 0,
+          acc: Math.round(a.percentage ?? a.accuracy ?? 0)
+        };
+        const prev = best.get(name);
+        if (!prev || row.score > prev.score) best.set(name, row);
+      });
+    return [...best.values()].sort((a, b) => b.score - a.score || b.acc - a.acc);
+  }, [attempts, range, lang]);
+
+  const meIndex = rows.findIndex((r) => r.name === userProfile.name);
+  const top3 = rows.slice(0, 3);
+  // Podium order 2-1-3 with heights 100/140/80.
+  const podium = [
+    { r: top3[1], rank: 2, h: 100, av: 56 },
+    { r: top3[0], rank: 1, h: 140, av: 68 },
+    { r: top3[2], rank: 3, h: 80, av: 56 }
+  ].filter((p) => p.r);
+  const table = rows.slice(3, 10);
+  const pts = (n: number) => `${num(Number.isInteger(n) ? n : n.toFixed(1), lang)} ${tr('pts', 'अंक')}`;
+
+  const tabs: [Range, string][] = [
+    ['week', tr('This week', 'यो हप्ता')],
+    ['all', tr('All time', 'सबै समय')],
+    ['province', tr('Province', 'प्रदेश')]
+  ];
+
+  const RowView = ({ r, rank, me }: { r: Row; rank: number; me?: boolean }) => (
+    <div className="flex items-center gap-3.5 px-5 py-[13px] border-t border-[#eef2f6]" style={{ background: me ? '#e4f2fc' : undefined }}>
+      <span className="w-10 font-semibold text-ink-soft">#{num(rank, lang)}</span>
+      <span
+        className="w-[34px] h-[34px] rounded-full flex-none flex items-center justify-center font-semibold text-[13px]"
+        style={{ background: me ? '#0b1220' : TINT_HEX[rank % TINT_HEX.length], color: me ? '#fff' : '#0b1220' }}
+      >
+        {initialOf(r.name)}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="block font-semibold text-sm text-ink truncate">
+          {r.name}
+          {me && <span className="font-normal text-ink-soft"> · {tr('You', 'तपाईं')}</span>}
+        </span>
+        {r.city && <span className="block text-xs text-[#667085] truncate">{r.city}</span>}
+      </span>
+      <span className="text-[13px] text-ink-soft w-[60px] text-right">{num(r.acc, lang)}%</span>
+      <span className="font-semibold text-sm w-[70px] text-right text-ink">{pts(r.score)}</span>
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-amber-200 border border-white/10">
-              <Trophy className="w-3.5 h-3.5 text-amber-400" />
-              <span>{lang === 'np' ? 'प्रदेश तथा पदअनुसार राष्ट्रिय स्तरको वरीयता' : 'Statewide & Post-wise National Leaderboard'}</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              {lang === 'np' ? 'मोक टेस्ट र्याङ्क एवं लिडरबोर्ड' : 'Mock Test Rank & Merit Leaderboard'}
-            </h1>
-            <p className="text-xs sm:text-sm text-amber-200/80">
-              {lang === 'np'
-                ? 'नेपालभरका हजारौँ परीक्षार्थीहरूका बीच आफ्नो स्थान, कुल प्राप्ताङ्क, नेगेटिभ मार्किङ र समय व्यवस्थापन तुलना गर्नुहोस्।'
-                : 'Real-time percentile tracking, province-wise rankings, negative marking penalties, and top scorer leaderboards for all Lok Sewa mock tests.'}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="px-5 py-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-center">
-              <span className="text-[10px] text-amber-300 font-mono block">Your Current Province</span>
-              <span className="text-xs font-bold text-white">{userProfile.province || 'Bagmati Province'}</span>
-            </div>
-          </div>
+    <div className="flex flex-col gap-5 pt-7 pb-6">
+      <div className="flex flex-wrap justify-between items-end gap-3.5">
+        <h1 className={H1.replace('lg:text-[56px]', 'lg:text-[48px]')}>{tr('Merit ranks', 'योग्यताक्रम')}</h1>
+        <div className="flex gap-1 p-1 bg-white rounded-full shadow-[0_1px_2px_rgb(11_18_32/0.05)]" role="tablist">
+          {tabs.map(([id, label]) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={range === id}
+              onClick={() => setRange(id)}
+              className={`h-9 px-3.5 rounded-full text-[13px] transition ${range === id ? 'bg-ink text-white' : 'text-ink-soft hover:text-ink'}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Filter Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-        {/* Province Filter */}
-        <div className="flex items-center gap-2">
-          <MapPin className="w-3.5 h-3.5 text-amber-500" />
-          <select
-            value={selectedProvince}
-            onChange={(e) => setSelectedProvince(e.target.value)}
-            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
-          >
-            {provinces.map(p => (
-              <option key={p.id} value={p.id}>
-                {lang === 'np' ? p.nameNp : p.nameEn}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Quiz Set Selector */}
-        <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
-          <select
-            value={selectedSetId}
-            onChange={(e) => setSelectedSetId(e.target.value)}
-            className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 focus:outline-none"
-          >
-            <option value="all">{lang === 'np' ? 'सबै मोक टेस्टहरू' : 'All Mock Test Sets'}</option>
-            {quizSets.map(qs => (
-              <option key={qs.id} value={qs.id}>
-                {lang === 'np' ? qs.titleNp : qs.title}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Leaderboard Table / Cards */}
       {loading ? (
-        <div className="text-center py-16 space-y-3">
-          <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-slate-400">Compiling statewide rankings...</p>
-        </div>
-      ) : attempts.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-[2rem] space-y-3 p-8 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-          <Trophy className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">No attempts recorded for this filter yet</h3>
-          <p className="text-xs text-slate-500">Be the first candidate to take this mock drill!</p>
+        <div className="bg-white rounded-[24px] h-64 animate-pulse shadow-soft" />
+      ) : rows.length === 0 ? (
+        <div className="bg-white rounded-[24px] shadow-soft py-14 px-6 text-center">
+          <h2 className="font-display text-2xl font-semibold text-ink">{tr('No scores yet', 'अहिलेसम्म कुनै अंक छैन')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{tr('Finish a mock paper to appear on the board.', 'बोर्डमा देखिन एउटा नमुना परीक्षा पूरा गर्नुहोस्।')}</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Flame className="w-4 h-4 text-amber-500" />
-              <span>{lang === 'np' ? 'शीर्ष स्थान प्राप्त परीक्षार्थीहरू' : 'Top Ranking Candidates'}</span>
-            </h3>
-            <span className="text-xs text-slate-400 font-mono">
-              Total Attempts: {attempts.length}
-            </span>
-          </div>
-
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {attempts.map((attempt, index) => {
-              const rank = index + 1;
-              const isTop3 = rank <= 3;
-              const rankColors =
-                rank === 1
-                  ? 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300'
-                  : rank === 2
-                  ? 'bg-slate-200 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-300'
-                  : rank === 3
-                  ? 'bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400'
-                  : 'bg-slate-50 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400';
-
-              const matchedSet = quizSets.find(qs => qs.id === attempt.quizSetId);
-
-              return (
-                <div
-                  key={attempt.id}
-                  className={`p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:bg-slate-50 dark:hover:bg-slate-800/40 ${
-                    rank === 1 ? 'bg-amber-50/30 dark:bg-amber-950/10' : ''
-                  }`}
+        <>
+          <div className="grid grid-cols-[1fr_1.15fr_1fr] gap-3 items-end max-w-[720px] w-full mx-auto">
+            {podium.map(({ r, rank, h, av }) => (
+              <div key={rank} className="flex flex-col items-center gap-2 text-center min-w-0">
+                <span
+                  className="rounded-full flex items-center justify-center font-display font-semibold text-xl text-ink shadow-[0_0_0_4px_#fff]"
+                  style={{ width: av, height: av, background: TINT_HEX[(rank + 3) % TINT_HEX.length] }}
                 >
-                  {/* Rank & User Info */}
-                  <div className="flex items-center gap-4">
-                    <div className={`w-9 h-9 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 border ${rankColors}`}>
-                      {rank === 1 ? <Trophy className="w-4 h-4 text-amber-600" /> : rank === 2 ? <Medal className="w-4 h-4 text-slate-600" /> : rank === 3 ? <Award className="w-4 h-4 text-amber-700" /> : `#${rank}`}
-                    </div>
-
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                          {attempt.userName}
-                        </h4>
-                        {isTop3 && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-                            Merit Rank #{rank}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        <span>{matchedSet ? (lang === 'np' ? matchedSet.titleNp : matchedSet.title) : 'General Lok Sewa Mock Drill'}</span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {Math.floor(attempt.timeTakenSeconds / 60)}m {attempt.timeTakenSeconds % 60}s
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Score & Accuracy Badges */}
-                  <div className="flex items-center gap-4 self-end sm:self-auto">
-                    <div className="text-right">
-                      <div className="text-sm font-black text-slate-900 dark:text-slate-100">
-                        {attempt.score} <span className="text-xs font-normal text-slate-400">/ {attempt.totalQuestions}</span>
-                      </div>
-                      <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                        {attempt.percentage}% Accuracy
-                      </div>
-                    </div>
-
-                    <div className="w-16 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden shrink-0">
-                      <div
-                        className="bg-emerald-500 h-full rounded-full"
-                        style={{ width: `${attempt.percentage}%` }}
-                      />
-                    </div>
-                  </div>
+                  {initialOf(r!.name)}
+                </span>
+                <div className="font-semibold text-[13.5px] leading-tight text-ink truncate max-w-full">{r!.name}</div>
+                <div className="text-xs text-[#667085]">{pts(r!.score)}</div>
+                <div
+                  className="w-full rounded-t-[20px] rounded-b-[6px] flex items-start justify-center pt-3 font-display text-[28px] font-semibold"
+                  style={{ height: h, background: rank === 1 ? '#0b1220' : '#fff', color: rank === 1 ? '#fff' : '#0b1220' }}
+                >
+                  {num(rank, lang)}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-        </div>
+
+          <div className="bg-white rounded-[24px] overflow-hidden shadow-soft [&>div:first-child]:border-t-0">
+            {table.map((r, i) => (
+              <RowView key={r.name} r={r} rank={i + 4} me={r.name === userProfile.name} />
+            ))}
+            {meIndex >= 10 && <RowView r={rows[meIndex]} rank={meIndex + 1} me />}
+            {meIndex === -1 && (
+              <div className="flex items-center justify-between gap-3 px-5 py-[13px] border-t border-[#eef2f6] bg-[#e4f2fc] text-sm text-ink-soft">
+                {tr('You are not on this board yet — take a mock to get ranked.', 'तपाईं अझै बोर्डमा हुनुहुन्न — स्थान पाउन नमुना परीक्षा दिनुहोस्।')}
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

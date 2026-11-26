@@ -22,7 +22,8 @@ import {
   Map as MapIcon,
   Building2,
   Factory,
-  Cpu
+  Cpu,
+  ShieldCheck
 } from 'lucide-react';
 import {
   Vacancy,
@@ -37,7 +38,8 @@ import {
   PaginatedVacancyResponse
 } from '../types';
 import { t } from '../utils/translations';
-import { tintFor } from '../utils/tints';
+import { tintBand } from '../utils/tints';
+import { num, L, daysLeft, urgency, fmtDate, matchScore, CARD, BTN_PRIMARY, H1, H2 } from '../utils/ui';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { setPageSEO, setWebSiteSearchSchema } from '../utils/seo';
 
@@ -140,7 +142,7 @@ export const VacancyList: React.FC<VacancyListProps> = ({
   const [selectedJobLevel, setSelectedJobLevel] = useState<string>('All');
   const [selectedDeadline, setSelectedDeadline] = useState<VacancyDeadlineFilter>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<VacancySortOption>('newest');
+  const [sortBy, setSortBy] = useState<VacancySortOption>('deadline_soonest');
 
   // Pagination State
   const [page, setPage] = useState<number>(1);
@@ -325,7 +327,7 @@ export const VacancyList: React.FC<VacancyListProps> = ({
     setSelectedJobLevel('All');
     setSelectedDeadline('all');
     setSelectedStatus('all');
-    setSortBy('newest');
+    setSortBy('deadline_soonest');
     setPage(1);
   };
 
@@ -360,8 +362,8 @@ export const VacancyList: React.FC<VacancyListProps> = ({
   };
 
   const selectClass =
-    'w-full h-11 px-4 rounded-full bg-slate-50 dark:bg-white/5 ring-1 ring-black/[0.06] dark:ring-white/10 text-sm text-ink dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-300';
-  const labelClass = 'block text-xs text-ink-soft dark:text-slate-400 mb-1.5 pl-1';
+    'w-full h-11 px-4 rounded-full bg-sky-50 border border-[#e4e7ec] text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sky-300';
+  const labelClass = 'block text-xs text-[#667085] mb-1.5 pl-1';
 
   const SORTS = [
     { id: 'newest', labelEn: 'Newest', labelNp: 'नयाँ' },
@@ -370,469 +372,331 @@ export const VacancyList: React.FC<VacancyListProps> = ({
     { id: 'most_saved', labelEn: 'Most saved', labelNp: 'धेरै सुरक्षित' }
   ];
 
+  const tr = L(lang);
+  const chipCats = ['All', ...VACANCY_TYPES.map((t) => t.id).filter((id) => (typeCounts[id] || 0) > 0)];
+
   return (
-    <div>
+    <div className="flex flex-col gap-6 pt-8 pb-6">
       {/* HERO */}
-      <section className="pt-10 sm:pt-16 pb-12 sm:pb-16 text-center">
-        <span className="inline-flex items-center gap-2 pl-2 pr-3.5 py-1.5 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 text-xs text-ink-soft dark:text-slate-300">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          {totalCount} {np ? 'सक्रिय विज्ञापन · दैनिक अपडेट' : 'live notices · updated daily'}
-        </span>
-
-        <h1 className="mt-6 font-display font-semibold text-ink dark:text-white text-[2.4rem] leading-[1.05] sm:text-6xl sm:leading-[1.02] tracking-tight">
-          {np ? (
-            <>
-              सरकारी जागिर खोज्नुहोस्।
-              <br />
-              तयारी गर्नुहोस्, सफल हुनुहोस्।
-            </>
-          ) : (
-            <>
-              Find your government job.
-              <br />
-              Prepare smarter. Get selected.
-            </>
-          )}
+      <section className="flex flex-col gap-3.5 pt-3">
+        <h1 className={H1}>
+          {tr('Every verified', 'हरेक प्रमाणित')} <span className="marker">{tr('sarkari vacancy', 'सरकारी विज्ञापन')}</span>
         </h1>
-
-        <p className="mt-5 max-w-xl mx-auto text-[15px] sm:text-base text-ink-soft dark:text-slate-400 leading-relaxed">
-          {np
-            ? 'लोक सेवा, शिक्षक सेवा, बैंक र प्रदेशका प्रमाणित विज्ञापनहरू, पाठ्यक्रम र अभ्यास क्विजसहित एकै ठाउँमा।'
-            : 'Verified vacancies from Lok Sewa, TSC, banks and provinces, with syllabus, practice quizzes and eligibility in one place.'}
+        <p className="m-0 max-w-[38rem] text-[15px] leading-relaxed text-ink-soft">
+          {tr(
+            'Lok Sewa, Shikshak Sewa, provincial PSCs, banks and security forces — checked against the official gazette before it reaches you.',
+            'लोक सेवा, शिक्षक सेवा, प्रदेश लोक सेवा, बैंक र सुरक्षा निकाय — आधिकारिक राजपत्रसँग भिडाएर मात्र।'
+          )}
         </p>
 
-        {/* Search pill */}
-        <div className="mt-9 max-w-2xl mx-auto">
-          <div className="flex items-center gap-2 h-14 sm:h-16 pl-5 pr-2 rounded-full bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10 focus-within:ring-2 focus-within:ring-sky-300">
-            <Search className="w-5 h-5 text-slate-400 shrink-0" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label={np ? 'विज्ञापन खोज्नुहोस्' : 'Search vacancies'}
-              placeholder={np ? 'पद, कार्यालय वा जिल्ला खोज्नुहोस्…' : 'Search position, office or district…'}
-              className="flex-1 min-w-0 bg-transparent text-[15px] text-ink dark:text-white placeholder:text-slate-400 focus:outline-none"
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchTerm('');
-                  searchInputRef.current?.focus();
-                }}
-                className="w-9 h-9 inline-flex items-center justify-center rounded-full text-slate-400 hover:text-ink hover:bg-slate-100 dark:hover:bg-white/10 transition"
-                title="Clear search"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setDebouncedSearch(searchTerm);
+            setPage(1);
+          }}
+          className="flex items-center gap-2 max-w-[640px] h-14 pl-5 pr-1.5 rounded-full bg-white shadow-soft focus-within:ring-2 focus-within:ring-sky-300"
+        >
+          <Search className="w-[18px] h-[18px] text-[#667085] shrink-0" strokeWidth={2} />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label={tr('Search vacancies', 'विज्ञापन खोज्नुहोस्')}
+            placeholder={tr('Search positions, notice no, or organization...', 'पद, विज्ञापन नम्बर वा निकाय खोज्नुहोस्...')}
+            className="flex-1 min-w-0 bg-transparent text-[15px] text-ink placeholder:text-[#98a2b3] focus:outline-none"
+          />
+          {searchTerm && (
             <button
               type="button"
-              onClick={toggleListening}
-              title={np ? 'बोलेर खोज्नुहोस्' : 'Voice search'}
-              className={`w-10 h-10 inline-flex items-center justify-center rounded-full transition ${
-                isListening ? 'bg-rose-500 text-white' : 'text-slate-500 hover:text-ink hover:bg-slate-100 dark:hover:bg-white/10'
-              }`}
+              onClick={() => {
+                setSearchTerm('');
+                searchInputRef.current?.focus();
+              }}
+              className="w-9 h-9 shrink-0 inline-flex items-center justify-center rounded-full text-[#98a2b3] hover:text-ink hover:bg-sky-50 transition"
+              aria-label={tr('Clear search', 'खोज हटाउनुहोस्')}
             >
-              {isListening ? <MicOff className="w-[18px] h-[18px]" /> : <Mic className="w-[18px] h-[18px]" />}
+              <X className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-              aria-expanded={isAdvancedFiltersOpen}
-              className="h-10 sm:h-12 px-4 sm:px-5 inline-flex items-center gap-2 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill hover:bg-black transition"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              <span className="hidden sm:inline">{np ? 'फिल्टर' : 'Filters'}</span>
-              {activeFiltersCount > 0 && (
-                <span className="min-w-5 h-5 px-1 rounded-full bg-white text-ink dark:bg-ink dark:text-white text-[11px] inline-flex items-center justify-center">
-                  {activeFiltersCount}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {isListening && (
-            <p className="mt-3 text-xs text-rose-600 dark:text-rose-400">
-              {np ? 'सुन्दैछ… पद वा कार्यालयको नाम भन्नुहोस्' : 'Listening… say a position or office name'}
-            </p>
           )}
+          <button
+            type="button"
+            onClick={toggleListening}
+            aria-label={tr('Voice search', 'बोलेर खोज्नुहोस्')}
+            className={`hidden sm:inline-flex w-10 h-10 shrink-0 items-center justify-center rounded-full transition ${
+              isListening ? 'bg-rose-500 text-white' : 'text-[#667085] hover:text-ink hover:bg-sky-50'
+            }`}
+          >
+            {isListening ? <MicOff className="w-[18px] h-[18px]" /> : <Mic className="w-[18px] h-[18px]" />}
+          </button>
+          <button type="submit" className="h-11 px-5 shrink-0 rounded-full bg-ink text-white text-sm font-medium shadow-pill hover:bg-black transition">
+            {tr('Search', 'खोज्नुहोस्')}
+          </button>
+        </form>
+        {isListening && <p className="text-xs text-rose-600">{tr('Listening… say a position or office name', 'सुन्दैछ… पद वा कार्यालयको नाम भन्नुहोस्')}</p>}
 
-          {/* Quick presets */}
-          <div className="mt-5 flex flex-wrap justify-center gap-2">
-            {POPULAR_PRESETS.map((preset, idx) => {
-              const isActive =
-                (preset.search && debouncedSearch.includes(preset.search)) ||
-                (preset.category && selectedCategory === preset.category) ||
-                (preset.deadline && selectedDeadline === preset.deadline) ||
-                (preset.province && selectedProvince === preset.province) ||
-                (preset.qualification && selectedQualification === preset.qualification);
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    if (preset.search) setSearchTerm(preset.search);
-                    if (preset.category) setSelectedCategory(preset.category);
-                    if (preset.deadline) setSelectedDeadline(preset.deadline);
-                    if (preset.province) setSelectedProvince(preset.province);
-                    if (preset.qualification) setSelectedQualification(preset.qualification);
-                    setPage(1);
-                  }}
-                  className={`px-3.5 py-1.5 rounded-full text-[13px] transition ${
-                    isActive
-                      ? 'bg-ink text-white dark:bg-white dark:text-ink'
-                      : 'bg-white/60 dark:bg-white/5 text-ink-soft dark:text-slate-300 ring-1 ring-black/[0.04] dark:ring-white/10 hover:bg-white dark:hover:bg-white/10'
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* BROWSE BY TYPE */}
-      <section className="mb-14" aria-labelledby="browse-types">
-        <div className="text-center">
-          <p className="text-sm text-ink-soft">{np ? 'विज्ञापनका प्रकार' : 'Browse by type'}</p>
-          <h2 id="browse-types" className="mt-1 font-display text-3xl sm:text-4xl font-semibold text-ink">
-            {np ? <>तपाईंको <span className="marker">क्षेत्र</span> छान्नुहोस्</> : <>Pick your <span className="marker">sector</span></>}
-          </h2>
-        </div>
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-          {VACANCY_TYPES.map((type) => {
-            const Icon = type.icon;
-            const count = typeCounts[type.id] || 0;
-            const active = selectedCategory === type.id;
+        {/* Category chips */}
+        <div className="flex gap-2 overflow-x-auto py-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist" aria-label={tr('Vacancy type', 'विज्ञापनको प्रकार')}>
+          {chipCats.map((c) => {
+            const active = selectedCategory === c;
+            const type = VACANCY_TYPES.find((t) => t.id === c);
+            const label = c === 'All' ? tr('All', 'सबै') : np ? type?.np : c;
+            const count = c === 'All' ? initialVacancies.length : typeCounts[c] || 0;
             return (
               <button
-                key={type.id}
-                onClick={() => pickType(type.id)}
-                aria-pressed={active}
-                className={`group relative overflow-hidden text-left rounded-[1.75rem] p-4 sm:p-5 bg-gradient-to-br ${tintFor(type.id)} transition hover:-translate-y-0.5 ${
-                  active ? 'ring-2 ring-ink' : 'ring-1 ring-black/[0.03]'
+                key={c}
+                role="tab"
+                aria-selected={active}
+                onClick={() => {
+                  setSelectedCategory(c);
+                  setPage(1);
+                }}
+                className={`flex-none h-[38px] px-4 rounded-full text-[13.5px] whitespace-nowrap shadow-[0_1px_2px_rgb(11_18_32/0.05)] transition ${
+                  active ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-sky-50'
                 }`}
               >
-                <span className="w-10 h-10 rounded-full bg-white/80 inline-flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-ink" strokeWidth={1.8} />
-                </span>
-                <span className="mt-6 sm:mt-8 block font-display text-lg sm:text-xl font-medium text-ink leading-tight">{np ? type.np : type.en}</span>
-                <span className="mt-0.5 block text-xs sm:text-sm text-ink-soft">
-                  {count} {np ? 'विज्ञापन' : count === 1 ? 'notice' : 'notices'}
-                </span>
-                <ArrowUpRight className="absolute top-4 right-4 w-4 h-4 text-ink opacity-40 group-hover:opacity-100 transition" />
+                {label} <span className="opacity-55 ml-1">{num(count, lang)}</span>
               </button>
             );
           })}
         </div>
       </section>
 
+      {/* SECTION HEADING */}
+      <div ref={listTopRef} className="scroll-mt-28 flex items-baseline justify-between gap-3 flex-wrap">
+        <h2 className={H2}>
+          {tr('Open notices', 'खुला विज्ञापनहरू')} <span className="text-[#667085] font-medium">{num(totalCount, lang)}</span>
+        </h2>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline text-[13px] text-ink-soft">
+            {sortBy === 'deadline_soonest' ? tr('Sorted by closing date', 'अन्तिम मितिअनुसार') : SORTS.find((s) => s.id === sortBy)?.[np ? 'labelNp' : 'labelEn']}
+          </span>
+          <button
+            onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
+            aria-expanded={isAdvancedFiltersOpen}
+            className="h-9 px-3.5 inline-flex items-center gap-1.5 rounded-full bg-white border border-[#d0d5dd] text-[13px] text-ink hover:bg-sky-50 transition"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            {tr('Filters', 'फिल्टर')}
+            {activeFiltersCount > 0 && (
+              <span className="min-w-5 h-5 px-1 rounded-full bg-ink text-white text-[11px] inline-flex items-center justify-center">{num(activeFiltersCount, lang)}</span>
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* FILTER PANEL */}
       {isAdvancedFiltersOpen && (
-        <section className="mb-10 p-5 sm:p-7 rounded-[2rem] bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display text-xl font-semibold text-ink dark:text-white">{np ? 'फिल्टरहरू' : 'Filters'}</h2>
+        <section className={`${CARD} p-5 sm:p-6`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display text-lg font-semibold text-ink">{tr('Filters', 'फिल्टरहरू')}</h3>
             <div className="flex items-center gap-2">
               {activeFiltersCount > 0 && (
-                <button onClick={handleResetFilters} className="px-4 h-9 rounded-full text-sm text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white transition">
-                  {np ? 'सबै हटाउनुहोस्' : 'Clear all'}
+                <button onClick={handleResetFilters} className="px-3 h-9 rounded-full text-[13px] text-ink-soft hover:text-ink transition">
+                  {tr('Clear all', 'सबै हटाउनुहोस्')}
                 </button>
               )}
-              <button
-                onClick={() => setIsAdvancedFiltersOpen(false)}
-                className="w-9 h-9 inline-flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 text-ink dark:text-white"
-                aria-label="Close filters"
-              >
+              <button onClick={() => setIsAdvancedFiltersOpen(false)} className="w-9 h-9 inline-flex items-center justify-center rounded-full bg-sky-50 text-ink" aria-label={tr('Close filters', 'फिल्टर बन्द')}>
                 <X className="w-4 h-4" />
               </button>
             </div>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className={labelClass}>{np ? 'प्रदेश' : 'Province'}</label>
+              <label className={labelClass}>{tr('Sort by', 'क्रम')}</label>
+              <select value={sortBy} onChange={(e) => { setSortBy(e.target.value as VacancySortOption); setPage(1); }} className={selectClass}>
+                {SORTS.map((o) => (
+                  <option key={o.id} value={o.id}>{np ? o.labelNp : o.labelEn}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>{tr('Province', 'प्रदेश')}</label>
               <select value={selectedProvince} onChange={(e) => { setSelectedProvince(e.target.value); setPage(1); }} className={selectClass}>
                 {PROVINCES.map((prov) => (
                   <option key={prov} value={prov}>{prov}</option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'जिल्ला' : 'District'}</label>
+              <label className={labelClass}>{tr('District', 'जिल्ला')}</label>
               <select value={selectedDistrict} onChange={(e) => { setSelectedDistrict(e.target.value); setPage(1); }} className={selectClass}>
-                <option value="All">{np ? 'सबै जिल्ला' : 'All districts'}</option>
-                <option value="Kathmandu">Kathmandu</option>
-                <option value="Pokhara">Pokhara / Kaski</option>
-                <option value="Biratnagar">Biratnagar / Morang</option>
-                <option value="Lalitpur">Lalitpur</option>
-                <option value="Chitwan">Chitwan</option>
-                <option value="Butwal">Butwal / Rupandehi</option>
-                <option value="Janakpur">Janakpur / Dhanusha</option>
-                {availableDistricts.map((d, i) => (
-                  <option key={i} value={d}>{d}</option>
-                ))}
+                <option value="All">{tr('All districts', 'सबै जिल्ला')}</option>
+                {['Kathmandu', 'Pokhara', 'Biratnagar', 'Lalitpur', 'Chitwan', 'Butwal', 'Janakpur', ...availableDistricts]
+                  .filter((d, i, a) => a.indexOf(d) === i)
+                  .map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'न्यूनतम योग्यता' : 'Qualification'}</label>
+              <label className={labelClass}>{tr('Qualification', 'न्यूनतम योग्यता')}</label>
               <select value={selectedQualification} onChange={(e) => { setSelectedQualification(e.target.value); setPage(1); }} className={selectClass}>
                 {QUALIFICATIONS.map((q) => (
                   <option key={q} value={q}>{q}</option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'विषय' : 'Subject'}</label>
+              <label className={labelClass}>{tr('Subject', 'विषय')}</label>
               <select value={selectedSubject} onChange={(e) => { setSelectedSubject(e.target.value); setPage(1); }} className={selectClass}>
                 {SUBJECT_OPTIONS.map((sub) => (
                   <option key={sub.id} value={sub.id}>{np ? sub.labelNp : sub.labelEn}</option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'तह / श्रेणी' : 'Job level'}</label>
+              <label className={labelClass}>{tr('Job level', 'तह / श्रेणी')}</label>
               <select value={selectedJobLevel} onChange={(e) => { setSelectedJobLevel(e.target.value); setPage(1); }} className={selectClass}>
                 {JOB_LEVEL_OPTIONS.map((lvl) => (
                   <option key={lvl.id} value={lvl.id}>{np ? lvl.labelNp : lvl.labelEn}</option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'म्याद' : 'Deadline'}</label>
+              <label className={labelClass}>{tr('Deadline', 'म्याद')}</label>
               <select value={selectedDeadline} onChange={(e) => { setSelectedDeadline(e.target.value as VacancyDeadlineFilter); setPage(1); }} className={selectClass}>
-                <option value="all">{np ? 'सबै म्याद' : 'Any deadline'}</option>
-                <option value="active">{np ? 'म्याद बाँकी' : 'Still open'}</option>
-                <option value="week">{np ? '७ दिनभित्र' : 'Closing in 7 days'}</option>
-                <option value="month">{np ? '३० दिनभित्र' : 'Closing in 30 days'}</option>
-                <option value="expired">{np ? 'म्याद समाप्त' : 'Expired'}</option>
+                <option value="all">{tr('Any deadline', 'सबै म्याद')}</option>
+                <option value="active">{tr('Still open', 'म्याद बाँकी')}</option>
+                <option value="week">{tr('Closing in 7 days', '७ दिनभित्र')}</option>
+                <option value="month">{tr('Closing in 30 days', '३० दिनभित्र')}</option>
+                <option value="expired">{tr('Expired', 'म्याद समाप्त')}</option>
               </select>
             </div>
-
             <div>
-              <label className={labelClass}>{np ? 'स्थिति' : 'Status'}</label>
-              <select value={selectedStatus} onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }} className={selectClass}>
-                <option value="all">{np ? 'सबै स्थिति' : 'Any status'}</option>
-                <option value="published">{np ? 'प्रकाशित' : 'Published'}</option>
-                <option value="closing_soon">{np ? 'अन्तिम म्याद' : 'Closing soon'}</option>
-                <option value="expired">{np ? 'म्याद समाप्त' : 'Expired'}</option>
-              </select>
-            </div>
-
-            <div>
-              <label className={labelClass}>{np ? 'निकाय' : 'Organization'}</label>
+              <label className={labelClass}>{tr('Organization', 'निकाय')}</label>
               <select value={selectedOrg} onChange={(e) => { setSelectedOrg(e.target.value); setPage(1); }} className={selectClass}>
-                <option value="All">{np ? 'सबै निकाय' : 'All organizations'}</option>
-                <option value="PSC">Lok Sewa Aayog (PSC)</option>
-                <option value="TSC">Teachers Service Commission (TSC)</option>
-                <option value="NRB">Nepal Rastra Bank</option>
-                <option value="Nepal Bank">Nepal Bank Limited</option>
-                <option value="Nepal Police">Nepal Police</option>
-                <option value="Statistics">National Statistics Office</option>
-                <option value="MoALD">Ministry of Agriculture</option>
-                <option value="Koshi">Koshi Pradesh PSC</option>
-                <option value="Madhesh">Madhesh Pradesh PSC</option>
+                <option value="All">{tr('All organizations', 'सबै निकाय')}</option>
+                {['PSC', 'TSC', 'NRB', 'Nepal Bank', 'Nepal Police', 'Statistics', 'MoALD', 'Koshi', 'Madhesh', ...availableOrgs]
+                  .filter((d, i, a) => a.indexOf(d) === i)
+                  .map((o) => (
+                    <option key={o} value={o}>{o}</option>
+                  ))}
               </select>
             </div>
           </div>
         </section>
       )}
 
-      {/* SECTION HEADING + SORT */}
-      <div ref={listTopRef} className="scroll-mt-28 flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
-        <div>
-          <p className="text-sm text-ink-soft dark:text-slate-400">{np ? 'नयाँ सूचनाहरू' : 'Latest notices'}</p>
-          <h2 className="mt-1 font-display text-3xl sm:text-4xl font-semibold text-ink dark:text-white">
-            {np ? (
-              <>खुला <span className="marker">विज्ञापनहरू</span></>
-            ) : (
-              <>Open <span className="marker">vacancies</span></>
-            )}
-          </h2>
-          {selectedCategory !== 'All' && (
-            <button
-              onClick={() => {
-                setSelectedCategory('All');
-                setPage(1);
-              }}
-              className="mt-3 h-8 pl-3.5 pr-2.5 inline-flex items-center gap-1.5 rounded-full bg-ink text-white text-[13px]"
-              title={np ? 'फिल्टर हटाउनुहोस्' : 'Clear sector filter'}
-            >
-              {(() => {
-                const type = VACANCY_TYPES.find((v) => v.id === selectedCategory);
-                return type ? (np ? type.np : type.en) : selectedCategory;
-              })()}
-              <X className="w-3.5 h-3.5 opacity-70" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1 p-1 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 overflow-x-auto no-scrollbar max-w-full self-start sm:self-auto">
-          {SORTS.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => {
-                setSortBy(opt.id as VacancySortOption);
-                setPage(1);
-              }}
-              className={`px-3.5 h-9 rounded-full text-[13px] whitespace-nowrap transition ${
-                sortBy === opt.id
-                  ? 'bg-ink text-white dark:bg-white dark:text-ink'
-                  : 'text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white'
-              }`}
-            >
-              {np ? opt.labelNp : opt.labelEn}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* ERROR */}
       {fetchError && (
-        <div className="mb-6 px-5 py-4 rounded-3xl bg-white dark:bg-slate-900 ring-1 ring-rose-200 dark:ring-rose-900 flex items-center justify-between gap-3 text-sm">
-          <span className="flex items-center gap-2 text-ink-soft dark:text-slate-300">
+        <div className={`${CARD} px-5 py-4 flex items-center justify-between gap-3 text-sm`}>
+          <span className="flex items-center gap-2 text-ink-soft">
             <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-            {np ? 'प्रत्यक्ष सूचना लोड हुन सकेन।' : 'Couldn’t load live notices. Showing saved data.'}
+            {tr('Couldn’t load live notices. Showing saved data.', 'प्रत्यक्ष सूचना लोड हुन सकेन।')}
           </span>
           <button onClick={fetchVacancies} className="px-4 h-9 rounded-full bg-ink text-white text-sm shrink-0">
-            {np ? 'पुनः प्रयास' : 'Retry'}
+            {tr('Retry', 'पुनः प्रयास')}
           </button>
         </div>
       )}
 
-      {/* LIST */}
+      {/* GRID */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Array.from({ length: limit > 6 ? 6 : limit }).map((_, i) => (
-            <div key={i} className="rounded-[1.75rem] bg-white dark:bg-slate-900 shadow-soft overflow-hidden animate-pulse">
-              <div className="h-28 bg-slate-100 dark:bg-white/5" />
-              <div className="p-5 space-y-3">
-                <div className="h-5 bg-slate-100 dark:bg-white/5 rounded-full w-4/5" />
-                <div className="h-4 bg-slate-100 dark:bg-white/5 rounded-full w-3/5" />
-                <div className="h-10 bg-slate-100 dark:bg-white/5 rounded-full mt-6" />
+        <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={`${CARD} overflow-hidden animate-pulse`}>
+              <div className="h-[58px] bg-sky-50" />
+              <div className="p-[18px] space-y-3">
+                <div className="h-5 bg-sky-50 rounded-full w-4/5" />
+                <div className="h-4 bg-sky-50 rounded-full w-2/5" />
+                <div className="grid grid-cols-3 gap-2"><div className="h-14 bg-sky-50 rounded-[14px]" /><div className="h-14 bg-sky-50 rounded-[14px]" /><div className="h-14 bg-sky-50 rounded-[14px]" /></div>
               </div>
             </div>
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="py-16 px-6 text-center rounded-[2rem] bg-white dark:bg-slate-900 shadow-soft">
-          <div className="w-14 h-14 mx-auto rounded-full bg-sky-100 dark:bg-white/10 flex items-center justify-center">
-            <Search className="w-6 h-6 text-ink dark:text-white" />
+        <div className={`${CARD} py-16 px-6 text-center`}>
+          <div className="w-14 h-14 mx-auto rounded-full bg-sky-100 flex items-center justify-center">
+            <Search className="w-6 h-6 text-ink" />
           </div>
-          <h3 className="mt-5 font-display text-2xl font-semibold text-ink dark:text-white">
-            {np ? 'कुनै विज्ञापन भेटिएन' : 'No vacancies found'}
-          </h3>
-          <p className="mt-2 text-sm text-ink-soft dark:text-slate-400 max-w-sm mx-auto">
-            {np ? 'फरक शब्द प्रयोग गर्नुहोस् वा फिल्टर हटाउनुहोस्।' : 'Try different words or clear your filters.'}
-          </p>
-          <button onClick={handleResetFilters} className="mt-6 px-5 h-11 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-sm font-medium shadow-pill">
-            {np ? 'फिल्टर हटाउनुहोस्' : 'Clear filters'}
+          <h3 className="mt-5 font-display text-2xl font-semibold text-ink">{tr('No vacancies found', 'कुनै विज्ञापन भेटिएन')}</h3>
+          <p className="mt-2 text-sm text-ink-soft max-w-sm mx-auto">{tr('Try different words or clear your filters.', 'फरक शब्द प्रयोग गर्नुहोस् वा फिल्टर हटाउनुहोस्।')}</p>
+          <button onClick={handleResetFilters} className={`mt-6 ${BTN_PRIMARY}`}>
+            {tr('Clear filters', 'फिल्टर हटाउनुहोस्')}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))]">
           {items.map((vacancy) => {
-            const isEligible = checkQuickEligibility(vacancy);
             const isBookmarked = bookmarkedIds.includes(vacancy.id);
-            const isClosingSoon = vacancy.status === 'closing_soon' || vacancy.status === ('closing' as any);
-            const isExpired = vacancy.status === 'expired';
             const posts = vacancy.number_of_posts || vacancy.posts || 1;
-            const applyHref = vacancy.official_source_url || vacancy.applyUrl;
+            const fee = vacancy.application_fee ?? vacancy.fee ?? 0;
+            const deadline = vacancy.application_deadline || vacancy.deadline;
+            const dl = daysLeft(deadline);
+            const u = urgency(dl);
+            const closed = dl < 0 || vacancy.status === 'expired';
+            const match = matchScore(vacancy, userProfile).score;
+            const type = VACANCY_TYPES.find((t) => t.id === vacancy.category);
+            const catLabel = np ? type?.np || vacancy.category : vacancy.category;
+            const due = closed
+              ? tr('Closed', 'बन्द')
+              : !Number.isFinite(dl)
+                ? tr('Ongoing', 'चालु')
+                : dl <= 10
+                  ? tr(`${dl} days left`, `${num(dl, lang)} दिन बाँकी`)
+                  : tr(`${dl} days`, `${num(dl, lang)} दिन`);
 
             return (
               <article
                 key={vacancy.id}
                 onClick={() => onSelectVacancy(vacancy)}
-                className="group flex flex-col rounded-[1.75rem] bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 overflow-hidden cursor-pointer transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-20px_rgb(11_18_32/0.25)]"
+                className={`${CARD} group cursor-pointer overflow-hidden flex flex-col transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgb(11_18_32/0.04),0_20px_40px_-16px_rgb(11_18_32/0.2)]`}
               >
-                {/* Pastel band */}
-                <div className={`relative h-32 p-4 bg-gradient-to-b ${tintFor(vacancy.category || '')}`}>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs text-ink dark:text-slate-100">
-                        {vacancy.category}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs text-ink dark:text-slate-100">
-                        {isExpired ? (np ? 'समाप्त' : 'Closed') : isClosingSoon ? (np ? 'छिट्टै बन्द' : 'Closing soon') : np ? 'खुला' : 'Open'}
-                      </span>
-                    </div>
+                <div className="pt-4 px-[18px] pb-[30px] flex items-center justify-between gap-2" style={tintBand(vacancy.category || '')}>
+                  <span className="text-xs font-semibold text-ink bg-white/75 px-2.5 py-[5px] rounded-full truncate">{catLabel}</span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span
+                      className="text-xs font-semibold px-2.5 py-[5px] rounded-full"
+                      style={closed ? { background: '#eef2f6', color: '#667085' } : { background: u.bg, color: u.fg }}
+                    >
+                      {due}
+                    </span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onBookmark(vacancy);
                       }}
-                      title={np ? 'सुरक्षित गर्नुहोस्' : 'Save vacancy'}
+                      aria-label={tr('Save vacancy', 'सुरक्षित गर्नुहोस्')}
                       aria-pressed={isBookmarked}
-                      className={`w-9 h-9 shrink-0 inline-flex items-center justify-center rounded-full transition ${
-                        isBookmarked ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'bg-white/80 dark:bg-white/10 text-ink dark:text-white hover:bg-white'
-                      }`}
+                      className={`w-7 h-7 inline-flex items-center justify-center rounded-full transition ${isBookmarked ? 'bg-ink text-white' : 'bg-white/75 text-ink hover:bg-white'}`}
                     >
-                      <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                      <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
                     </button>
-                  </div>
-                  <div className="absolute left-4 bottom-3 flex items-baseline gap-1.5 text-ink dark:text-white">
-                    <span className="font-display text-4xl font-semibold leading-none">{posts}</span>
-                    <span className="text-xs text-ink-soft dark:text-slate-300">{posts === 1 ? (np ? 'पद' : 'post') : np ? 'पदहरू' : 'posts'}</span>
                   </div>
                 </div>
 
-                {/* Body */}
-                <div className="flex-1 flex flex-col p-5">
-                  <h3 className="font-display text-[1.2rem] leading-snug font-medium text-ink dark:text-white line-clamp-2">
+                <div className="px-[18px] pb-[18px] -mt-3.5 flex flex-col gap-2.5 flex-1">
+                  <h3 className="font-display text-[18px] font-semibold leading-[1.25] tracking-[-0.01em] text-ink [text-wrap:pretty] line-clamp-2">
                     {np && vacancy.titleNp ? vacancy.titleNp : vacancy.title}
                   </h3>
-                  <p className="mt-1.5 text-sm text-ink-soft dark:text-slate-400 truncate">{vacancy.organization || vacancy.org}</p>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-ink dark:text-slate-200">
-                    <span className={`inline-flex items-center gap-1.5 ${isClosingSoon ? 'text-rose-600 dark:text-rose-400' : ''}`}>
-                      <Clock className="w-3.5 h-3.5 opacity-60" />
-                      {vacancy.application_deadline || vacancy.deadline || (np ? 'चालु' : 'Ongoing')}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 opacity-60" />
-                      {vacancy.province}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 min-w-0">
-                      <GraduationCap className="w-3.5 h-3.5 opacity-60 shrink-0" />
-                      <span className="truncate max-w-[9rem]">{vacancy.qualification || vacancy.qualifications?.minLevel}</span>
-                    </span>
-                  </div>
-
-                  <div className="mt-auto pt-5">
-                    <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-3">
-                      <span className={`text-xs whitespace-nowrap ${isEligible ? 'text-emerald-600 dark:text-emerald-400' : 'text-ink-soft dark:text-slate-400'} inline-flex items-center gap-1`}>
-                        {isEligible ? <Check className="w-3.5 h-3.5" /> : null}
-                        {isEligible ? (np ? 'योग्य' : 'Eligible') : np ? 'योग्यता जाँच' : 'Check fit'}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        {applyHref && (
-                          <a
-                            href={applyHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="h-9 px-3.5 inline-flex items-center gap-1 whitespace-nowrap rounded-full ring-1 ring-slate-200 dark:ring-white/15 text-[13px] text-ink dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition"
-                          >
-                            {np ? 'आवेदन' : 'Apply'}
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectVacancy(vacancy);
-                          }}
-                          className="h-9 px-4 rounded-full bg-ink dark:bg-white text-white dark:text-ink text-[13px] font-medium group-hover:shadow-pill transition"
-                        >
-                          {np ? 'हेर्नुहोस्' : 'View'}
-                        </button>
+                  <p className="text-[13px] text-ink-soft flex items-center gap-1.5 min-w-0">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#059669]" aria-label={tr('Verified', 'प्रमाणित')} />
+                    <span className="truncate">{vacancy.shortOrg || vacancy.organization || vacancy.org}</span>
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 mt-1">
+                    {[
+                      [tr('Posts', 'पद'), num(posts, lang)],
+                      [tr('Fee', 'दस्तुर'), `${tr('Rs ', 'रु ')}${num(fee.toLocaleString(), lang)}`],
+                      [tr('Closes', 'अन्तिम मिति'), num(fmtDate(deadline), lang)]
+                    ].map(([k, val]) => (
+                      <div key={k} className="bg-sky-50 rounded-[14px] p-2.5 min-w-0">
+                        <div className="text-[11px] text-[#667085]">{k}</div>
+                        <div className="font-semibold text-[15px] mt-0.5 text-ink truncate">{val}</div>
                       </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between gap-2 mt-auto pt-2">
+                    <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                      <div className="w-14 h-1.5 rounded-full bg-sky-100 overflow-hidden">
+                        <div className="h-full transition-[width] duration-300" style={{ width: `${match}%`, background: match >= 80 ? '#059669' : '#5ea9e2' }} />
+                      </div>
+                      {tr(`${match}% match`, `${num(match, lang)}% मिलान`)}
                     </div>
+                    <span className="text-[13.5px] font-medium text-ink inline-flex items-center gap-1 group-hover:gap-1.5 transition-all">
+                      {tr('Details', 'विवरण')} →
+                    </span>
                   </div>
                 </div>
               </article>
@@ -843,17 +707,16 @@ export const VacancyList: React.FC<VacancyListProps> = ({
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-ink-soft dark:text-slate-400">
-            {(page - 1) * limit + 1}–{Math.min(page * limit, totalCount)} {np ? 'मध्ये' : 'of'} {totalCount}
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-ink-soft">
+            {num((page - 1) * limit + 1, lang)}–{num(Math.min(page * limit, totalCount), lang)} {tr('of', 'मध्ये')} {num(totalCount, lang)}
           </p>
-
-          <div className="flex items-center gap-1 p-1 rounded-full bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10">
+          <div className="flex items-center gap-1 p-1 rounded-full bg-white shadow-soft">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Previous page"
+              className="w-10 h-10 inline-flex items-center justify-center rounded-full text-ink hover:bg-sky-50 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label={tr('Previous page', 'अघिल्लो पृष्ठ')}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -861,18 +724,15 @@ export const VacancyList: React.FC<VacancyListProps> = ({
               .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
               .map((p, idx, arr) => {
                 const prevP = arr[idx - 1];
-                const showEllipsis = prevP && p - prevP > 1;
                 return (
                   <React.Fragment key={p}>
-                    {showEllipsis && <span className="px-1 text-slate-400 text-sm">…</span>}
+                    {prevP && p - prevP > 1 && <span className="px-1 text-[#98a2b3] text-sm">…</span>}
                     <button
                       onClick={() => setPage(p)}
                       aria-current={page === p ? 'page' : undefined}
-                      className={`w-9 h-9 rounded-full text-sm transition ${
-                        page === p ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10'
-                      }`}
+                      className={`w-10 h-10 rounded-full text-sm transition ${page === p ? 'bg-ink text-white' : 'text-ink hover:bg-sky-50'}`}
                     >
-                      {p}
+                      {num(p, lang)}
                     </button>
                   </React.Fragment>
                 );
@@ -880,25 +740,24 @@ export const VacancyList: React.FC<VacancyListProps> = ({
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Next page"
+              className="w-10 h-10 inline-flex items-center justify-center rounded-full text-ink hover:bg-sky-50 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label={tr('Next page', 'अर्को पृष्ठ')}
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-
           <select
             value={limit}
             onChange={(e) => {
               setLimit(Number(e.target.value));
               setPage(1);
             }}
-            aria-label="Results per page"
-            className="h-9 px-3 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 text-sm text-ink-soft dark:text-slate-300 focus:outline-none"
+            aria-label={tr('Results per page', 'प्रति पृष्ठ')}
+            className="h-9 px-3 rounded-full bg-white border border-[#e4e7ec] text-sm text-ink-soft focus:outline-none"
           >
             {[6, 12, 24].map((size) => (
               <option key={size} value={size}>
-                {size} {np ? 'प्रति पृष्ठ' : 'per page'}
+                {num(size, lang)} {tr('per page', 'प्रति पृष्ठ')}
               </option>
             ))}
           </select>

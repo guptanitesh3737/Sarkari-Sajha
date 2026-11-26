@@ -2380,6 +2380,24 @@ Return a valid JSON object:
     res.json(list);
   });
 
+  // Must be registered before /api/quizzes/:id, which would otherwise match it.
+  app.get('/api/quizzes/enhanced-leaderboard', (req, res) => {
+    const { province, examProfile, setId } = req.query;
+    let list = [...quizAttemptsStore];
+
+    if (setId && typeof setId === 'string' && setId !== 'all') {
+      list = list.filter(a => a.quizSetId === setId);
+    }
+
+    // Sort descending by score, then ascending by time taken
+    list.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeTakenSeconds - b.timeTakenSeconds;
+    });
+
+    res.json(list);
+  });
+
   app.get('/api/quizzes/:id', (req, res) => {
     const quizSet = quizSetsStore.find(q => q.id === req.params.id);
     if (!quizSet) {
@@ -4283,22 +4301,6 @@ Return structured JSON conforming to the complete 14-field extraction schema.`;
   // -------------------------------------------------------------
   // 13. STATEWIDE & POST-WISE ENHANCED LEADERBOARD
   // -------------------------------------------------------------
-  app.get('/api/quizzes/enhanced-leaderboard', (req, res) => {
-    const { province, examProfile, setId } = req.query;
-    let list = [...quizAttemptsStore];
-
-    if (setId && typeof setId === 'string' && setId !== 'all') {
-      list = list.filter(a => a.quizSetId === setId);
-    }
-
-    // Sort descending by score, then ascending by time taken
-    list.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return a.timeTakenSeconds - b.timeTakenSeconds;
-    });
-
-    res.json(list);
-  });
 
   // -------------------------------------------------------------
   // 14. PHASE 9 — AI CAREER ASSISTANT BACKEND ENGINE

@@ -16,6 +16,7 @@ import {
 import { User as FirebaseUser } from 'firebase/auth';
 import { ApplicationTrack, Vacancy, ApplicationStatus, Language } from '../types';
 import { t } from '../utils/translations';
+import { num, L, daysLeft, H1 } from '../utils/ui';
 
 interface ApplicationTrackerProps {
   applications: ApplicationTrack[];
@@ -108,234 +109,170 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const tr = L(lang);
+  const np = lang === 'np';
+  const STAGES = [tr('Bookmarked', 'बुकमार्क'), tr('Form drafted', 'फाराम तयार'), tr('Fee paid', 'दस्तुर तिरियो'), tr('Submitted', 'बुझाइयो')];
+  const DOTS = ['#98a2b3', '#5ea9e2', '#f59e0b', '#059669'];
+
+  // Board stage derived from the stored status model:
+  // 0 Bookmarked · 1 Applied (fee unpaid) · 2 Applied (fee paid) · 3 admit card issued or later.
+  const stageOf = (a: ApplicationTrack) =>
+    a.status === 'Bookmarked' ? 0 : a.status === 'Applied' ? (a.feePaid ? 2 : 1) : 3;
+  const moveTo = (a: ApplicationTrack, k: number) => {
+    const next = Math.max(0, Math.min(3, k));
+    if (next === stageOf(a)) return;
+    const map: [ApplicationStatus, boolean][] = [
+      ['Bookmarked', false],
+      ['Applied', false],
+      ['Applied', true],
+      ['Admit Card Issued', true]
+    ];
+    onUpdateStatus(a.id, map[next][0], a.notes, map[next][1]);
+  };
+
+  const rows = applications
+    .map((a) => {
+      const v = vacancies.find((x) => x.id === a.vacancyId);
+      const deadline = v?.application_deadline || v?.deadline;
+      return { a, v, k: stageOf(a), dl: daysLeft(deadline), deadline };
+    })
+    .sort((x, y) => (x.deadline || '9999').localeCompare(y.deadline || '9999'));
+  const pending = rows.filter((r) => r.k < 3);
+  const week = pending.filter((r) => r.dl >= 0 && r.dl <= 7).length;
+
   return (
-    <div className="space-y-6">
-      {/* Banner */}
-      <div className="bg-white p-6 rounded-2xl text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800">
-              <BookmarkCheck className="w-3.5 h-3.5 text-blue-600" /> Career Application Pipeline
-            </span>
-            <h2 className="text-2xl font-black font-sans text-slate-900">
-              {lang === 'np' ? 'मेरो दरखास्त तथा भर्ना ट्रयाकर' : 'My Saved Bookmarks & Applications'}
-            </h2>
-            <p className="text-xs text-slate-500 max-w-xl">
-              Track your Lok Sewa, Banking, and Government job applications from initial bookmark to fee voucher payment, admit card release, exam attendance, and final results!
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
-            {onOpenGoogleSheetsSync && (
-              <button
-                onClick={onOpenGoogleSheetsSync}
-                className="px-4 py-2.5 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 whitespace-nowrap border border-emerald-600 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-                title="Sync and export applications directly to Google Sheets"
-              >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
-                <span>{lang === 'np' ? 'गूगल शीट्स सिङ्क' : 'Google Sheets Sync'}</span>
-              </button>
+    <div className="flex flex-col gap-5 pt-7 pb-6">
+      <div className="flex flex-wrap justify-between items-end gap-3.5">
+        <div className="flex flex-col gap-1.5">
+          <h1 className={H1.replace('lg:text-[56px]', 'lg:text-[48px]')}>{tr('My applications', 'मेरो आवेदनहरू')}</h1>
+          <p className="text-[15px] text-ink-soft">
+            {tr(
+              `${pending.length} in progress · ${week} deadline${week === 1 ? '' : 's'} this week`,
+              `${num(pending.length, lang)} प्रक्रियामा · यो हप्ता ${num(week, lang)} अन्तिम मिति`
             )}
-
-            <button
-              onClick={handleExportCSV}
-              disabled={applications.length === 0}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-xs rounded-full transition flex items-center justify-center gap-2 whitespace-nowrap border border-slate-200"
-              title="Export all tracked application history to CSV file"
-            >
-              <Download className="w-4 h-4" />
-              <span>{lang === 'np' ? 'CSV एक्सपोर्ट' : 'Export CSV'}</span>
-            </button>
-          </div>
+          </p>
         </div>
-
-        {/* Private Data Security Notice if not logged in */}
-        {!firebaseUser && (
-          <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 text-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="p-2 bg-amber-500/20 text-amber-700 rounded-xl">
-                <BookmarkCheck className="w-5 h-5" />
+        <div className="flex flex-wrap gap-2">
+          {onOpenGoogleSheetsSync && (
+            <button
+              onClick={onOpenGoogleSheetsSync}
+              className="h-11 px-[18px] rounded-full bg-white text-sm text-ink flex items-center gap-2 shadow-[0_1px_2px_rgb(11_18_32/0.05)] hover:bg-sky-50 transition"
+            >
+              <span className="w-[18px] h-[18px] rounded bg-[#0f9d58] text-white flex items-center justify-center">
+                <FileSpreadsheet className="w-3 h-3" />
               </span>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900">
-                  {lang === 'np' ? 'व्यक्तिगत ट्रयाकर सुरक्षित गर्नुहोस्' : 'Private Firebase & Firestore Application Storage'}
-                </h4>
-                <p className="text-[11px] text-slate-600">
-                  {lang === 'np'
-                    ? 'तपाईं हाल गेस्ट मोडमा हुनुहुन्छ। स्थायी रूपमा दरखास्तहरू बचत र सिङ्क गर्न लगइन गर्नुहोस्।'
-                    : 'Sign in to access and sync your private application pipeline securely with Firebase Firestore.'}
-                </p>
-              </div>
-            </div>
-            {onOpenAuth && (
-              <button
-                onClick={onOpenAuth}
-                className="px-4 py-2 font-bold text-xs rounded-full shadow-xs transition shrink-0 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-              >
-                {lang === 'np' ? 'साइन इन / लगइन गर्नुहोस्' : 'Sign In / Register'}
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Pipeline Filter Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pt-4 border-t border-slate-100 mt-4 scrollbar-none">
+              {tr('Sync to Google Sheets', 'गुगल शिटमा सिंक')}
+            </button>
+          )}
           <button
-            onClick={() => setActiveFilter('All')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition ${
-              activeFilter === 'All'
-                ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-            }`}
+            onClick={handleExportCSV}
+            disabled={applications.length === 0}
+            className="h-11 px-4 rounded-full bg-white text-sm text-ink flex items-center gap-2 shadow-[0_1px_2px_rgb(11_18_32/0.05)] hover:bg-sky-50 disabled:opacity-50 transition"
           >
-            All Tracks ({applications.length})
+            <Download className="w-4 h-4" />
+            CSV
           </button>
-
-          {pipelineStatuses.map((st) => {
-            const count = applications.filter((a) => a.status === st).length;
-            return (
-              <button
-                key={st}
-                onClick={() => setActiveFilter(st)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 ${
-                  activeFilter === st
-                    ? 'bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                }`}
-              >
-                <span>{st}</span>
-                {count > 0 && (
-                  <span className="bg-slate-200 px-1.5 py-0.5 rounded-full text-[10px] font-mono text-slate-800">
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
         </div>
       </div>
 
-      {/* Applications Cards Grid */}
-      {filteredApps.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center text-slate-500 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-          <BookmarkCheck className="w-12 h-12 mx-auto text-slate-300" />
-          <h3 className="text-lg font-bold text-slate-800">No vacancies saved in this pipeline stage</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Bookmark interesting vacancies from the "Latest Vacancies" tab to start tracking your application progress.
+      {!firebaseUser && (
+        <div className="bg-white rounded-[24px] px-5 py-4 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-sm text-ink-soft">
+            {tr('You are browsing as a guest. Sign in to keep your tracker synced across devices.', 'तपाईं गेस्ट मोडमा हुनुहुन्छ। ट्र्याकर सबै उपकरणमा सिंक गर्न साइन इन गर्नुहोस्।')}
+          </p>
+          {onOpenAuth && (
+            <button onClick={onOpenAuth} className="h-10 px-4 rounded-full bg-ink text-white text-sm shrink-0 hover:bg-black transition">
+              {tr('Sign in', 'साइन इन')}
+            </button>
+          )}
+        </div>
+      )}
+
+      {rows.length === 0 ? (
+        <div className="bg-white rounded-[24px] shadow-soft py-14 px-6 text-center">
+          <h2 className="font-display text-2xl font-semibold text-ink">{tr('Nothing tracked yet', 'अहिलेसम्म केही ट्र्याक गरिएको छैन')}</h2>
+          <p className="mt-2 text-sm text-ink-soft max-w-sm mx-auto">
+            {tr('Open a vacancy and tap “Track this application” to add it here.', 'कुनै विज्ञापन खोलेर “यो आवेदन ट्र्याक गर्नुहोस्” थिच्नुहोस्।')}
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {filteredApps.map((app) => {
-            const vac = vacancies.find((v) => v.id === app.vacancyId);
-            if (!vac) return null;
-
+        <div className="flex gap-3.5 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 snap-x">
+          {STAGES.map((name, k) => {
+            const items = rows.filter((r) => r.k === k);
             return (
-              <div
-                key={app.id}
-                className="bg-white hover:border-slate-300 rounded-2xl p-5 text-slate-900 transition space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
-                        {vac.category}
-                      </span>
-                      <span className="text-slate-500 text-xs font-mono">{vac.province}</span>
-                    </div>
-
-                    <h4 className="text-base font-bold text-slate-900 font-sans">{vac.title}</h4>
-                    <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400" /> {vac.org}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {/* Status Dropdown */}
-                    <select
-                      value={app.status}
-                      onChange={(e) =>
-                        onUpdateStatus(app.id, e.target.value as ApplicationStatus, app.notes, app.feePaid)
-                      }
-                      className="bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-sky-300 focus:outline-none"
-                    >
-                      {pipelineStatuses.map((st) => (
-                        <option key={st} value={st}>
-                          {st}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      onClick={() => onRemoveApp(app.id)}
-                      className="p-2 rounded-full bg-sky-50/70 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition"
-                      title="Remove Bookmark"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Voucher Payment & Notes */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="bg-sky-50/70 p-3 rounded-xl flex items-center justify-between">
-                    <span className="text-slate-600 flex items-center gap-1.5">
-                      <DollarSign className="w-4 h-4 text-emerald-600" /> Voucher Fee (NPR {vac.fee}):
-                    </span>
-                    <button
-                      onClick={() =>
-                        onUpdateStatus(app.id, app.status, app.notes, !app.feePaid)
-                      }
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition border ${
-                        app.feePaid
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'bg-rose-50 text-rose-700'
-                      }`}
-                    >
-                      {app.feePaid ? '✓ Fee Paid' : '✗ Unpaid'}
-                    </button>
-                  </div>
-
-                  <div className="bg-sky-50/70 p-3 rounded-xl flex items-center justify-between">
-                    <span className="text-slate-600 flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4 text-amber-600" /> Deadline:
-                    </span>
-                    <span className="font-bold text-amber-800">{vac.deadline}</span>
-                  </div>
-                </div>
-
-                {/* Candidate Notes */}
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between text-slate-500">
-                    <span>Preparation & Application Notes:</span>
-                    <span className="text-[10px] text-slate-400">Auto-saved</span>
-                  </div>
-                  <input
-                    type="text"
-                    value={app.notes || ''}
-                    onChange={(e) =>
-                      onUpdateStatus(app.id, app.status, e.target.value, app.feePaid)
-                    }
-                    placeholder="Add personal notes e.g. Submitted citizenship voucher, exam center Kathmandu..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-full px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-300"
-                  />
-                </div>
-
-                {/* Footer Action */}
-                <div className="pt-2 flex items-center justify-between text-xs">
-                  <span className="text-slate-500 text-[11px]">
-                    Saved on: {app.appliedAt}
+              <section key={name} aria-label={name} className="flex-[1_0_260px] snap-start bg-white/60 rounded-[24px] p-3 flex flex-col gap-2.5 min-h-[360px]">
+                <div className="flex justify-between items-center px-1.5 py-1">
+                  <span className="flex items-center gap-2 font-semibold text-sm text-ink">
+                    <span className="w-2 h-2 rounded-full" style={{ background: DOTS[k] }} />
+                    {name}
                   </span>
-
-                  <button
-                    onClick={() => onSelectVacancy(vac)}
-                    className="px-3 py-1.5 font-semibold rounded-full transition flex items-center gap-1 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-                  >
-                    <span>View Spec & Syllabus</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
+                  <span className="text-xs text-[#667085] bg-white px-2 py-0.5 rounded-full">{num(items.length, lang)}</span>
                 </div>
-              </div>
+                {items.map(({ a, v, dl }) => {
+                  const done = k === 3;
+                  const closed = !done && dl < 0;
+                  const urgent = !done && dl >= 0 && dl <= 10;
+                  const due = done
+                    ? tr('Done', 'सम्पन्न')
+                    : closed
+                      ? tr('Closed', 'बन्द')
+                      : Number.isFinite(dl)
+                        ? tr(`${dl}d left`, `${num(dl, lang)} दिन`)
+                        : tr('Open', 'खुला');
+                  return (
+                    <article key={a.id} className="bg-white rounded-[18px] p-3.5 flex flex-col gap-2.5 shadow-[0_1px_2px_rgb(11_18_32/0.04),0_8px_20px_-12px_rgb(11_18_32/0.14)]">
+                      <button
+                        onClick={() => v && onSelectVacancy(v)}
+                        className="text-left font-semibold text-sm leading-[1.35] text-ink hover:underline underline-offset-2"
+                      >
+                        {v ? (np && v.titleNp ? v.titleNp : v.title) : tr('Removed vacancy', 'हटाइएको विज्ञापन')}
+                      </button>
+                      <div className="text-xs text-[#667085]">{v?.shortOrg || v?.organization || ''}</div>
+                      <div className="flex justify-between items-center gap-2">
+                        <span
+                          className="text-[11.5px] font-semibold px-[9px] py-1 rounded-full"
+                          style={
+                            done
+                              ? { background: '#ecfdf5', color: '#047857' }
+                              : closed
+                                ? { background: '#eef2f6', color: '#667085' }
+                                : urgent
+                                  ? { background: '#ffe4e6', color: '#be123c' }
+                                  : { background: '#f3f9fe', color: '#0b1220' }
+                          }
+                        >
+                          {due}
+                        </span>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => onRemoveApp(a.id)}
+                            aria-label={tr('Remove', 'हटाउनुहोस्')}
+                            className="w-8 h-8 rounded-full text-[#98a2b3] hover:text-[#be123c] hover:bg-[#fff1f2] flex items-center justify-center transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => moveTo(a, k - 1)}
+                            disabled={k === 0}
+                            aria-label={tr(`Move back to ${STAGES[Math.max(0, k - 1)]}`, `${STAGES[Math.max(0, k - 1)]} मा फर्काउनुहोस्`)}
+                            className="w-8 h-8 rounded-full border border-[#e4e7ec] bg-white text-ink disabled:opacity-30 hover:bg-sky-50 transition"
+                          >
+                            ←
+                          </button>
+                          <button
+                            onClick={() => moveTo(a, k + 1)}
+                            disabled={k === 3}
+                            aria-label={tr(`Move to ${STAGES[Math.min(3, k + 1)]}`, `${STAGES[Math.min(3, k + 1)]} मा सार्नुहोस्`)}
+                            className="w-8 h-8 rounded-full bg-ink text-white disabled:opacity-30 hover:bg-black transition"
+                          >
+                            →
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </section>
             );
           })}
         </div>

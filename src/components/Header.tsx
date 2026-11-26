@@ -95,13 +95,13 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'vacancies', label: lang === 'np' ? 'विज्ञापन' : 'Vacancies' },
     { id: 'syllabus', label: lang === 'np' ? 'पाठ्यक्रम' : 'Syllabus' },
     { id: 'quizzes', label: lang === 'np' ? 'क्विज' : 'Quiz' },
-    { id: 'ai_assistant', label: lang === 'np' ? 'एआई सहायक' : 'AI Assistant' },
+    { id: 'matcher', label: lang === 'np' ? 'एआई मिलान' : 'AI Matcher' },
     { id: 'dashboard', label: lang === 'np' ? 'ड्यासबोर्ड' : 'Dashboard' }
   ];
 
   const secondary = [
     { id: 'tracker', label: t('navTracker', lang), icon: BookmarkCheck },
-    { id: 'matcher', label: t('navMatcher', lang), icon: Sparkles },
+    { id: 'ai_assistant', label: lang === 'np' ? 'एआई सहायक' : 'AI Assistant', icon: Sparkles },
     { id: 'subjective', label: t('navSubjective', lang), icon: FileText },
     { id: 'leaderboard', label: t('navLeaderboard', lang), icon: Trophy },
     { id: 'alerts', label: t('navAlerts', lang), icon: Bell },
@@ -156,9 +156,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 aria-current={active ? 'page' : undefined}
                 className={`px-3 xl:px-3.5 py-2 rounded-full text-[15px] whitespace-nowrap transition ${
-                  active
-                    ? 'text-ink dark:text-white font-medium'
-                    : 'text-slate-500 hover:text-ink dark:text-slate-400 dark:hover:text-white'
+                  active ? 'text-ink font-semibold' : 'text-[#667085] hover:text-ink'
                 }`}
               >
                 {item.label}

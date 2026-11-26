@@ -37,6 +37,7 @@ import { AdminBetaObservability } from './AdminBetaObservability';
 import { AdminQuestionBank } from './AdminQuestionBank';
 import { AdminAiQuizLab } from './AdminAiQuizLab';
 import { AdminAiVacancyExtractor } from './AdminAiVacancyExtractor';
+import { AdminReviewQueue } from './AdminReviewQueue';
 import { AdminPdfParserModal } from './AdminPdfParserModal';
 import { AdminTeamManagement } from './AdminTeamManagement';
 import { AdminNotificationManagement } from './AdminNotificationManagement';
@@ -459,6 +460,16 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       {/* 1. DASHBOARD OVERVIEW & ANALYTICS */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
+          <AdminReviewQueue
+            lang={lang}
+            publishedCount={vacancies.filter((v) => v.status === 'published' || v.status === 'closing_soon').length || vacancies.length}
+            onOpenExtractor={() => {
+              setAiSubTool('vacancy_extractor');
+              setActiveTab('ai_vacancy_extractor');
+            }}
+            onPublished={onRefreshVacancies}
+          />
+
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center space-x-3">

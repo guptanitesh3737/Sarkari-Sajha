@@ -22,6 +22,7 @@ import { SyllabusPost, SyllabusPaper, SyllabusChapter, Language, UserSubscriptio
 import { INITIAL_SYLLABUS_POSTS } from '../data/seedData';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { setPageSEO, setSyllabusSchema, setBreadcrumbSchema } from '../utils/seo';
+import { num, L, H1 } from '../utils/ui';
 
 interface SyllabusBrowserProps {
   lang: Language;
@@ -155,360 +156,138 @@ Downloaded from SarkariSajha Exam Portal: ${new Date().toLocaleDateString()}
     setTimeout(() => setDownloadSuccess(null), 3500);
   };
 
+  const tr = L(lang);
+  const np = lang === 'np';
+  const PAPER_TINTS = ['#cfe4ff', '#c9f3e1', '#ffe0c7', '#ffd6e3', '#e3f7c4', '#e6d9ff'];
+  const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+  const [openPapers, setOpenPapers] = useState<Record<string, boolean>>({});
+  const q = searchQuery.trim().toLowerCase();
+  const chapterMatches = (c: SyllabusChapter) =>
+    !q ||
+    c.title.toLowerCase().includes(q) ||
+    c.titleNp.includes(q) ||
+    c.topics.some((t) => t.title.toLowerCase().includes(q) || t.titleNp.includes(q));
+
+  const modeLabel = (p: SyllabusPaper) =>
+    p.paperType === 'objective_mcq' ? tr('MCQ', 'वस्तुगत') : p.paperType === 'practical' ? tr('Practical', 'प्रयोगात्मक') : tr('Subjective', 'विषयगत');
+  const duration = (m: number) => (m >= 60 ? tr(`${m / 60} hr`, `${num(m / 60, lang)} घण्टा`) : tr(`${m} min`, `${num(m, lang)} मिनेट`));
+
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="hero-panel p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-blue-200 border border-white/10">
-              <GraduationCap className="w-3.5 h-3.5" />
-              <span>{lang === 'np' ? 'आधिकारिक पाठ्यक्रम तथा अध्यायवार अध्ययन' : 'Official PSC Syllabus & Chapter Study Paths'}</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              {lang === 'np' ? 'पाठ्यक्रम ब्राउजर एवं नोटस्' : 'Syllabus Browser & Study Paths'}
-            </h1>
-            <p className="text-sm text-blue-200/80 leading-relaxed">
-              {lang === 'np'
-                ? 'शाखा अधिकृत, नायब सुब्बा, खरिदार तथा बैंकिङ पदहरूको आधिकारिक पाठ्यक्रम, महत्वपूर्ण दफावार सारांश र १-क्लिक अभ्यास क्विज।'
-                : 'Interactive syllabus breakdown for Section Officer, NaSu, Kharidar, and Banking posts with chapter notes, legal citations, and linked practice drills.'}
-            </p>
-          </div>
+    <div className="flex flex-col gap-5 pt-7 pb-6">
+      <header className="flex flex-col gap-2">
+        <h1 className={H1.replace('lg:text-[56px]', 'lg:text-[48px]')}>{tr('Syllabus & papers', 'पाठ्यक्रम र पत्रहरू')}</h1>
+        <p className="max-w-[38rem] text-[15px] leading-relaxed text-ink-soft">
+          {tr('Official PSC syllabus, broken down by paper and marks weightage.', 'लोक सेवा आयोगको आधिकारिक पाठ्यक्रम, पत्र र अंकभार अनुसार।')}
+        </p>
+      </header>
 
-          {/* Quick Voice / Text Search Bar */}
-          <div className="w-full md:w-80 shrink-0">
-            <div className="relative flex items-center">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={lang === 'np' ? 'विषय वा पाठ खोज्नुहोस्...' : 'Search chapter or topic...'}
-                className="w-full pl-9 pr-11 py-2.5 bg-white/10 hover:bg-white/15 focus:bg-white/20 text-white placeholder:text-slate-300 text-xs rounded-full border border-white/15 focus:outline-none focus:ring-2 focus:ring-sky-300 transition"
-              />
+      <div className="flex flex-wrap items-center gap-3 justify-between">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 max-w-full" role="tablist" aria-label={tr('Exam', 'परीक्षा')}>
+          {posts.map((p) => {
+            const active = p.id === activePost?.id;
+            return (
               <button
-                type="button"
-                onClick={toggleListening}
-                title={lang === 'np' ? 'नेपालीमा बोलेर खोज्नुहोस्' : 'Voice Search (Nepali/English)'}
-                className={`absolute right-2 p-1.5 rounded-full text-xs transition ${
-                  isListening
-                    ? 'bg-rose-500 text-white'
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
+                key={p.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => {
+                  setSelectedPostId(p.id);
+                  setSelectedPaperIndex(0);
+                  setOpenPapers({});
+                }}
+                className={`flex-none h-10 px-4 rounded-full text-[13.5px] whitespace-nowrap transition ${active ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-sky-50'}`}
               >
-                {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                {np ? p.nameNp : p.name}
               </button>
-            </div>
-            {isListening && (
-              <p className="text-[11px] text-rose-300 mt-1 font-medium flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
-                {lang === 'np' ? 'सुन्दैछ... नेपालीमा बोल्नुहोस्' : 'Listening... Speak in Nepali or English'}
-              </p>
-            )}
-          </div>
+            );
+          })}
         </div>
+        <label className="flex items-center gap-2 h-10 pl-4 pr-1.5 rounded-full bg-white shadow-[0_1px_2px_rgb(11_18_32/0.05)] w-full sm:w-72">
+          <Search className="w-4 h-4 text-[#98a2b3] shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={tr('Search a topic…', 'विषय खोज्नुहोस्…')}
+            aria-label={tr('Search a topic', 'विषय खोज्नुहोस्')}
+            className="flex-1 min-w-0 bg-transparent text-sm text-ink placeholder:text-[#98a2b3] focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={toggleListening}
+            aria-label={tr('Voice search', 'बोलेर खोज्नुहोस्')}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition ${isListening ? 'bg-rose-500 text-white' : 'text-[#667085] hover:bg-sky-50'}`}
+          >
+            {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+          </button>
+        </label>
       </div>
 
-      {/* Post Selector Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-        {posts.map((post) => {
-          const isSelected = post.id === selectedPostId;
-          return (
-            <button
-              key={post.id}
-              onClick={() => {
-                setSelectedPostId(post.id);
-                setSelectedPaperIndex(0);
-              }}
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-bold transition whitespace-nowrap border ${
-                isSelected
-                  ? 'border-blue-600 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
-                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700'
-              }`}
-            >
-              <Award className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`} />
-              <div className="text-left">
-                <div>{lang === 'np' ? post.nameNp : post.name}</div>
-                <div className={`text-[10px] font-normal ${isSelected ? 'text-blue-100' : 'text-slate-400'}`}>
-                  {post.level}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Active Post Details Card */}
-      {activePost && (
-        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 space-y-6 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-          {/* Post Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-800">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                  {activePost.code}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {activePost.organization}
-                </span>
-              </div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-                {lang === 'np' ? activePost.nameNp : activePost.name}
-              </h2>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-                {lang === 'np' ? activePost.descriptionNp : activePost.description}
-              </p>
-            </div>
-
-            {/* Paper Selection Tabs */}
-            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/70 p-1.5 rounded-2xl shrink-0">
-              {activePost.papers.map((paper, idx) => (
+      {loading && posts.length === 0 ? (
+        <div className="bg-white rounded-[24px] h-24 animate-pulse shadow-soft" />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {(activePost?.papers || []).map((paper, pi) => {
+            const chapters = paper.chapters.filter(chapterMatches);
+            const open = q ? chapters.length > 0 : openPapers[paper.id] ?? pi === 0;
+            if (q && chapters.length === 0) return null;
+            return (
+              <section key={paper.id} className="bg-white rounded-[24px] overflow-hidden shadow-soft">
                 <button
-                  key={paper.id}
-                  onClick={() => setSelectedPaperIndex(idx)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${
-                    selectedPaperIndex === idx
-                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                  onClick={() => setOpenPapers((o) => ({ ...o, [paper.id]: !open }))}
+                  aria-expanded={open}
+                  className="w-full text-left px-[22px] py-[18px] flex items-center gap-3.5 text-ink"
                 >
-                  Paper {paper.paperNumber} ({paper.paperType === 'objective_mcq' ? 'MCQ' : 'Subjective'})
+                  <span
+                    className="w-11 h-11 flex-none rounded-[14px] flex items-center justify-center font-display font-semibold"
+                    style={{ background: PAPER_TINTS[pi % PAPER_TINTS.length] }}
+                  >
+                    {ROMAN[pi] || num(pi + 1, lang)}
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-semibold text-[15.5px]">{np ? paper.nameNp : paper.name}</span>
+                    <span className="block text-[12.5px] text-[#667085] mt-0.5">
+                      {modeLabel(paper)} · {duration(paper.timeDurationMinutes)} · {num(paper.fullMarks, lang)} {tr('marks', 'अंक')} · {num(paper.chapters.length, lang)}{' '}
+                      {tr('units', 'एकाइ')}
+                    </span>
+                  </span>
+                  <span className="text-lg text-ink-soft w-5 text-center" aria-hidden="true">
+                    {open ? '−' : '+'}
+                  </span>
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Paper Information Strip */}
-          {activePaper && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-sky-50/70 dark:bg-slate-800/40 p-4 rounded-2xl text-xs">
-              <div>
-                <span className="text-slate-400 block text-[10px] font-semibold">Paper Name</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{lang === 'np' ? activePaper.nameNp : activePaper.name}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[10px] font-semibold">Full Marks</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{activePaper.fullMarks} Marks (Pass: {activePaper.passMarks})</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[10px] font-semibold">Time Duration</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{activePaper.timeDurationMinutes} Minutes</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[10px] font-semibold">Exam Format</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
-                  {activePaper.paperType === 'objective_mcq' ? '1st Phase MCQ (0.20 Neg)' : '2nd Phase Subjective Written'}
-                </span>
-              </div>
-            </div>
+                {open && (
+                  <div className="px-[22px] pb-3.5">
+                    {chapters.map((c) => (
+                      <div key={c.id} className="flex items-center gap-3 py-3 border-t border-[#eef2f6] flex-wrap">
+                        <span className="flex-[1_1_200px] text-sm text-ink">{np ? c.titleNp : c.title}</span>
+                        <span className="text-[13px] text-ink-soft w-[70px]">
+                          {c.weightageMarks ? `${num(c.weightageMarks, lang)} ${tr('marks', 'अंक')}` : '—'}
+                        </span>
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={() => handleDownloadNotes(c)}
+                            className="h-[34px] px-3 rounded-full text-[12.5px] text-ink-soft hover:text-ink hover:bg-sky-50 transition"
+                            title={isPro ? tr('Download notes', 'नोट डाउनलोड') : tr('Notes are a Pro feature', 'नोट प्रो सुविधा हो')}
+                          >
+                            {downloadSuccess === c.id ? tr('Saved ✓', 'सुरक्षित ✓') : tr('Notes', 'नोट')}
+                          </button>
+                          <button
+                            onClick={() => onLaunchQuiz?.(c.practiceQuizSetId || '')}
+                            className="h-[34px] px-3.5 rounded-full border border-[#d0d5dd] bg-white text-[12.5px] text-ink hover:bg-sky-50 transition"
+                          >
+                            {tr('Practice', 'अभ्यास')}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+          {q && (activePost?.papers || []).every((p) => p.chapters.filter(chapterMatches).length === 0) && (
+            <p className="py-8 text-center text-sm text-[#667085]">{tr('No topic matches that search.', 'खोजसँग मिल्ने विषय भेटिएन।')}</p>
           )}
-
-          {/* Chapter List & Accordion */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-blue-600" />
-                <span>
-                  {lang === 'np' ? 'अध्याय तथा खण्ड सूची' : 'Chapter Syllabus & Structured Notes'}
-                </span>
-                <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full font-normal text-slate-500">
-                  {filteredChapters.length} {filteredChapters.length === 1 ? 'Chapter' : 'Chapters'}
-                </span>
-              </h3>
-
-              {downloadSuccess && (
-                <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 animate-fade-in">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Notes downloaded successfully!</span>
-                </div>
-              )}
-            </div>
-
-            {filteredChapters.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2">
-                <p className="text-sm text-slate-500">No chapters match "{searchQuery}".</p>
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="text-xs font-bold text-blue-600 hover:underline"
-                >
-                  Clear search filter
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredChapters.map((chapter) => {
-                  const isExpanded = expandedChapterId === chapter.id;
-
-                  return (
-                    <div
-                      key={chapter.id}
-                      className={`border rounded-2xl transition overflow-hidden ${
-                        isExpanded
-                          ? 'bg-blue-50/20 dark:bg-blue-950/10'
-                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 hover:border-slate-300 dark:hover:border-slate-700'
-                      }`}
-                    >
-                      {/* Chapter Title Row */}
-                      <button
-                        type="button"
-                        onClick={() => setExpandedChapterId(isExpanded ? null : chapter.id)}
-                        className="w-full p-4 flex items-center justify-between gap-4 text-left"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                            isExpanded
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                          }`}>
-                            {chapter.chapterNumber}
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                              {lang === 'np' ? chapter.titleNp : chapter.title}
-                            </h4>
-                            <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                              {chapter.weightageMarks && (
-                                <span className="font-semibold text-amber-600 dark:text-amber-400">
-                                  Weightage: {chapter.weightageMarks} Marks
-                                </span>
-                              )}
-                              <span>•</span>
-                              <span>{chapter.topics.length} Sub-topics</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {chapter.practiceQuizSetId && (
-                            <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-                              <Sparkles className="w-3 h-3" />
-                              Drill Linked
-                            </span>
-                          )}
-                          {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-slate-400" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4 text-slate-400" />
-                          )}
-                        </div>
-                      </button>
-
-                      {/* Expanded Chapter Details */}
-                      {isExpanded && (
-                        <div className="px-5 pb-5 pt-1 space-y-4 border-t border-blue-100 dark:border-blue-900/40 text-xs">
-                          {/* Summary Notes (Bilingual) */}
-                          <div className="space-y-2 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                            <div className="flex items-center justify-between">
-                              <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 text-xs">
-                                <FileText className="w-3.5 h-3.5 text-blue-600" />
-                                {lang === 'np' ? 'विषयवस्तुको सारंश (Quick Revision Notes)' : 'Quick Revision Summary Notes'}
-                              </span>
-                              <button
-                                onClick={() => handleDownloadNotes(chapter)}
-                                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition ${
-                                  isPro
-                                    ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300'
-                                    : 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
-                                }`}
-                              >
-                                {isPro ? (
-                                  <>
-                                    <Download className="w-3.5 h-3.5" />
-                                    <span>Download Notes</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Lock className="w-3 h-3 text-amber-600" />
-                                    <span>Unlock PDF Notes (Pro)</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                              {lang === 'np' ? chapter.summaryNotesNp : chapter.summaryNotesEn}
-                            </p>
-                          </div>
-
-                          {/* Key Constitutional / Legal Articles */}
-                          {chapter.keyArticles && chapter.keyArticles.length > 0 && (
-                            <div className="space-y-1.5">
-                              <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px] flex items-center gap-1">
-                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                                Relevant Legal & Constitutional Provisions
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {chapter.keyArticles.map((art, aIdx) => (
-                                  <span
-                                    key={aIdx}
-                                    className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-lg text-[11px] font-mono border border-slate-200 dark:border-slate-700"
-                                  >
-                                    {art}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Sub-Topics Breakdown */}
-                          <div className="space-y-2">
-                            <span className="font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
-                              Sub-Topic Syllabus Items
-                            </span>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                              {chapter.topics.map((top) => (
-                                <div
-                                  key={top.id}
-                                  className="p-3 bg-sky-50/70 dark:bg-slate-800/50 rounded-xl space-y-1.5"
-                                >
-                                  <div className="font-bold text-slate-900 dark:text-slate-100">
-                                    {lang === 'np' ? top.titleNp : top.title}
-                                  </div>
-                                  <ul className="space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
-                                    {top.keyPoints.map((pt, pIdx) => (
-                                      <li key={pIdx} className="flex items-start gap-1.5">
-                                        <span className="text-blue-500 mt-0.5">•</span>
-                                        <span>{pt}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Action Buttons: 1-Click Practice Drill / AI Written Evaluator */}
-                          <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
-                            {chapter.practiceQuizSetId && onLaunchQuiz && (
-                              <button
-                                type="button"
-                                onClick={() => onLaunchQuiz(chapter.practiceQuizSetId!)}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs shadow-sm transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-                              >
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>{lang === 'np' ? 'यस अध्यायको मोडल क्विज सुरु गर्नुहोस्' : 'Launch Chapter Practice Drill'}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-
-                            {activePaper.paperType === 'subjective_written' && onOpenSubjective && (
-                              <button
-                                type="button"
-                                onClick={() => onOpenSubjective(activePost.name)}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs shadow-sm transition bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-                              >
-                                <FileText className="w-3.5 h-3.5" />
-                                <span>{lang === 'np' ? 'AI लिखित उत्तर परीक्षकमा जानुहोस्' : 'Practice Subjective Written Evaluation'}</span>
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </div>
       )}
     </div>

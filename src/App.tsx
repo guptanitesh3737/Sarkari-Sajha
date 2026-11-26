@@ -724,6 +724,7 @@ export default function App() {
                   onBookmark={handleToggleBookmark}
                   isBookmarked={bookmarkedIds.includes(activeDetailVacancy.id)}
                   onOpenMatchModal={() => setSelectedVacancy(activeDetailVacancy)}
+                  onOpenSyllabus={() => setActiveTab('syllabus')}
                 />
               ) : (
                 <div className="py-16 text-center space-y-4">
@@ -791,6 +792,10 @@ export default function App() {
             {activeTab === 'syllabus' && (
               <SyllabusBrowser
                 lang={lang}
+                onLaunchQuiz={(id) => {
+                  setActiveQuizSetId(id || undefined);
+                  setActiveTab('quizzes');
+                }}
                 subscription={subscription}
                 onOpenUpgrade={() => setShowSubscriptionModal(true)}
               />

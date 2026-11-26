@@ -31,6 +31,8 @@ import {
 import { QuizSet, QuizQuestion, QuizAttempt, Language, UserProfile, QuizCategoryItem, ExamProfile } from '../types';
 import { t } from '../utils/translations';
 import { Leaderboard } from './Leaderboard';
+import { num, L, H1 } from '../utils/ui';
+import { tintBand } from '../utils/tints';
 
 interface QuizEngineProps {
   quizSets: QuizSet[];
@@ -362,7 +364,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
           onAttemptComplete(data.attempt);
         }
 
-        if (data.attempt.percentage >= (selectedSet.passThreshold || customPassThreshold || 50)) {
+        if (data.attempt.passed ?? data.attempt.percentage >= (selectedSet.passThreshold || customPassThreshold || 50)) {
           confetti({
             particleCount: 90,
             spread: 75,
@@ -426,75 +428,40 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
     return true;
   });
 
+  const tr = L(lang);
+
   return (
-    <div className="space-y-6">
-      {/* Quiz Engine Top Banner */}
-      <div className="hero-panel pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-ink mb-2">
-              <Trophy className="w-3.5 h-3.5 text-ink" /> Lok Sewa Exam Prep & Model Sets
-            </span>
-            <h2 className="text-2xl font-black font-sans text-slate-900">
-              {lang === 'np' ? 'लोक सेवा नमुना परीक्षा' : 'Practice for Lok Sewa'}
-            </h2>
-            <p className="text-xs text-slate-500 mt-1 max-w-xl">
-              Real PSC-format mock tests with negative marking and instant explanations.
+    <div className="flex flex-col gap-6 pb-6">
+      {/* Header (browse view only) */}
+      {quizState === 'idle' && (
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-7">
+          <div className="flex flex-col gap-2.5">
+            <h1 className={H1}>
+              {tr('Practice for', 'अभ्यास गर्नुहोस्')} <span className="marker">{tr('Lok Sewa', 'लोक सेवा')}</span>
+            </h1>
+            <p className="max-w-[38rem] text-[15px] leading-relaxed text-ink-soft">
+              {tr('Timed, PSC-format mock papers with negative marking and explanations for every answer.', 'नेगेटिभ मार्किङसहित लोक सेवा ढाँचाका समयबद्ध नमुना परीक्षा र हरेक उत्तरको व्याख्या।')}
             </p>
           </div>
-
-          {quizState !== 'idle' ? (
-            <button
-              onClick={() => {
-                setQuizState('idle');
-                setSelectedSet(null);
-              }}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-full border border-slate-200 transition flex items-center gap-2 self-start sm:self-center"
-            >
-              <RotateCcw className="w-4 h-4 text-slate-600" />
-              <span>Back to Quiz Sets</span>
-            </button>
-          ) : (
-            <div className="flex items-center p-1 bg-white/70 rounded-full ring-1 ring-black/[0.04] self-start sm:self-auto gap-1">
+          <div className="flex items-center p-1 bg-white rounded-full shadow-[0_1px_2px_rgb(11_18_32/0.05)] gap-1 self-start sm:self-auto" role="tablist">
+            {([
+              ['quizzes', tr('Mock papers', 'नमुना परीक्षा')],
+              ['ai_drill', tr('AI drill', 'एआई अभ्यास')],
+              ['leaderboard', tr('Rankings', 'शीर्ष नतिजा')]
+            ] as const).map(([id, label]) => (
               <button
-                onClick={() => setSubTab('quizzes')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
-                  subTab === 'quizzes'
-                    ? 'bg-ink text-white'
-                    : 'text-ink-soft hover:text-ink'
-                }`}
+                key={id}
+                role="tab"
+                aria-selected={subTab === id}
+                onClick={() => setSubTab(id)}
+                className={`h-9 px-3.5 rounded-full text-[13px] transition ${subTab === id ? 'bg-ink text-white' : 'text-ink-soft hover:text-ink'}`}
               >
-                <BookOpen className="w-3.5 h-3.5 text-ink" />
-                <span>{lang === 'np' ? 'अभ्यास सेटहरू' : 'Model Sets'}</span>
+                {label}
               </button>
-
-              <button
-                onClick={() => setSubTab('ai_drill')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
-                  subTab === 'ai_drill'
-                    ? 'bg-ink text-white'
-                    : 'text-ink-soft hover:text-ink'
-                }`}
-              >
-                <BrainCircuit className="w-3.5 h-3.5" />
-                <span>AI Drill Lab</span>
-              </button>
-
-              <button
-                onClick={() => setSubTab('leaderboard')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
-                  subTab === 'leaderboard'
-                    ? 'bg-ink text-white'
-                    : 'text-ink-soft hover:text-ink'
-                }`}
-              >
-                <Trophy className="w-3.5 h-3.5 text-ink" />
-                <span>{lang === 'np' ? 'शीर्ष नतिजा' : 'Rankings'}</span>
-              </button>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* IDLE STATE: BROWSE SETS OR GENERATE AI DRILL */}
       {quizState === 'idle' && (
@@ -684,44 +651,36 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               </div>
 
               {/* Quiz Sets Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid gap-[18px] [grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))]">
                 {filteredSets.map((qs) => (
-                  <div
-                    key={qs.id}
-                    className="bg-white hover:ring-sky-300 rounded-2xl p-6 text-slate-900 transition hover:shadow-md flex flex-col justify-between group shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="bg-sky-100 text-ink px-2.5 py-0.5 rounded text-[10px] font-mono font-bold">
-                          {qs.category}
-                        </span>
-                        <span className="text-slate-500 text-xs font-mono flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-ink" /> {qs.timeLimitMinutes} Mins
-                        </span>
-                      </div>
-
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-ink transition font-sans">
-                        {lang === 'np' ? qs.titleNp : qs.title}
-                      </h3>
-
-                      <p className="text-xs text-slate-500 leading-relaxed">
-                        {lang === 'np' ? qs.descriptionNp : qs.description}
-                      </p>
-
-                      <div className="pt-2 flex items-center justify-between text-xs text-slate-600 font-semibold border-t border-slate-100">
-                        <span>Level: {qs.level}</span>
-                        <span className="text-ink">{qs.totalQuestions} Questions</span>
-                      </div>
+                  <article key={qs.id} className="bg-white rounded-[24px] overflow-hidden shadow-soft flex flex-col transition hover:-translate-y-0.5">
+                    <div className="pt-4 px-[18px] pb-[30px] flex items-center justify-between gap-2" style={tintBand(qs.category || qs.id)}>
+                      <span className="text-xs font-semibold text-ink bg-white/75 px-2.5 py-[5px] rounded-full truncate">{qs.category}</span>
+                      <span className="text-xs font-semibold px-2.5 py-[5px] rounded-full bg-white/75 text-ink shrink-0">
+                        {num(qs.timeLimitMinutes, lang)} {tr('min', 'मिनेट')}
+                      </span>
                     </div>
-
-                    <button
-                      onClick={() => handleStartQuiz(qs)}
-                      className="w-full mt-5 py-2.5 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-                    >
-                      <span>{t('startQuiz', lang)}</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                    <div className="px-[18px] pb-[18px] -mt-3.5 flex flex-col gap-2.5 flex-1">
+                      <h3 className="font-display text-[18px] font-semibold leading-[1.25] text-ink">{lang === 'np' && qs.titleNp ? qs.titleNp : qs.title}</h3>
+                      <p className="text-[13px] text-ink-soft leading-relaxed line-clamp-2">{lang === 'np' && qs.descriptionNp ? qs.descriptionNp : qs.description}</p>
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <div className="bg-sky-50 rounded-[14px] p-2.5">
+                          <div className="text-[11px] text-[#667085]">{tr('Questions', 'प्रश्न')}</div>
+                          <div className="font-semibold text-[15px] mt-0.5 text-ink">{num(qs.totalQuestions, lang)}</div>
+                        </div>
+                        <div className="bg-sky-50 rounded-[14px] p-2.5">
+                          <div className="text-[11px] text-[#667085]">{tr('Level', 'तह')}</div>
+                          <div className="font-semibold text-[15px] mt-0.5 text-ink truncate">{qs.level}</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleStartQuiz(qs)}
+                        className="mt-auto h-11 rounded-full bg-ink text-white text-sm font-medium shadow-pill hover:bg-black transition"
+                      >
+                        {tr('Start mock', 'परीक्षा सुरु गर्नुहोस्')} →
+                      </button>
+                    </div>
+                  </article>
                 ))}
               </div>
             </div>
@@ -729,816 +688,336 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
         </>
       )}
 
-      {/* RUNNING STATE: ACTIVE EXAM INTERFACE */}
-      {quizState === 'running' && selectedSet && questions.length > 0 && (
-        <div className="space-y-5">
-          {/* Active Session Progress & Score Preview Summary Bar */}
-          {(() => {
-            const answeredCount = Object.keys(userAnswers).length;
-            const totalQ = questions.length;
-            const remainingCount = totalQ - answeredCount;
-            const percent = Math.round((answeredCount / totalQ) * 100);
+      {/* RUNNING STATE: TIMED EXAM (design A) */}
+      {quizState === 'running' && selectedSet && questions.length > 0 && (() => {
+        const q = questions[currentQuestionIndex];
+        const selectedOpt = userAnswers[q.id];
+        const isFlagged = !!flaggedQuestions[q.id];
+        const mm = String(Math.floor(Math.max(0, timeLeft) / 60)).padStart(2, '0');
+        const ss = String(Math.max(0, timeLeft) % 60).padStart(2, '0');
+        const showEn = questionLangMode !== 'np' || !q.questionTextNp;
+        const showNp = questionLangMode !== 'en' && !!q.questionTextNp && q.questionTextNp !== q.questionText;
+        const negPct = Math.round((selectedSet.negativeMarkRate ?? customNegativeRate ?? 0.2) * 100);
+        const optRow = (on: boolean) =>
+          `w-full flex items-center gap-3.5 min-h-14 px-4 py-3 rounded-[18px] text-left text-[15px] text-ink border-[1.5px] transition ${
+            on ? 'border-ink bg-sky-50' : 'border-[#eef2f6] bg-white hover:border-[#d0d5dd]'
+          }`;
+        const keyDot = (on: boolean) =>
+          `w-[30px] h-[30px] flex-none rounded-full flex items-center justify-center text-[13px] font-semibold ${on ? 'bg-ink text-white' : 'bg-sky-50 text-ink'}`;
 
-            return (
-              <div id="active-quiz-score-summary" className="bg-white rounded-2xl p-4 space-y-3.5 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="p-2 rounded-xl bg-sky-100 text-ink border border-sky-200">
-                      <BarChart2 className="w-5 h-5 text-ink" />
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-xs font-bold text-slate-900 font-sans">
-                          {lang === 'np' ? 'वास्तविक समय नतिजा र प्रश्न प्रगति' : 'Real-Time Score & Questions Summary'}
-                        </h4>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-100 text-ink border border-sky-200">
-                          LIVE
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        {lang === 'np'
-                          ? `कुल ${totalQ} प्रश्नहरू मध्ये ${remainingCount} वटा प्रश्न हल गर्न बाँकी छ • २०% नेगेटिभ मार्किङ`
-                          : `${remainingCount} of ${totalQ} questions remaining • 20% Negative Marking Penalty`}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Real-time score summary badges */}
-                  <div className="flex items-center gap-2 sm:gap-2.5 text-xs font-mono font-bold flex-wrap">
-                    <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 shadow-2xs flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{lang === 'np' ? 'हल गरिएको:' : 'Answered:'} {answeredCount}/{totalQ}</span>
-                    </span>
-
-                    <span className="px-3 py-1.5 rounded-xl bg-sky-100 text-ink shadow-2xs flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-ink" />
-                      <span>{lang === 'np' ? 'बाँकी प्रश्न:' : 'Remaining:'} {remainingCount}</span>
-                    </span>
-
-                    <span className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 shadow-2xs flex items-center gap-1.5">
-                      <Award className="w-3.5 h-3.5 text-blue-600" />
-                      <span>{percent}% {lang === 'np' ? 'सम्पन्न' : 'Complete'}</span>
-                    </span>
-                  </div>
+        return (
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap justify-between items-center gap-3.5">
+              <div className="min-w-0">
+                <div className="text-[12.5px] text-ink-soft">
+                  {tr('Exam mode', 'परीक्षा मोड')} · {selectedSet.category}
                 </div>
-
-                {/* Progress Bar */}
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-500 font-semibold">
-                    <span>
-                      {lang === 'np' ? `प्रगति: ${answeredCount}/${totalQ} प्रश्नहरू` : `Progress: ${answeredCount}/${totalQ} Questions`}
-                    </span>
-                    <span className="text-ink font-bold">
-                      {lang === 'np' ? `${remainingCount} प्रश्नहरू बाँकी (${100 - percent}%)` : `${remainingCount} Questions Remaining (${100 - percent}%)`}
-                    </span>
-                  </div>
-
-                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/80 p-0.5 relative">
-                    <div
-                      className="bg-ink h-full rounded-full transition-all duration-300 ease-out shadow-xs"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                </div>
+                <h1 className="mt-0.5 font-display text-2xl sm:text-[32px] font-semibold tracking-[-0.02em] leading-[1.1] text-ink">
+                  {lang === 'np' && selectedSet.titleNp ? selectedSet.titleNp : selectedSet.title}
+                </h1>
               </div>
-            );
-          })()}
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Question Panel */}
-            <div className="lg:col-span-2 space-y-5">
-              {/* Exam Header Bar */}
-              <div className="bg-white rounded-2xl p-4 flex items-center justify-between text-slate-900 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-                <div className="flex items-center gap-2">
-                  <span className="bg-slate-900 text-white font-mono font-bold text-xs px-2.5 py-1 rounded-lg">
-                    Q {currentQuestionIndex + 1} of {questions.length}
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    {questions[currentQuestionIndex].topic || questions[currentQuestionIndex].category}
-                  </span>
-                </div>
-
-                {/* Language Switch & Countdown Timer Badge */}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px]">
-                    <button
-                      onClick={() => setQuestionLangMode('both')}
-                      className={`px-2 py-0.5 rounded font-medium transition ${questionLangMode === 'both' ? 'bg-white shadow-xs font-bold text-slate-900' : 'text-slate-600'}`}
-                    >
-                      Bilingual
-                    </button>
-                    <button
-                      onClick={() => setQuestionLangMode('np')}
-                      className={`px-2 py-0.5 rounded font-medium transition ${questionLangMode === 'np' ? 'bg-white shadow-xs font-bold text-slate-900' : 'text-slate-600'}`}
-                    >
-                      नेपाली
-                    </button>
-                    <button
-                      onClick={() => setQuestionLangMode('en')}
-                      className={`px-2 py-0.5 rounded font-medium transition ${questionLangMode === 'en' ? 'bg-white shadow-xs font-bold text-slate-900' : 'text-slate-600'}`}
-                    >
-                      EN
-                    </button>
-                  </div>
-
-                  <div
-                    className={`px-3 py-1.5 rounded-xl font-mono font-extrabold text-sm flex items-center gap-2 border ${
-                      timeLeft < 120
-                        ? 'bg-rose-50 text-rose-700'
-                        : 'bg-slate-50 text-ink'
-                    }`}
-                  >
-                    <Clock className="w-4 h-4 text-ink" />
-                    <span>{formatTime(timeLeft)}</span>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2.5 bg-white rounded-full py-1.5 pr-1.5 pl-4 shadow-[0_1px_2px_rgb(11_18_32/0.05)]">
+                <span className="text-xs text-[#667085]">{tr('Time remaining', 'बाँकी समय')}</span>
+                <span
+                  className="font-display tabular-nums text-xl font-semibold"
+                  style={{ color: timeLeft < 120 ? '#be123c' : '#0b1220' }}
+                  aria-live="off"
+                >
+                  {num(`${mm}:${ss}`, lang)}
+                </span>
+                <button onClick={handleSubmitQuiz} className="h-10 px-4 rounded-full bg-ink text-white text-[13.5px] hover:bg-black transition">
+                  {tr('Submit exam', 'परीक्षा बुझाउनुहोस्')}
+                </button>
               </div>
-
-              {/* Current Question Card */}
-              {(() => {
-                const q = questions[currentQuestionIndex];
-                const selectedOpt = userAnswers[q.id];
-                const isFlagged = flaggedQuestions[q.id];
-
-                return (
-                  <div ref={questionCardRef} className="bg-white rounded-2xl p-6 text-slate-900 space-y-6 scroll-mt-24 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="space-y-2 flex-1">
-                        {/* Display based on language mode */}
-                        {(questionLangMode === 'both' || questionLangMode === 'en') && (
-                          <h3 className="text-base font-bold text-slate-900 font-sans leading-snug">
-                            {q.questionText}
-                          </h3>
-                        )}
-                        {(questionLangMode === 'both' || questionLangMode === 'np') && q.questionTextNp && (
-                          <h4 className="text-base font-medium text-slate-800 font-serif leading-snug">
-                            {q.questionTextNp}
-                          </h4>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={() => toggleFlagQuestion(q.id)}
-                        className={`p-2 rounded-full border text-xs font-bold flex items-center gap-1.5 transition shrink-0 ${
-                          isFlagged
-                            ? 'bg-sky-100 text-ink border-sky-200'
-                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                        }`}
-                        title="Mark question to review before final submission"
-                      >
-                        <Bookmark className={`w-4 h-4 ${isFlagged ? 'fill-ink text-ink' : ''}`} />
-                        <span>{isFlagged ? 'Flagged' : 'Review'}</span>
-                      </button>
-                    </div>
-
-                    {/* Question Type Badge & Instruction */}
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                        {q.questionType === 'multiple_select'
-                          ? 'Multiple Select (Select all that apply)'
-                          : q.questionType === 'true_false'
-                          ? 'True / False'
-                          : 'Multiple Choice'}
-                      </span>
-                    </div>
-
-                    {/* Options List by Question Type */}
-                    {q.questionType === 'true_false' ? (
-                      <div className="grid grid-cols-2 gap-4">
-                        {[true, false].map((val) => {
-                          const isSelected = selectedOpt === val;
-                          return (
-                            <button
-                              key={String(val)}
-                              onClick={() => handleSelectTrueFalse(q.id, val)}
-                              className={`p-6 rounded-full text-center text-sm font-bold transition border flex flex-col items-center justify-center gap-2 ${
-                                isSelected
-                                  ? 'bg-sky-100 ring-2 ring-ink text-ink shadow-sm'
-                                  : 'bg-slate-50 hover:bg-slate-100 text-slate-800'
-                              }`}
-                            >
-                              <span className="text-xl">{val ? '✓' : '✕'}</span>
-                              <span>{val ? 'True (सत्य)' : 'False (गलत)'}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ) : q.questionType === 'multiple_select' ? (
-                      <div className="space-y-3">
-                        <p className="text-[11px] text-ink font-semibold bg-sky-100 p-2 rounded-lg">
-                          ℹ️ Select all correct choices that apply, then click Next or navigate with palette.
-                        </p>
-                        {q.options.map((opt, optIdx) => {
-                          const selectedList = (userAnswers[q.id] as number[]) || [];
-                          const isSelected = selectedList.includes(optIdx);
-                          const optNp = q.optionsNp?.[optIdx];
-
-                          return (
-                            <button
-                              key={optIdx}
-                              onClick={() => handleToggleMultiSelect(q.id, optIdx)}
-                              className={`w-full p-4 rounded-full text-left text-xs transition border flex items-center justify-between ${
-                                isSelected
-                                  ? 'bg-sky-100 ring-1 ring-ink font-bold text-ink'
-                                  : 'bg-slate-50/60 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
-                              }`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className={`w-5 h-5 rounded flex items-center justify-center text-xs font-bold border ${
-                                  isSelected ? 'bg-ink border-ink text-white' : 'bg-white border-slate-300'
-                                }`}>
-                                  {isSelected ? '✓' : ''}
-                                </div>
-                                <div>
-                                  <span>{opt}</span>
-                                  {optNp && optNp !== opt && (
-                                    <span className="block text-[11px] text-slate-500 font-serif font-normal mt-0.5">
-                                      {optNp}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {q.options.map((opt, optIdx) => {
-                          const isSelected = selectedOpt === optIdx;
-                          const optNp = q.optionsNp?.[optIdx];
-
-                          return (
-                            <button
-                              key={optIdx}
-                              onClick={() => handleSelectOption(q.id, optIdx)}
-                              className={`w-full p-4 rounded-full text-left text-xs transition border flex items-center justify-between ${
-                                isSelected
-                                  ? 'bg-sky-100 ring-1 ring-ink font-bold text-ink'
-                                  : 'bg-slate-50/60 hover:bg-slate-100 hover:border-slate-300 text-slate-800'
-                              }`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                  isSelected ? 'bg-ink text-white' : 'bg-slate-200 text-slate-700'
-                                }`}>
-                                  {String.fromCharCode(65 + optIdx)}
-                                </span>
-                                <div>
-                                  <span>{opt}</span>
-                                  {optNp && optNp !== opt && (
-                                    <span className="block text-[11px] text-slate-500 font-serif font-normal mt-0.5">
-                                      {optNp}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              {isSelected && <CheckCircle2 className="w-4 h-4 text-ink shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Navigation Buttons */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <button
-                        onClick={() => navigateQuestion(Math.max(0, currentQuestionIndex - 1))}
-                        disabled={currentQuestionIndex === 0}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-full text-xs font-bold transition flex items-center gap-1.5"
-                      >
-                        <ChevronLeft className="w-4 h-4" /> Previous
-                      </button>
-
-                      <span className="text-xs text-slate-400 font-mono">
-                        Question {currentQuestionIndex + 1} of {questions.length}
-                      </span>
-
-                      <button
-                        onClick={() => navigateQuestion(Math.min(questions.length - 1, currentQuestionIndex + 1))}
-                        disabled={currentQuestionIndex === questions.length - 1}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 rounded-full text-xs font-bold transition flex items-center gap-1.5"
-                      >
-                        Next <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })()}
             </div>
 
-            {/* Right Sidebar: Question Palette Grid */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-2xl p-5 text-slate-900 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-                <h4 className="text-xs font-bold text-slate-500">Question Palette</h4>
+            <div className="flex flex-wrap gap-5 items-start">
+              <div ref={questionCardRef} className="flex-[1_1_520px] min-w-0 bg-white rounded-[28px] p-5 sm:p-[26px] shadow-soft flex flex-col gap-[18px] scroll-mt-24">
+                <div className="flex justify-between items-center gap-2 text-[13px] text-ink-soft">
+                  <span>{tr(`Question ${currentQuestionIndex + 1} of ${questions.length}`, `प्रश्न ${num(currentQuestionIndex + 1, lang)} / ${num(questions.length, lang)}`)}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="bg-sky-50 px-2.5 py-[3px] rounded-full truncate">{q.subject || q.topic || q.category}</span>
+                    {q.questionTextNp && (
+                      <button
+                        onClick={() => setQuestionLangMode(questionLangMode === 'both' ? (lang === 'np' ? 'np' : 'en') : 'both')}
+                        className="shrink-0 h-7 px-2.5 rounded-full border border-[#e4e7ec] text-xs hover:bg-sky-50 transition"
+                        title={tr('Show both languages', 'दुवै भाषा देखाउनुहोस्')}
+                      >
+                        {questionLangMode === 'both' ? 'EN / नेपाली' : questionLangMode === 'np' ? 'नेपाली' : 'EN'}
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-                <div className="grid grid-cols-5 gap-2">
-                  {questions.map((q, idx) => {
-                    const isAnswered = userAnswers[q.id] !== undefined;
-                    const isCurrent = idx === currentQuestionIndex;
-                    const isFlagged = flaggedQuestions[q.id];
+                <div className="flex flex-col gap-1.5">
+                  {showEn && (
+                    <h2 className="font-display text-[22px] font-semibold leading-[1.3] tracking-[-0.01em] text-ink [text-wrap:pretty]">{q.questionText}</h2>
+                  )}
+                  {showNp && <p className={`${showEn ? 'text-[17px] text-ink-soft' : 'font-display text-[22px] font-semibold text-ink'} leading-[1.35]`}>{q.questionTextNp}</p>}
+                  {q.questionType === 'multiple_select' && (
+                    <p className="text-[12.5px] text-[#667085]">{tr('Select all that apply.', 'लागू हुने सबै छान्नुहोस्।')}</p>
+                  )}
+                </div>
 
+                <div className="flex flex-col gap-2.5" role={q.questionType === 'multiple_select' ? 'group' : 'radiogroup'}>
+                  {q.questionType === 'true_false'
+                    ? [true, false].map((val, k) => {
+                        const on = selectedOpt === val;
+                        return (
+                          <button key={String(val)} role="radio" aria-checked={on} onClick={() => handleSelectTrueFalse(q.id, val)} className={optRow(on)}>
+                            <span className={keyDot(on)}>{k === 0 ? 'A' : 'B'}</span>
+                            {val ? tr('True', 'सत्य') : tr('False', 'गलत')}
+                          </button>
+                        );
+                      })
+                    : q.options.map((opt, k) => {
+                        const multi = q.questionType === 'multiple_select';
+                        const on = multi ? ((selectedOpt as number[]) || []).includes(k) : selectedOpt === k;
+                        const optNp = q.optionsNp?.[k];
+                        return (
+                          <button
+                            key={k}
+                            role={multi ? 'checkbox' : 'radio'}
+                            aria-checked={on}
+                            onClick={() => (multi ? handleToggleMultiSelect(q.id, k) : handleSelectOption(q.id, k))}
+                            className={optRow(on)}
+                          >
+                            <span className={keyDot(on)}>{String.fromCharCode(65 + k)}</span>
+                            <span>
+                              {questionLangMode === 'np' && optNp ? optNp : opt}
+                              {questionLangMode === 'both' && optNp && optNp !== opt && <span className="block text-[13px] text-ink-soft mt-0.5">{optNp}</span>}
+                            </span>
+                          </button>
+                        );
+                      })}
+                </div>
+
+                <div className="flex justify-between gap-2.5 pt-1">
+                  <button
+                    onClick={() => navigateQuestion(Math.max(0, currentQuestionIndex - 1))}
+                    disabled={currentQuestionIndex === 0}
+                    className="h-[46px] px-[18px] rounded-full border border-[#d0d5dd] bg-white text-sm text-ink disabled:opacity-40 hover:bg-sky-50 transition"
+                  >
+                    ← {tr('Previous', 'अघिल्लो')}
+                  </button>
+                  <button
+                    onClick={() => toggleFlagQuestion(q.id)}
+                    aria-pressed={isFlagged}
+                    className="h-[46px] px-[18px] rounded-full text-sm text-[#92400e] transition"
+                    style={{ background: isFlagged ? '#fde68a' : '#fef3c7' }}
+                  >
+                    ⚑ {tr('Flag', 'चिन्ह')}
+                  </button>
+                  {currentQuestionIndex < questions.length - 1 ? (
+                    <button
+                      onClick={() => navigateQuestion(currentQuestionIndex + 1)}
+                      className="h-[46px] px-5 rounded-full bg-ink text-white text-sm shadow-pill hover:bg-black transition"
+                    >
+                      {tr('Next', 'अर्को')} →
+                    </button>
+                  ) : (
+                    <button onClick={handleSubmitQuiz} className="h-[46px] px-5 rounded-full bg-ink text-white text-sm shadow-pill hover:bg-black transition">
+                      {tr('Submit', 'बुझाउनुहोस्')}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <aside className="flex-[1_1_260px] bg-white rounded-[24px] p-5 shadow-soft flex flex-col gap-3.5">
+                <h3 className="font-semibold text-[14.5px] text-ink">{tr('Question palette', 'प्रश्न सूची')}</h3>
+                <div className="grid grid-cols-4 gap-2">
+                  {questions.map((qq, k) => {
+                    const a = userAnswers[qq.id] !== undefined && !(Array.isArray(userAnswers[qq.id]) && (userAnswers[qq.id] as number[]).length === 0);
+                    const f = !!flaggedQuestions[qq.id];
+                    const c = k === currentQuestionIndex;
                     return (
                       <button
-                        key={q.id}
-                        onClick={() => navigateQuestion(idx)}
-                        className={`h-9 rounded-full font-mono font-bold text-xs flex items-center justify-center relative transition ${
-                          isCurrent
-                            ? 'ring-2 ring-slate-900 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink'
-                            : isFlagged
-                            ? 'bg-sky-100 text-ink border border-sky-200'
-                            : isAnswered
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
-                        }`}
+                        key={qq.id}
+                        onClick={() => navigateQuestion(k)}
+                        aria-current={c ? 'step' : undefined}
+                        aria-label={tr(`Question ${k + 1}`, `प्रश्न ${num(k + 1, lang)}`)}
+                        className="h-11 rounded-[14px] text-sm font-semibold border-[1.5px] transition"
+                        style={{
+                          borderColor: c ? '#3b8fd6' : f ? '#f59e0b' : a ? '#0b1220' : '#e4e7ec',
+                          background: a ? '#0b1220' : f ? '#fef3c7' : '#fff',
+                          color: a ? '#fff' : '#0b1220'
+                        }}
                       >
-                        {idx + 1}
-                        {isFlagged && (
-                          <span className="w-2 h-2 rounded-full bg-sky-500 absolute -top-1 -right-1" />
-                        )}
+                        {num(k + 1, lang)}
                       </button>
                     );
                   })}
                 </div>
-
-                <div className="pt-3 border-t border-slate-100 space-y-2 text-[11px] text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300" />
-                    <span>Answered ({Object.keys(userAnswers).length})</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded bg-sky-100 border border-sky-200" />
-                    <span>Flagged for Review ({Object.values(flaggedQuestions).filter(Boolean).length})</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded bg-slate-100 border border-slate-300" />
-                    <span>Unanswered ({questions.length - Object.keys(userAnswers).length})</span>
-                  </div>
+                <div className="flex flex-wrap gap-3 text-xs text-ink-soft">
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-[3px] bg-ink" />{tr('Answered', 'उत्तर दिइएको')}</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-[3px] bg-[#fef3c7] border border-[#f59e0b]" />{tr('Flagged', 'चिन्हित')}</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-[3px] border border-[#d0d5dd]" />{tr('Not answered', 'उत्तर नदिइएको')}</span>
                 </div>
-
+                <p className="text-[12.5px] text-[#667085] leading-normal">
+                  {tr(`Negative marking: −${negPct}% per wrong answer, as in the real PSC paper.`, `गलत उत्तरमा ${num(negPct, lang)}% अंक कट्टा हुन्छ।`)}
+                </p>
                 <button
-                  onClick={handleSubmitQuiz}
-                  className="w-full py-3 font-bold text-xs rounded-full transition shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
+                  onClick={() => {
+                    setQuizState('idle');
+                    setSelectedSet(null);
+                  }}
+                  className="self-start text-[13px] text-ink-soft underline underline-offset-2 hover:text-ink"
                 >
-                  Finish & Submit Paper
+                  {tr('Leave exam', 'परीक्षा छोड्नुहोस्')}
                 </button>
-              </div>
+              </aside>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
-      {/* COMPLETED STATE: SCORECARD & AI EXPLANATION REVIEW */}
-      {quizState === 'completed' && attemptResult && (
-        <div className="space-y-6">
-          {/* Scorecard Hero Banner */}
-          <div className="bg-white rounded-2xl p-6 text-slate-900 text-center space-y-5 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-            <div className="inline-flex p-3 rounded-2xl bg-sky-100 text-ink">
-              <Trophy className="w-10 h-10" />
-            </div>
+      {/* COMPLETED STATE: RESULT (design A) */}
+      {quizState === 'completed' && attemptResult && (() => {
+        const total = attemptResult.totalQuestions || questions.length;
+        const correct = attemptResult.correctCount;
+        const wrong = attemptResult.incorrectCount;
+        const skipped = attemptResult.skippedCount ?? total - correct - wrong;
+        const subjectList: { subject: string; accuracy: number }[] = Array.isArray(attemptResult.subjectBreakdown)
+          ? (attemptResult.subjectBreakdown as any[])
+          : attemptResult.subjectBreakdown
+            ? Object.entries(attemptResult.subjectBreakdown).map(([subject, d]: [string, any]) => ({ subject, accuracy: d.accuracy || 0 }))
+            : [];
+        const isRight = (qq: QuizQuestion) => {
+          const userOpt = attemptResult.answers[qq.id];
+          if (qq.questionType === 'true_false') {
+            const expected = qq.isTrue !== undefined ? qq.isTrue : qq.correctOption === 0 || String(qq.correct_answer || '').toLowerCase() === 'true';
+            return { ok: userOpt === expected, skipped: userOpt === undefined || userOpt === null, correctText: expected ? tr('True', 'सत्य') : tr('False', 'गलत'), yourText: userOpt === undefined ? '' : userOpt ? tr('True', 'सत्य') : tr('False', 'गलत') };
+          }
+          if (qq.questionType === 'multiple_select') {
+            const exp = qq.correctAnswers || [qq.correctOption];
+            const mine = Array.isArray(userOpt) ? (userOpt as number[]) : [];
+            return {
+              ok: exp.length === mine.length && exp.every((i) => mine.includes(i)),
+              skipped: mine.length === 0,
+              correctText: exp.map((i) => qq.options[i]).join(', '),
+              yourText: mine.map((i) => qq.options[i]).join(', ')
+            };
+          }
+          return {
+            ok: userOpt === qq.correctOption,
+            skipped: userOpt === undefined || userOpt === null,
+            correctText: qq.options[qq.correctOption],
+            yourText: typeof userOpt === 'number' ? qq.options[userOpt] : ''
+          };
+        };
 
-            <div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                  attemptResult.passed
-                    ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                    : 'bg-rose-100 text-rose-900 border border-rose-300'
-                }`}>
-                  {attemptResult.passed ? 'PASSED (उत्तीर्ण)' : 'FAILED (अनुत्तीर्ण)'}
-                </span>
-                <span className="text-xs text-slate-500 font-mono">
-                  Pass Threshold: {attemptResult.passThreshold || 50}%
-                </span>
-              </div>
-              <h3 className="text-2xl font-black font-sans text-slate-900">
-                {attemptResult.passed ? 'Mock Test Completed 🎉' : 'Test Attempt Completed'}
-              </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Lok Sewa Official Scoring Standard: 1 Mark for Correct Answer, {Math.round((attemptResult.negativeMarkRate || 0.20) * 100)}% Negative Penalty for Wrong Answers.
-              </p>
-            </div>
-
-            {/* Score Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-sm max-w-4xl mx-auto">
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Net Score</span>
-                <span className="text-lg font-bold font-mono text-emerald-700">
-                  {attemptResult.score.toFixed(2)} / {attemptResult.totalQuestions}
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">Final Mark</span>
-              </div>
-
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Correct</span>
-                <span className="text-lg font-bold font-mono text-emerald-600">
-                  {attemptResult.correctCount}
-                </span>
-                <span className="text-[10px] text-emerald-600 block mt-0.5">+{attemptResult.correctCount}.0</span>
-              </div>
-
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Incorrect</span>
-                <span className="text-lg font-bold font-mono text-rose-600">
-                  {attemptResult.incorrectCount}
-                </span>
-                <span className="text-[10px] text-rose-600 block mt-0.5">-{attemptResult.negativeMarksDeducted?.toFixed(2) || '0.00'}</span>
-              </div>
-
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Skipped</span>
-                <span className="text-lg font-bold font-mono text-slate-600">
-                  {attemptResult.skippedCount ?? (attemptResult.totalQuestions - attemptResult.correctCount - attemptResult.incorrectCount)}
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">0 penalty</span>
-              </div>
-
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Accuracy</span>
-                <span className="text-lg font-bold font-mono text-ink">
-                  {attemptResult.percentage}%
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">
-                  {attemptResult.passed ? 'Passed' : 'Needs Practice'}
-                </span>
-              </div>
-
-              <div className="bg-sky-50/70 p-3 rounded-xl">
-                <span className="text-[10px] text-slate-500 block font-semibold">Time Taken</span>
-                <span className="text-lg font-bold font-mono text-blue-700">
-                  {formatTime(attemptResult.timeTakenSeconds)}
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">Duration</span>
-              </div>
-            </div>
-
-            {/* Subject & Topic Performance Breakdowns */}
-            {(() => {
-              const subjectList = Array.isArray(attemptResult.subjectBreakdown)
-                ? attemptResult.subjectBreakdown
-                : attemptResult.subjectBreakdown
-                ? Object.entries(attemptResult.subjectBreakdown).map(([subject, data]: [string, any]) => ({
-                    subject,
-                    totalQuestions: data.total || data.totalQuestions || 0,
-                    correct: data.correct || 0,
-                    incorrect: data.incorrect || 0,
-                    score: data.score || 0,
-                    accuracy: data.accuracy || 0
-                  }))
-                : [];
-
-              if (subjectList.length === 0) return null;
-
-              return (
-                <div className="bg-sky-50/70 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
-                  <div className="flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-ink" />
-                    <h4 className="text-xs font-bold text-slate-800">
-                      Subject Performance Breakdown
-                    </h4>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                    {subjectList.map((sb: any, sIdx: number) => (
-                      <div key={sIdx} className="bg-white p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                        <div className="flex items-center justify-between font-bold text-slate-900">
-                          <span className="truncate pr-2">{sb.subject}</span>
-                          <span className={`font-mono ${sb.accuracy >= 60 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                            {sb.accuracy}%
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-500">
-                          <span>Q: {sb.totalQuestions} ({sb.correct} Right, {sb.incorrect} Wrong)</span>
-                          <span className="font-mono font-semibold">Score: {sb.score.toFixed(1)}</span>
-                        </div>
-                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className={`h-full ${sb.accuracy >= 60 ? 'bg-emerald-500' : 'bg-rose-400'}`}
-                            style={{ width: `${Math.max(5, sb.accuracy)}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+        return (
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap gap-5 items-stretch">
+              <div className="flex-[1_1_300px] bg-ink text-white rounded-[28px] p-7 flex flex-col gap-2.5">
+                <div className="text-[13px] opacity-70">{tr('Your score', 'तपाईंको अंक')}</div>
+                <div className="font-display text-[64px] font-semibold leading-none">
+                  {num(attemptResult.score.toFixed(1), lang)}/{num(total, lang)}
                 </div>
-              );
-            })()}
-
-            {/* Topic Performance Breakdown */}
-            {(() => {
-              const topicList = Array.isArray(attemptResult.topicBreakdown)
-                ? attemptResult.topicBreakdown
-                : attemptResult.topicBreakdown
-                ? Object.entries(attemptResult.topicBreakdown).map(([topic, data]: [string, any]) => ({
-                    topic,
-                    totalQuestions: data.total || data.totalQuestions || 0,
-                    correct: data.correct || 0,
-                    score: data.score || 0,
-                    accuracy: data.accuracy || 0
-                  }))
-                : [];
-
-              if (topicList.length === 0) return null;
-
-              return (
-                <div className="bg-sky-50/70 rounded-2xl p-5 text-left space-y-4 max-w-4xl mx-auto">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-purple-600" />
-                    <h4 className="text-xs font-bold text-slate-800">
-                      Topic Mastery Breakdown
-                    </h4>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                    {topicList.map((tb: any, tIdx: number) => (
-                      <div key={tIdx} className="bg-white p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                        <div className="flex items-center justify-between font-bold text-slate-900">
-                          <span className="truncate pr-2">{tb.topic}</span>
-                          <span className={`font-mono ${tb.accuracy >= 60 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                            {tb.accuracy}%
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-500">
-                          <span>{tb.correct}/{tb.totalQuestions} Correct</span>
-                          <span className="font-mono">Score: {tb.score.toFixed(1)}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="text-sm opacity-80">
+                  {tr(`${correct} correct · ${wrong} wrong · ${skipped} skipped`, `${num(correct, lang)} सही · ${num(wrong, lang)} गलत · ${num(skipped, lang)} छोडिएको`)}
                 </div>
-              );
-            })()}
-
-            {/* AI Study Recommendations Card */}
-            {attemptResult.recommendations && (
-              <div className="bg-purple-50/80 rounded-2xl p-5 text-left text-xs text-purple-950 space-y-3 max-w-3xl mx-auto">
-                <div className="flex items-center gap-2 font-bold text-purple-900">
-                  <Sparkles className="w-4 h-4 text-purple-600" />
-                  <span>AI Diagnostic Recommendations & Study Plan</span>
+                <div className="text-[13px] opacity-70">
+                  {attemptResult.passed ? tr('Passed', 'उत्तीर्ण') : tr('Not passed yet', 'अनुत्तीर्ण')} · {num(attemptResult.percentage, lang)}% · {num(formatTime(attemptResult.timeTakenSeconds), lang)}
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="bg-white/80 p-3 rounded-xl border border-purple-100 space-y-1">
-                    <strong className="text-slate-700 block">Identified Weak Areas:</strong>
-                    {attemptResult.recommendations.weakAreas && attemptResult.recommendations.weakAreas.length > 0 ? (
-                      attemptResult.recommendations.weakAreas.map((w, idx) => (
-                        <span key={idx} className="inline-block px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold text-[10px] mr-1.5 mb-1">
-                          {w}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-emerald-700 font-semibold">Strong overall performance across topics!</span>
-                    )}
-                  </div>
-
-                  <div className="bg-white/80 p-3 rounded-xl border border-purple-100 space-y-1">
-                    <strong className="text-slate-700 block">Focused Action Item:</strong>
-                    <p className="text-slate-600 leading-relaxed">
-                      {attemptResult.recommendations.nextSteps || 'Review the detailed statutory citations and mnemonic clues below.'}
-                    </p>
-                  </div>
-                </div>
-
-                {attemptResult.recommendations.weakAreas && attemptResult.recommendations.weakAreas.length > 0 && (
+                <div className="mt-auto pt-3 flex flex-wrap gap-2">
+                  <button onClick={() => selectedSet && handleStartQuiz(selectedSet)} className="h-11 px-[18px] rounded-full bg-white text-ink text-sm hover:bg-sky-50 transition">
+                    {tr('Retake mock', 'पुनः प्रयास')}
+                  </button>
                   <button
                     onClick={() => {
-                      setSubTab('ai_drill');
                       setQuizState('idle');
-                      setAiDrillTopic(attemptResult.recommendations!.weakAreas[0]);
+                      setSelectedSet(null);
                     }}
-                    className="py-2 px-4 rounded-full font-bold transition flex items-center gap-1.5 bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
+                    className="h-11 px-[18px] rounded-full border border-white/25 text-white text-sm hover:bg-white/10 transition"
                   >
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>Launch AI Diagnostic Drill for Weak Topics</span>
+                    {tr('All mocks', 'सबै परीक्षा')}
                   </button>
+                </div>
+              </div>
+
+              <div className="flex-[2_1_380px] bg-white rounded-[28px] p-6 shadow-soft flex flex-col gap-3">
+                <h3 className="font-semibold text-ink">{tr('Accuracy by subject', 'विषयगत शुद्धता')}</h3>
+                {subjectList.length === 0 && <p className="text-sm text-[#667085]">{tr('No subject breakdown for this mock.', 'विषयगत विवरण उपलब्ध छैन।')}</p>}
+                {subjectList.map((s) => {
+                  const p = Math.round(s.accuracy);
+                  return (
+                    <div key={s.subject} className="grid grid-cols-[minmax(0,120px)_1fr_44px] items-center gap-3 text-[13.5px]">
+                      <span className="truncate text-ink">{s.subject}</span>
+                      <div className="h-2.5 rounded-full bg-sky-100 overflow-hidden">
+                        <div className="h-full transition-[width] duration-300" style={{ width: `${p}%`, background: p >= 80 ? '#059669' : p >= 50 ? '#5ea9e2' : '#f43f5e' }} />
+                      </div>
+                      <span className="text-right font-semibold text-ink">{num(p, lang)}%</span>
+                    </div>
+                  );
+                })}
+                {attemptResult.recommendations?.weakAreas && attemptResult.recommendations.weakAreas.length > 0 && (
+                  <div className="mt-2 pt-3 border-t border-[#eef2f6] flex flex-wrap items-center gap-2">
+                    <span className="text-[13px] text-ink-soft">{tr('Work on:', 'सुधार गर्नुहोस्:')}</span>
+                    {attemptResult.recommendations.weakAreas.map((w) => (
+                      <span key={w} className="text-xs px-2.5 py-1 rounded-full bg-[#ffe4e6] text-[#be123c]">{w}</span>
+                    ))}
+                    <button
+                      onClick={() => {
+                        setSubTab('ai_drill');
+                        setQuizState('idle');
+                        setAiDrillTopic(attemptResult.recommendations!.weakAreas[0]);
+                      }}
+                      className="ml-auto h-9 px-3.5 rounded-full bg-ink text-white text-[13px] hover:bg-black transition"
+                    >
+                      {tr('Drill weak topics', 'कमजोर विषय अभ्यास')}
+                    </button>
+                  </div>
                 )}
               </div>
-            )}
-
-            <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
-              <button
-                onClick={() => {
-                  setQuizState('idle');
-                  setSelectedSet(null);
-                }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-full border border-slate-200 transition flex items-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4 text-slate-600" />
-                <span>{lang === 'np' ? 'अर्को अभ्यास परीक्षा' : 'Take Another Quiz'}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setQuizState('idle');
-                  setSelectedSet(null);
-                  setSubTab('leaderboard');
-                }}
-                className="px-4 py-2 text-xs font-bold rounded-full transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-              >
-                <Trophy className="w-4 h-4" />
-                <span>{lang === 'np' ? 'शीर्ष स्थान नतिजा हेर्नुहोस्' : 'View Merit Leaderboard'}</span>
-              </button>
             </div>
-          </div>
 
-          {/* Question Breakdown with AI Explanations & Citations */}
-          <div className="space-y-4">
-            <h4 className="text-base font-bold text-slate-900 font-sans flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-ink" /> Question-by-Question Review & Source Citations
-            </h4>
-
-            {questions.map((q, idx) => {
-              const userOpt = attemptResult.answers[q.id];
-              let isCorrect = false;
-              let isUnanswered = userOpt === undefined || userOpt === null;
-
-              if (q.questionType === 'true_false') {
-                const expected = q.isTrue !== undefined ? q.isTrue : (q.correctOption === 0 || String(q.correct_answer || '').toLowerCase() === 'true');
-                isCorrect = userOpt === expected;
-              } else if (q.questionType === 'multiple_select') {
-                const expectedList = q.correctAnswers || [q.correctOption];
-                const userList = Array.isArray(userOpt) ? userOpt : [];
-                isCorrect = expectedList.length === userList.length && expectedList.every(i => userList.includes(i));
-                isUnanswered = userList.length === 0;
-              } else {
-                isCorrect = userOpt === q.correctOption;
-              }
-
-              const aiExplain = aiExplanations[q.id];
-              const isLoadingExplain = loadingAiExplain[q.id];
-
-              return (
-                <div
-                  key={q.id}
-                  className={`bg-white rounded-2xl p-5 text-slate-900 space-y-3 transition shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10 ${
-                    isCorrect
-                      ? 'bg-emerald-50/20'
-                      : isUnanswered
-                      ? 'bg-slate-50/30'
-                      : 'bg-rose-50/20'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-slate-100 text-slate-700 font-mono text-xs px-2 py-0.5 rounded font-bold border border-slate-200">
-                        Q{idx + 1}
-                      </span>
-                      <span className="text-xs text-slate-500 font-medium">
-                        {q.subject || q.category} • {q.topic}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-600">
-                        {q.questionType || 'multiple_choice'}
-                      </span>
-                    </div>
-
-                    {isCorrect ? (
-                      <span className="bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Correct (+1.0)
-                      </span>
-                    ) : isUnanswered ? (
-                      <span className="bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
-                        <HelpCircle className="w-3.5 h-3.5 text-slate-500" /> Unattempted (0.0)
-                      </span>
-                    ) : (
-                      <span className="bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1">
-                        <XCircle className="w-3.5 h-3.5 text-rose-600" /> Incorrect (-{(attemptResult.negativeMarkRate || 0.20).toFixed(2)})
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
-                    <h5 className="text-sm font-bold text-slate-900 font-sans">
-                      {q.questionText}
-                    </h5>
-                    {q.questionTextNp && q.questionTextNp !== q.questionText && (
-                      <p className="text-xs text-slate-600 font-serif">
-                        {q.questionTextNp}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Options Status for True/False vs Multiple Select vs Multiple Choice */}
-                  {q.questionType === 'true_false' ? (
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      {[true, false].map((val) => {
-                        const isExpected = q.isTrue !== undefined ? q.isTrue === val : (val ? q.correctOption === 0 : q.correctOption === 1);
-                        const isUser = userOpt === val;
-
-                        let style = 'bg-slate-50 border-slate-200 text-slate-700';
-                        if (isExpected) style = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold';
-                        else if (isUser && !isExpected) style = 'bg-rose-50 border-rose-300 text-rose-800 font-bold';
-
-                        return (
-                          <div key={String(val)} className={`p-3 rounded-xl border flex items-center justify-between ${style}`}>
-                            <span>{val ? 'True (सत्य)' : 'False (गलत)'}</span>
-                            {isExpected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
-                            {isUser && !isExpected && <XCircle className="w-3.5 h-3.5 text-rose-600" />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : q.questionType === 'multiple_select' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                      {q.options.map((opt, oIdx) => {
-                        const userList = Array.isArray(userOpt) ? userOpt : [];
-                        const isUserChoice = userList.includes(oIdx);
-                        const isRightAns = (q.correctAnswers || [q.correctOption]).includes(oIdx);
-
-                        let style = 'bg-slate-50 border-slate-200 text-slate-700';
-                        if (isRightAns) style = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold';
-                        else if (isUserChoice && !isRightAns) style = 'bg-rose-50 border-rose-300 text-rose-800 font-bold';
-
-                        return (
-                          <div key={oIdx} className={`p-2.5 rounded-xl border flex items-center justify-between ${style}`}>
-                            <span>{String.fromCharCode(65 + oIdx)}. {opt}</span>
-                            {isRightAns && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
-                            {isUserChoice && !isRightAns && <XCircle className="w-3.5 h-3.5 text-rose-600" />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                      {q.options.map((opt, oIdx) => {
-                        const isUserChoice = userOpt === oIdx;
-                        const isRightAns = oIdx === q.correctOption;
-
-                        let style = 'bg-slate-50 border-slate-200 text-slate-700';
-                        if (isRightAns) style = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold';
-                        else if (isUserChoice && !isCorrect) style = 'bg-rose-50 border-rose-300 text-rose-800 font-bold';
-
-                        return (
-                          <div key={oIdx} className={`p-2.5 rounded-xl border flex items-center justify-between ${style}`}>
-                            <span>{String.fromCharCode(65 + oIdx)}. {opt}</span>
-                            {isRightAns && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
-                            {isUserChoice && !isRightAns && <XCircle className="w-3.5 h-3.5 text-rose-600" />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Static Explanation & Syllabus Citation */}
-                  <div className="bg-sky-50/70 p-3 rounded-xl text-xs text-slate-700 space-y-1.5">
-                    {q.explanation && (
-                      <p><strong className="text-ink">Explanation:</strong> {q.explanation}</p>
-                    )}
-                    {q.mnemonicTip && (
-                      <p className="text-purple-800 flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <span><strong>Mnemonic Clue:</strong> {q.mnemonicTip}</span>
-                      </p>
-                    )}
-                    {q.source && (
-                      <p className="text-[11px] text-slate-500">
-                        <strong>Source Reference:</strong> {q.source}
-                      </p>
-                    )}
-                    {q.syllabusReference && q.syllabusReference !== q.source && (
-                      <p className="text-[11px] text-slate-500">
-                        <strong>Citation / Law Reference:</strong> {q.syllabusReference}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* AI Deep Explanation Button */}
-                  {!aiExplain ? (
-                    <button
-                      onClick={() => handleGenerateAiExplanation(q)}
-                      disabled={isLoadingExplain}
-                      className="px-3.5 py-2 font-bold text-xs rounded-full transition flex items-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
+            <div className="bg-white rounded-[28px] px-6 py-2 shadow-soft">
+              {questions.map((qq, k) => {
+                const r = isRight(qq);
+                const aiExplain = aiExplanations[qq.id];
+                const loadingExplain = loadingAiExplain[qq.id];
+                return (
+                  <div key={qq.id} className={`flex gap-3.5 py-4 ${k < questions.length - 1 ? 'border-b border-[#eef2f6]' : ''}`}>
+                    <span
+                      className="w-[26px] h-[26px] flex-none rounded-full flex items-center justify-center text-[13px] text-white"
+                      style={{ background: r.ok ? '#059669' : r.skipped ? '#98a2b3' : '#f43f5e' }}
+                      aria-label={r.ok ? tr('Correct', 'सही') : r.skipped ? tr('Skipped', 'छोडिएको') : tr('Wrong', 'गलत')}
                     >
-                      {isLoadingExplain ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Asking Gemini AI Instructor...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4" />
-                          <span>{t('aiExplainBtn', lang)}</span>
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <div className="bg-sky-100/80 p-3.5 rounded-xl text-xs text-ink space-y-2">
-                      <div className="flex items-center gap-1.5 font-bold text-ink">
-                        <Sparkles className="w-4 h-4 text-ink" /> Gemini AI Deep Breakdown
+                      {r.ok ? '✓' : r.skipped ? '–' : '✕'}
+                    </span>
+                    <div className="flex flex-col gap-1 min-w-0 flex-1">
+                      <div className="font-semibold text-[14.5px] text-ink">
+                        {lang === 'np' && qq.questionTextNp ? qq.questionTextNp : qq.questionText}
                       </div>
-                      <p className="leading-relaxed">{aiExplain.explanationEn}</p>
-                      <p className="leading-relaxed text-ink font-sans">{aiExplain.explanationNp}</p>
-                      {aiExplain.mnemonicTip && (
-                        <div className="bg-sky-100 p-2 rounded-lg font-mono text-[11px] text-ink">
-                          💡 Memory Trick: {aiExplain.mnemonicTip}
+                      <div className="text-[13px] text-ink-soft">
+                        {tr(`Correct: ${r.correctText}`, `सही उत्तर: ${r.correctText}`)}
+                        {r.skipped ? tr(' · Skipped', ' · छोडिएको') : !r.ok ? tr(` · You chose: ${r.yourText}`, ` · तपाईंको: ${r.yourText}`) : ''}
+                      </div>
+                      {(qq.explanation || aiExplain) && (
+                        <div className="text-[13px] text-ink-soft bg-sky-50 rounded-xl px-2.5 py-2 leading-relaxed">
+                          {aiExplain ? (lang === 'np' ? aiExplain.explanationNp : aiExplain.explanationEn) : qq.explanation}
+                          {aiExplain?.mnemonicTip && <span className="block mt-1 text-ink">💡 {aiExplain.mnemonicTip}</span>}
                         </div>
                       )}
+                      {!aiExplain && !r.ok && (
+                        <button
+                          onClick={() => handleGenerateAiExplanation(qq)}
+                          disabled={loadingExplain}
+                          className="self-start mt-0.5 text-[12.5px] text-ink underline underline-offset-2 disabled:opacity-60 inline-flex items-center gap-1"
+                        >
+                          {loadingExplain && <Loader2 className="w-3 h-3 animate-spin" />}
+                          {loadingExplain ? tr('Explaining…', 'व्याख्या गर्दै…') : tr('Explain with AI', 'एआईबाट व्याख्या')}
+                        </button>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

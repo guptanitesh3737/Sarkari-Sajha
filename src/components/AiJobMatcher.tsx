@@ -1,24 +1,7 @@
-import React, { useState } from 'react';
-import {
-  Sparkles,
-  FileText,
-  Upload,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  MapPin,
-  Building2,
-  Users,
-  Award,
-  ArrowRight,
-  RefreshCw,
-  Zap,
-  BarChart2,
-  TrendingUp,
-  Coins
-} from 'lucide-react';
-import { UserProfile, Vacancy, Language, MatchResult } from '../types';
-import { t } from '../utils/translations';
+import React, { useMemo, useRef, useState } from 'react';
+import { FileUp, Loader2 } from 'lucide-react';
+import { UserProfile, Vacancy, Language } from '../types';
+import { num, L, matchScore, H1 } from '../utils/ui';
 
 interface AiJobMatcherProps {
   userProfile: UserProfile;
@@ -28,476 +11,271 @@ interface AiJobMatcherProps {
   onSelectVacancy: (vacancy: Vacancy) => void;
 }
 
-// Helper function to estimate monthly salary (NPR) based on government/banking pay grade
-const getEstimatedSalary = (vac: Vacancy) => {
-  const lvl = vac.level.toLowerCase();
-  const cat = vac.category.toLowerCase();
+const SAMPLE_CV = `Aarav Sharma — Bhaktapur, Bagmati Province. Date of birth 2058-03-12 (age 24).
+Education: Bachelor of Information Technology (BIT), Tribhuvan University, 2080, first division.
++2 Science, NEB, 2076. SEE, 2074.
+Experience: 1.5 years junior web developer at a Kathmandu software company. Computer operator training (6 months).
+Skills: networking, databases, MS Office, Nepali and English typing. Nepali citizen.`;
 
-  if (lvl.includes('officer') || lvl.includes('level 7') || lvl.includes('gazetted class iii')) {
-    return { min: 48000, avg: 53000, max: 62000, scaleLabel: 'Gazetted Level 7' };
-  } else if (lvl.includes('secondary') || lvl.includes('class 9-12')) {
-    return { min: 43000, avg: 47000, max: 53000, scaleLabel: 'Secondary Teacher' };
-  } else if (lvl.includes('level 5') || lvl.includes('sub-engineer') || lvl.includes('non-gazetted class i')) {
-    return { min: 36000, avg: 40000, max: 45000, scaleLabel: 'Non-Gazetted Level 5' };
-  } else if (cat.includes('banking')) {
-    return { min: 34000, avg: 41000, max: 48000, scaleLabel: 'Banking Grade 3/4' };
-  } else if (cat.includes('security')) {
-    return { min: 35000, avg: 43000, max: 55000, scaleLabel: 'Police Inspector/ASI' };
-  }
-  return { min: 30000, avg: 36000, max: 42000, scaleLabel: 'Standard Assistant' };
-};
+type Stage = 'upload' | 'parsing' | 'done';
 
-export const AiJobMatcher: React.FC<AiJobMatcherProps> = ({
-  userProfile,
-  vacancies,
-  lang,
-  onUpdateProfile,
-  onSelectVacancy
-}) => {
-  const [resumeText, setResumeText] = useState(userProfile.resumeText || '');
-  const [parsing, setParsing] = useState(false);
-  const [parseMessage, setParseMessage] = useState<string | null>(null);
+export const AiJobMatcher: React.FC<AiJobMatcherProps> = ({ userProfile, vacancies, lang, onUpdateProfile, onSelectVacancy }) => {
+  const tr = L(lang);
+  const [stage, setStage] = useState<Stage>(userProfile.resumeText ? 'done' : 'upload');
+  const [fileName, setFileName] = useState<string>(userProfile.resumeText ? tr('Saved CV', 'सुरक्षित सीभी') : '');
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasted, setPasted] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const [matchingAll, setMatchingAll] = useState(false);
-  const [matchResults, setMatchResults] = useState<Record<string, MatchResult>>({});
-
-  const handleParseResume = async () => {
-    if (!resumeText || resumeText.trim().length < 15) {
-      alert('Please enter or paste at least 15 characters of candidate CV / qualification text.');
+  const parse = async (text: string, name: string) => {
+    if (text.trim().length < 15) {
+      setError(tr('Add a little more CV text (at least 15 characters).', 'कम्तीमा १५ अक्षरको सीभी विवरण राख्नुहोस्।'));
       return;
     }
-
+    setError(null);
+    setFileName(name);
+    setStage('parsing');
+    const started = Date.now();
     try {
-      setParsing(true);
-      setParseMessage(null);
-
       const res = await fetch('/api/parse-resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resumeText })
+        body: JSON.stringify({ resumeText: text })
       });
-
       const data = await res.json();
+      // Keep the skeleton up for ~1.3s so the state change reads clearly.
+      const wait = Math.max(0, 1300 - (Date.now() - started));
+      await new Promise((r) => setTimeout(r, wait));
       if (data.success && data.profile) {
-        onUpdateProfile(data.profile);
-        setParseMessage(data.parsedSummary || 'CV parsed successfully! Candidate qualifications updated.');
+        onUpdateProfile({ ...data.profile, resumeText: text });
+        setStage('done');
       } else {
-        alert(data.error || 'Failed to parse resume.');
+        setError(data.error || tr('We could not read that CV. Try pasting the text instead.', 'सीभी पढ्न सकिएन। पाठ टाँसेर प्रयास गर्नुहोस्।'));
+        setStage('upload');
       }
-    } catch (err) {
-      console.error('Resume parse error:', err);
-      alert('Error communicating with Gemini AI server.');
-    } finally {
-      setParsing(false);
+    } catch {
+      setError(tr('Could not reach the CV reader. Check your connection and try again.', 'सीभी पढ्ने सेवामा पुग्न सकिएन। फेरि प्रयास गर्नुहोस्।'));
+      setStage('upload');
     }
   };
 
-  const handleRunBatchMatch = async () => {
-    try {
-      setMatchingAll(true);
-      const results: Record<string, MatchResult> = {};
-
-      for (const vac of vacancies) {
-        try {
-          const res = await fetch('/api/match', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ vacancyId: vac.id })
-          });
-          const m = await res.json();
-          results[vac.id] = m;
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      setMatchResults(results);
-    } finally {
-      setMatchingAll(false);
+  const readFile = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setError(tr('That file is over 5 MB.', 'फाइल ५ MB भन्दा ठूलो छ।'));
+      return;
     }
+    if (!/\.(txt|md)$/i.test(file.name) && !file.type.startsWith('text/')) {
+      setError(tr('For now, upload a .txt file or paste your CV text.', 'अहिलेलाई .txt फाइल राख्नुहोस् वा सीभीको पाठ टाँस्नुहोस्।'));
+      setPasteOpen(true);
+      return;
+    }
+    parse(await file.text(), file.name);
   };
 
-  // Sort vacancies by computed match score if available
-  const sortedVacancies = [...vacancies].sort((a, b) => {
-    const scoreA = matchResults[a.id]?.matchScore || 0;
-    const scoreB = matchResults[b.id]?.matchScore || 0;
-    return scoreB - scoreA;
-  });
+  const ranked = useMemo(
+    () =>
+      vacancies
+        .map((v) => ({ v, m: matchScore(v, userProfile) }))
+        .sort((a, b) => b.m.score - a.m.score)
+        .slice(0, 6),
+    [vacancies, userProfile]
+  );
 
-  // Prepare salary distribution chart data
-  const salaryChartData = sortedVacancies.map((vac) => {
-    const salary = getEstimatedSalary(vac);
-    const match = matchResults[vac.id];
-    const matchScore = match ? match.matchScore : 0;
-
-    let shortTitle = vac.shortOrg || vac.title;
-    if (vac.title.toLowerCase().includes('section officer')) shortTitle = 'Section Officer';
-    else if (vac.title.toLowerCase().includes('computer officer') || vac.title.toLowerCase().includes('it specialist')) shortTitle = 'IT Officer';
-    else if (vac.title.toLowerCase().includes('junior assistant')) shortTitle = 'Junior Asst';
-    else if (vac.title.toLowerCase().includes('secondary level teacher')) shortTitle = 'Sec Teacher';
-    else if (vac.title.toLowerCase().includes('assistant sub-inspector')) shortTitle = 'ASI & Inspector';
-    else if (vac.title.toLowerCase().includes('sub-engineer')) shortTitle = 'Sub-Engineer';
-
-    return {
-      id: vac.id,
-      title: shortTitle,
-      fullTitle: vac.title,
-      category: vac.category,
-      minSalary: salary.min,
-      avgSalary: salary.avg,
-      maxSalary: salary.max,
-      posts: vac.posts,
-      matchScore: matchScore,
-      scaleLabel: salary.scaleLabel,
-      vacancyObj: vac
-    };
-  });
-
-  // Overall stats for salary summary
-  const maxSalaryValue = Math.max(...salaryChartData.map((d) => d.avgSalary), 0);
-  const avgSalaryValue = salaryChartData.length
-    ? Math.round(salaryChartData.reduce((acc, curr) => acc + curr.avgSalary, 0) / salaryChartData.length)
-    : 0;
-
-  // Selected bar for hover/click tooltip
-  const [hoveredBarId, setHoveredBarId] = useState<string | null>(null);
+  const color = (s: number) => (s >= 80 ? '#059669' : s >= 60 ? '#5ea9e2' : '#98a2b3');
+  const profileChips = [
+    userProfile.qualificationLevel,
+    userProfile.fieldOfStudy,
+    typeof userProfile.age === 'number' ? tr(`${userProfile.age} yrs`, `${num(userProfile.age, lang)} वर्ष`) : '',
+    userProfile.province,
+    userProfile.district
+  ].filter(Boolean) as string[];
 
   return (
-    <div className="space-y-8">
-      {/* Banner */}
-      <div className="bg-white text-slate-900 p-6 rounded-2xl shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Gemini AI Job Matching Engine
-            </span>
-            <h2 className="text-2xl font-black font-sans text-slate-900">
-              {lang === 'np' ? 'एआई योग्यता मिलान तथा सीभी विश्लेषण' : 'Resume Parser & AI Qualification Matcher'}
-            </h2>
-            <p className="text-xs text-slate-500 max-w-xl">
-              Paste your CV, degree transcripts, or qualification bio. Gemini AI will analyze your eligibility, age, and subject stream against all active Lok Sewa, Banking, and Government openings in Nepal!
-            </p>
-          </div>
+    <div className="flex flex-col gap-5 pt-7 pb-6">
+      <header className="flex flex-col gap-2">
+        <h1 className={H1.replace('lg:text-[56px]', 'lg:text-[48px]')}>{tr('Which vacancies fit you?', 'कुन विज्ञापन तपाईंलाई मिल्छ?')}</h1>
+        <p className="max-w-[38rem] text-[15px] leading-relaxed text-ink-soft">
+          {tr(
+            'Add your CV. We read qualification, age and experience, then score every open notice against PSC eligibility rules.',
+            'आफ्नो सीभी राख्नुहोस्। हामी योग्यता, उमेर र अनुभव पढेर हरेक विज्ञापनसँग मिलाउँछौं।'
+          )}
+        </p>
+      </header>
 
-          <button
-            onClick={handleRunBatchMatch}
-            disabled={matchingAll}
-            className="px-5 py-3 font-bold text-xs rounded-full shadow-xs transition flex items-center justify-center gap-2 whitespace-nowrap bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
+      {stage === 'upload' && (
+        <div className="bg-white rounded-[28px] p-2.5 shadow-soft">
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) readFile(f);
+            }}
+            className={`border-2 border-dashed rounded-[22px] px-5 py-11 flex flex-col items-center gap-3 text-center transition ${
+              dragOver ? 'border-[#5ea9e2] bg-sky-100' : 'border-[#b3dbf7] bg-sky-50'
+            }`}
           >
-            {matchingAll ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Computing AI Scores...</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 text-amber-300" />
-                <span>Compute AI Fit for All Jobs</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Interactive Salary Distribution Chart */}
-      <div id="salary-distribution-chart" className="bg-white rounded-2xl p-6 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-emerald-50 text-emerald-700">
-              <BarChart2 className="w-5 h-5 text-emerald-600" />
-            </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-slate-900 font-sans uppercase tracking-wide">
-                  {lang === 'np' ? 'सिफारिस पदहरूको अनुमानित तलब वितरण' : 'Recommended Jobs Salary Distribution'}
-                </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-200">
-                  NPR / Month
-                </span>
+            <div className="w-14 h-14 rounded-[18px] bg-white flex items-center justify-center shadow-[0_1px_2px_rgb(11_18_32/0.06)]">
+              <FileUp className="w-6 h-6 text-ink" strokeWidth={1.8} />
+            </div>
+            <div className="font-semibold text-base text-ink">{tr('Drop your CV here', 'सीभी यहाँ राख्नुहोस्')}</div>
+            <div className="text-[13px] text-[#667085]">{tr('Text file or pasted text · up to 5 MB · never shared', 'पाठ फाइल वा टाँसिएको पाठ · ५ MB सम्म')}</div>
+            <div className="flex gap-2.5 flex-wrap justify-center mt-1.5">
+              <button
+                onClick={() => parse(SAMPLE_CV, 'sample_cv.txt')}
+                className="h-[46px] px-5 rounded-full bg-ink text-white text-[14.5px] shadow-pill hover:bg-black transition"
+              >
+                {tr('Try with sample CV', 'नमुना सीभी प्रयोग गर्नुहोस्')}
+              </button>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="h-[46px] px-5 rounded-full border border-[#d0d5dd] bg-white text-[14.5px] text-ink hover:bg-sky-50 transition"
+              >
+                {tr('Browse files', 'फाइल छान्नुहोस्')}
+              </button>
+              <button
+                onClick={() => setPasteOpen((o) => !o)}
+                className="h-[46px] px-5 rounded-full border border-[#d0d5dd] bg-white text-[14.5px] text-ink hover:bg-sky-50 transition"
+                aria-expanded={pasteOpen}
+              >
+                {tr('Paste text', 'पाठ टाँस्नुहोस्')}
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".txt,.md,text/plain"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) readFile(f);
+                  e.target.value = '';
+                }}
+              />
+            </div>
+            {pasteOpen && (
+              <div className="w-full max-w-xl mt-3 flex flex-col gap-2 text-left">
+                <label htmlFor="cv-text" className="text-xs text-[#667085] pl-1">
+                  {tr('CV text', 'सीभीको पाठ')}
+                </label>
+                <textarea
+                  id="cv-text"
+                  value={pasted}
+                  onChange={(e) => setPasted(e.target.value)}
+                  rows={6}
+                  placeholder={tr('Education, date of birth, experience, province…', 'शिक्षा, जन्म मिति, अनुभव, प्रदेश…')}
+                  className="w-full rounded-[18px] bg-white border border-[#e4e7ec] p-3.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-sky-300"
+                />
+                <button
+                  onClick={() => parse(pasted, tr('Pasted CV', 'टाँसिएको सीभी'))}
+                  className="self-end h-11 px-5 rounded-full bg-ink text-white text-sm hover:bg-black transition"
+                >
+                  {tr('Read my CV', 'सीभी पढ्नुहोस्')}
+                </button>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Estimated monthly base compensation based on Government & Banking pay scales in Nepal
+            )}
+            {error && (
+              <p role="alert" className="text-[13px] text-[#be123c] mt-1">
+                {error}
               </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs font-mono font-bold">
-            <div className="bg-sky-50/70 px-3 py-1.5 rounded-xl">
-              <span className="text-slate-500 block text-[10px] font-sans font-normal">Highest Scale</span>
-              <span className="text-emerald-700 font-extrabold">रू {maxSalaryValue.toLocaleString()}/mo</span>
-            </div>
-            <div className="bg-sky-50/70 px-3 py-1.5 rounded-xl">
-              <span className="text-slate-500 block text-[10px] font-sans font-normal">Average Scale</span>
-              <span className="text-blue-700 font-extrabold">रू {avgSalaryValue.toLocaleString()}/mo</span>
-            </div>
+            )}
           </div>
         </div>
+      )}
 
-        {/* Visual Bar Chart Grid */}
-        <div className="pt-4 pb-2">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 items-end h-56 border-b border-slate-200 pb-2">
-            {salaryChartData.map((item) => {
-              const maxScale = 70000;
-              const heightPercent = Math.min(100, Math.max(20, Math.round((item.avgSalary / maxScale) * 100)));
-              const isHovered = hoveredBarId === item.id;
-              
-              let barColor = 'bg-blue-500 hover:bg-blue-600';
-              let badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
-              if (item.matchScore >= 80) {
-                barColor = 'bg-emerald-500 hover:bg-emerald-600';
-                badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-              } else if (item.matchScore >= 50) {
-                barColor = 'bg-amber-500 hover:bg-amber-600';
-                badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
-              }
-
-              return (
-                <div
-                  key={item.id}
-                  onMouseEnter={() => setHoveredBarId(item.id)}
-                  onMouseLeave={() => setHoveredBarId(null)}
-                  className="flex flex-col items-center h-full justify-end group cursor-pointer relative"
-                >
-                  {/* Tooltip on hover */}
-                  {isHovered && (
-                    <div className="absolute bottom-full mb-2 z-30 bg-slate-900 text-white text-[11px] p-3 rounded-xl shadow-xl border border-slate-700 w-48 pointer-events-none space-y-1">
-                      <p className="font-bold text-amber-300 leading-tight">{item.fullTitle}</p>
-                      <p className="text-slate-300 text-[10px]">{item.category} • {item.scaleLabel}</p>
-                      <div className="pt-1 flex items-center justify-between border-t border-slate-800 text-emerald-400 font-mono font-bold">
-                        <span>Avg Salary:</span>
-                        <span>रू {item.avgSalary.toLocaleString()}</span>
-                      </div>
-                      <p className="text-[9px] text-slate-400">Range: रू {item.minSalary.toLocaleString()} - {item.maxSalary.toLocaleString()}</p>
-                    </div>
-                  )}
-
-                  {/* Top value badge */}
-                  <span className="text-[10px] font-mono font-bold text-slate-600 group-hover:text-slate-900 mb-1">
-                    रू {Math.round(item.avgSalary / 1000)}k
-                  </span>
-
-                  {/* Bar */}
-                  <div className="w-full bg-slate-100 rounded-t-lg overflow-hidden flex items-end h-36">
-                    <div
-                      style={{ height: `${heightPercent}%` }}
-                      className={`w-full ${barColor} transition-all duration-300 rounded-t-md flex items-center justify-center`}
-                    >
-                      {item.matchScore > 0 && (
-                        <span className="text-[9px] font-mono font-bold text-white opacity-90 px-1">
-                          {item.matchScore}%
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Label */}
-                  <span className="text-[10px] font-semibold text-slate-700 truncate w-full text-center mt-2 group-hover:text-blue-600">
-                    {item.title}
-                  </span>
-                </div>
-              );
-            })}
+      {stage === 'parsing' && (
+        <div className="bg-white rounded-[28px] p-7 flex flex-col gap-3.5 shadow-soft" aria-busy="true">
+          <div className="font-semibold text-ink flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            {tr('Reading your CV with Gemini…', 'जेमिनीले सीभी पढ्दै…')}
           </div>
+          {[70, 90, 55].map((w) => (
+            <div key={w} className="h-3.5 rounded-lg animate-pulse bg-gradient-to-r from-[#eef2f6] via-[#f8fafc] to-[#eef2f6]" style={{ width: `${w}%` }} />
+          ))}
         </div>
+      )}
 
-        {/* Legend / Color Explanation */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-600">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-xs bg-emerald-500 inline-block"></span> High AI Match (≥80%)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-xs bg-amber-500 inline-block"></span> Moderate Match (50-79%)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-xs bg-blue-500 inline-block"></span> Standard Scale
-            </span>
-          </div>
-          <span className="text-slate-400 text-[10px] italic">
-            *Excludes provident fund, festival bonus & field allowances
-          </span>
-        </div>
-      </div>
-
-      {/* Two Column Layout: CV Input / Active Profile + Match Results */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Candidate Profile & CV Parser */}
-        <div className="lg:col-span-1 space-y-6">
-          {/* Active Candidate Card */}
-          <div className="bg-white rounded-2xl p-5 text-slate-900 space-y-4 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-blue-600" /> Active Candidate Profile
-            </h3>
-
-            <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Name:</span>
-                <span className="font-bold text-slate-900">{userProfile.name}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Qualification:</span>
-                <span className="font-bold text-blue-700">{userProfile.qualificationLevel}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Stream / Field:</span>
-                <span className="font-semibold text-slate-800 truncate max-w-[150px]">
-                  {userProfile.fieldOfStudy}
-                </span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Province:</span>
-                <span className="font-bold text-emerald-700">{userProfile.province}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-slate-500">Age:</span>
-                <span className="font-bold text-amber-800">{userProfile.age} Years</span>
+      {stage === 'done' && (
+        <>
+          <div className="bg-white rounded-[24px] px-5 py-[18px] flex flex-wrap items-center gap-2.5 shadow-soft">
+            <div className="flex items-center gap-2.5 mr-2">
+              <span className="w-10 h-10 rounded-full bg-ink text-white flex items-center justify-center font-semibold">
+                {(userProfile.name || 'U').charAt(0).toUpperCase()}
+              </span>
+              <div>
+                <div className="font-semibold text-[14.5px] text-ink">{userProfile.name || tr('Your profile', 'तपाईंको प्रोफाइल')}</div>
+                <div className="text-xs text-[#667085]">{fileName || tr('Saved CV', 'सुरक्षित सीभी')}</div>
               </div>
             </div>
-          </div>
-
-          {/* CV Text Area Parser */}
-          <div className="bg-white rounded-2xl p-5 text-slate-900 space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Upload className="w-4 h-4 text-purple-600" /> Paste CV or Qualification Text
-            </h3>
-            <p className="text-[11px] text-slate-500">
-              Paste your bio, graduation details, citizenship age, and skills. Gemini AI will structure it automatically.
-            </p>
-
-            <textarea
-              rows={6}
-              value={resumeText}
-              onChange={(e) => setResumeText(e.target.value)}
-              placeholder="e.g. Graduated in Bachelor of Computer Engineering in 2024. Age 24, resident of Kathmandu, Bagmati Province. Interested in IT and Lok Sewa positions..."
-              className="w-full bg-sky-50/70 rounded-2xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-300"
-            />
-
-            <button
-              onClick={handleParseResume}
-              disabled={parsing}
-              className="w-full py-2.5 font-bold text-xs rounded-full transition flex items-center justify-center gap-2 shadow-xs bg-ink hover:bg-black text-white dark:bg-white dark:text-ink"
-            >
-              {parsing ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Parsing with Gemini AI...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>{t('parseResumeBtn', lang)}</span>
-                </>
-              )}
+            {profileChips.map((c) => (
+              <span key={c} className="text-[12.5px] px-[11px] py-1.5 rounded-full bg-sky-50 text-ink">
+                {c}
+              </span>
+            ))}
+            <button onClick={() => setStage('upload')} className="ml-auto text-[13px] underline underline-offset-2 text-ink">
+              {tr('Replace CV', 'सीभी बदल्नुहोस्')}
             </button>
-
-            {parseMessage && (
-              <div className="bg-purple-50 p-3 rounded-xl text-xs text-purple-900 flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
-                <p className="leading-snug font-medium">{parseMessage}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Column: AI Job Match Recommendations */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-900 font-sans flex items-center gap-2">
-              <span>Matched Vacancies</span>
-              <span className="text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-bold">
-                {vacancies.length} Total
-              </span>
-            </h3>
-
-            {Object.keys(matchResults).length > 0 && (
-              <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" /> AI Scores Updated
-              </span>
-            )}
           </div>
 
-          <div className="space-y-4">
-            {sortedVacancies.map((vacancy) => {
-              const match = matchResults[vacancy.id];
-              const hasComputed = !!match;
-
+          <ol className="flex flex-col gap-3">
+            {ranked.map(({ v, m }, i) => {
+              const top = i === 0 && m.score >= 60;
+              const why = [
+                { ok: m.qualOk, text: m.qualOk ? tr('✓ Qualification', '✓ योग्यता') : tr('✕ Qualification', '✕ योग्यता') },
+                { ok: m.ageOk, text: m.ageOk ? tr('✓ Age', '✓ उमेर') : tr('✕ Age', '✕ उमेर') },
+                { ok: null, text: m.provOk ? tr('✓ Province', '✓ प्रदेश') : tr('Other province', 'अर्को प्रदेश') }
+              ];
               return (
-                <div
-                  key={vacancy.id}
-                  className="bg-white hover:border-slate-300 rounded-2xl p-5 text-slate-900 transition space-y-3 shadow-soft ring-1 ring-black/[0.03] dark:ring-white/10"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-mono font-bold">
-                          {vacancy.category}
-                        </span>
-                        <span className="text-slate-500 text-[11px]">{vacancy.province}</span>
-                      </div>
-                      <h4 className="text-base font-bold text-slate-900 font-sans">{vacancy.title}</h4>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                        <Building2 className="w-3.5 h-3.5 text-slate-400" /> {vacancy.org}
-                      </p>
+                <li key={v.id}>
+                  <button
+                    onClick={() => onSelectVacancy(v)}
+                    className="w-full text-left bg-white rounded-[22px] px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-3.5 shadow-[0_1px_2px_rgb(11_18_32/0.04),0_12px_32px_-12px_rgb(11_18_32/0.1)] hover:-translate-y-0.5 transition"
+                    style={{ outline: top ? '2px solid #fcd34d' : 'none' }}
+                  >
+                    <div className="w-[52px] flex-none font-display text-[26px] font-semibold" style={{ color: color(m.score) }}>
+                      {num(m.score, lang)}%
                     </div>
-
-                    {/* Score Badge */}
-                    {hasComputed && (
-                      <div className="bg-sky-50/70 p-2.5 rounded-xl text-center flex-shrink-0 min-w-[100px]">
-                        <span className="text-[10px] text-slate-500 block font-semibold">Match Score</span>
+                    <div className="flex-[1_1_260px] min-w-0 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-[15px] text-ink">{lang === 'np' && v.titleNp ? v.titleNp : v.title}</span>
+                        {top && (
+                          <span className="text-[11px] font-semibold px-2 py-[3px] rounded-full bg-[#fef3c7] text-[#92400e]">{tr('Top match', 'उत्कृष्ट मिलान')}</span>
+                        )}
+                      </div>
+                      <div className="h-1.5 rounded-full bg-sky-100 overflow-hidden max-w-[360px]">
+                        <div className="h-full transition-[width] duration-300" style={{ width: `${m.score}%`, background: color(m.score) }} />
+                      </div>
+                    </div>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {why.map((w) => (
                         <span
-                          className={`text-lg font-black font-mono ${
-                            match.matchScore >= 80
-                              ? 'text-emerald-700'
-                              : match.matchScore >= 50
-                              ? 'text-amber-700'
-                              : 'text-rose-700'
-                          }`}
+                          key={w.text}
+                          className="text-xs px-[9px] py-1 rounded-full"
+                          style={
+                            w.ok === null
+                              ? { background: '#f3f9fe', color: '#0b1220' }
+                              : w.ok
+                                ? { background: '#ecfdf5', color: '#047857' }
+                                : { background: '#fff1f2', color: '#be123c' }
+                          }
                         >
-                          {match.matchScore}%
+                          {w.text}
                         </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* AI Recommendation Rationale */}
-                  {hasComputed && (
-                    <div className="bg-sky-50/70 p-3 rounded-xl text-xs space-y-1.5">
-                      <p className="text-slate-700 italic">"{match.aiRecommendationRationale}"</p>
-                      <div className="flex items-center gap-3 text-[11px] pt-1 border-t border-slate-200">
-                        <span className={match.qualificationMatch ? 'text-emerald-700 font-semibold' : 'text-rose-700'}>
-                          Qual: {match.qualificationMatch ? '✓ Met' : '✗ Unmet'}
-                        </span>
-                        <span className={match.provinceMatch ? 'text-emerald-700 font-semibold' : 'text-rose-700'}>
-                          Province: {match.provinceMatch ? '✓ Met' : '✗ Unmet'}
-                        </span>
-                        <span className={match.ageMatch ? 'text-emerald-700 font-semibold' : 'text-rose-700'}>
-                          Age: {match.ageMatch ? '✓ Met' : '✗ Unmet'}
-                        </span>
-                      </div>
+                      ))}
                     </div>
-                  )}
-
-                  {/* Footer Actions */}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-slate-500">
-                      Seats: <strong className="text-slate-900">{vacancy.posts}</strong> | Deadline:{' '}
-                      <strong className="text-amber-700">{vacancy.deadline}</strong>
-                    </span>
-
-                    <button
-                      onClick={() => onSelectVacancy(vacancy)}
-                      className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-full border border-slate-200 transition flex items-center gap-1"
-                    >
-                      <span>View Full Spec</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                  </button>
+                </li>
               );
             })}
-          </div>
-        </div>
-      </div>
+          </ol>
+        </>
+      )}
     </div>
   );
 };

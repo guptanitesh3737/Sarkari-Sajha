@@ -65,6 +65,8 @@ import {
   updateUserProfileInFirestore
 } from '../lib/firestoreService';
 import { JobAlertsCenter } from './JobAlertsCenter';
+import { num, L, daysLeft } from '../utils/ui';
+import { tintHex } from '../utils/tints';
 
 interface DashboardProps {
   userProfile: UserProfile;
@@ -271,95 +273,114 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { id: 'alerts' as DashboardSubTab, labelEn: 'Alerts', labelNp: 'अलर्ट', count: notifications.length }
   ];
 
+  const tr = L(lang);
+  const firstName = (userProfile.name || '').split(' ')[0] || tr('there', 'साथी');
+
+  // Mock accuracy for the last 8 weeks (average percentage per week).
+  const weekly = useMemo(() => {
+    const now = Date.now();
+    const buckets = Array.from({ length: 8 }, () => ({ sum: 0, n: 0 }));
+    quizAttempts.forEach((a) => {
+      const t0 = new Date(a.attemptedAt).getTime();
+      if (Number.isNaN(t0)) return;
+      const w = 7 - Math.floor((now - t0) / (7 * 864e5));
+      if (w < 0 || w > 7) return;
+      buckets[w].sum += a.percentage ?? a.accuracy ?? 0;
+      buckets[w].n += 1;
+    });
+    return buckets.map((b) => (b.n ? Math.round(b.sum / b.n) : null));
+  }, [quizAttempts]);
+  const thisWeekMocks = quizAttempts.filter((a) => Date.now() - new Date(a.attemptedAt).getTime() < 7 * 864e5).length;
+  const inProgress = applications.filter((a) => a.status === 'Bookmarked' || a.status === 'Applied').length;
+
+  const kpis = [
+    {
+      label: tr('Accuracy', 'शुद्धता'),
+      value: `${num(prepSummary.overallAccuracy, lang)}%`,
+      delta: tr(`${prepSummary.totalQuestionsAnswered} questions answered`, `${num(prepSummary.totalQuestionsAnswered, lang)} प्रश्न हल`),
+      good: false,
+      tab: 'preparation' as DashboardSubTab
+    },
+    {
+      label: tr('Mocks taken', 'नमुना परीक्षा'),
+      value: num(prepSummary.totalAttempts, lang),
+      delta: tr(`${thisWeekMocks} this week`, `यो हप्ता ${num(thisWeekMocks, lang)}`),
+      good: thisWeekMocks > 0,
+      tab: 'preparation' as DashboardSubTab
+    },
+    {
+      label: tr('Practice streak', 'लगातार अभ्यास'),
+      value: tr(`${prepSummary.streakDays}d`, `${num(prepSummary.streakDays, lang)} दिन`),
+      delta: prepSummary.streakDays > 0 ? tr('Keep it going', 'जारी राख्नुहोस्') : tr('Take a quiz today', 'आज क्विज दिनुहोस्'),
+      good: prepSummary.streakDays > 0,
+      tab: 'preparation' as DashboardSubTab
+    },
+    {
+      label: tr('Applications', 'आवेदन'),
+      value: num(inProgress, lang),
+      delta: tr(`${savedVacanciesList.length} tracked in total`, `जम्मा ${num(savedVacanciesList.length, lang)} ट्र्याकमा`),
+      good: false,
+      tab: 'saved' as DashboardSubTab
+    }
+  ];
+
+  const stageText = (st: ApplicationStatus, fee: boolean) =>
+    st === 'Bookmarked'
+      ? tr('Bookmarked · draft the form', 'बुकमार्क · फाराम भर्नुहोस्')
+      : st === 'Applied'
+        ? fee
+          ? tr('Fee paid · submit form', 'दस्तुर तिरियो · फाराम बुझाउनुहोस्')
+          : tr('Form drafted · pay fee', 'फाराम तयार · दस्तुर तिर्नुहोस्')
+        : tr('Submitted', 'बुझाइयो');
+
+  const upcoming = (savedVacanciesList.length
+    ? savedVacanciesList
+        .filter(({ appTrack }) => appTrack.status === 'Bookmarked' || appTrack.status === 'Applied')
+        .map(({ vacancy, appTrack }) => ({ vacancy, sub: stageText(appTrack.status, appTrack.feePaid) }))
+    : closingSoonList.map(({ vacancy }) => ({ vacancy, sub: vacancy.shortOrg || vacancy.organization }))
+  )
+    .map((x) => ({ ...x, dl: daysLeft(x.vacancy.application_deadline || x.vacancy.deadline) }))
+    .filter((x) => x.dl >= 0 && Number.isFinite(x.dl))
+    .sort((a, b) => a.dl - b.dl)
+    .slice(0, 4);
+
   return (
-    <div className="pt-4 sm:pt-8 space-y-8">
-      {/* GREETING */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="relative shrink-0">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white dark:bg-slate-900 shadow-soft ring-1 ring-black/[0.04] dark:ring-white/10 flex items-center justify-center font-display text-2xl sm:text-3xl font-semibold text-ink dark:text-white">
-              {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : 'C'}
-            </div>
-            {firebaseUser && (
-              <span
-                className="absolute bottom-0.5 right-0.5 w-5 h-5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-950 inline-flex items-center justify-center"
-                title={np ? 'खाता सिंक भएको' : 'Account synced'}
-              >
-                <Check className="w-3 h-3 text-white" />
-              </span>
-            )}
-          </div>
-          <div>
-            <p className="text-sm text-ink-soft dark:text-slate-400">{np ? 'नमस्ते,' : 'Namaste,'}</p>
-            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-ink dark:text-white leading-tight">
-              {userProfile.name || (np ? 'उम्मेदवार' : 'Candidate')}
-            </h1>
-            <p className="mt-1 text-sm text-ink-soft dark:text-slate-400">
-              {userProfile.qualificationLevel}
-              {userProfile.fieldOfStudy ? ` · ${userProfile.fieldOfStudy}` : ''} · {userProfile.province} · {userProfile.age}{' '}
-              {np ? 'वर्ष' : 'yrs'}
-            </p>
-          </div>
+    <div className="flex flex-col gap-5 pt-7 pb-6">
+      {/* HEADER */}
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <p className="text-sm text-ink-soft">{tr(`Namaste, ${firstName}`, `नमस्ते, ${firstName}`)}</p>
+          <h1 className="font-display font-semibold tracking-[-0.025em] leading-[1.05] text-ink text-[30px] sm:text-[48px] [text-wrap:balance]">
+            {tr('Your preparation at a glance', 'तपाईंको तयारी एक नजरमा')}
+          </h1>
         </div>
-
-        <div className="flex flex-wrap lg:flex-nowrap items-center gap-2 shrink-0">
-          {isPro ? (
-            <span className="h-11 px-4 inline-flex items-center gap-1.5 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 text-sm text-ink dark:text-white">
-              <Crown className="w-4 h-4 text-amber-500" />
-              Pro
-            </span>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {!isPro && (
+            <button onClick={onOpenSubscription} className="h-11 px-4 rounded-full bg-white text-sm text-ink inline-flex items-center gap-1.5 shadow-[0_1px_2px_rgb(11_18_32/0.05)] hover:bg-sky-50 transition">
+              <Crown className="w-4 h-4 text-[#f59e0b]" />
+              {tr('Go Pro', 'प्रो लिनुहोस्')}
+            </button>
+          )}
+          {!firebaseUser ? (
+            <button onClick={onOpenAuth} className="h-11 px-4 rounded-full bg-white text-sm text-ink shadow-[0_1px_2px_rgb(11_18_32/0.05)] hover:bg-sky-50 transition">
+              {tr('Sign in to sync', 'सिंक गर्न लगइन')}
+            </button>
           ) : (
-            <button onClick={onOpenSubscription} className={`${ghostPill} h-11 px-4 text-sm bg-white/80 dark:bg-white/5 whitespace-nowrap`}>
-              <Crown className="w-4 h-4 opacity-70" />
-              {np ? 'प्रो लिनुहोस्' : 'Go Pro'}
+            <button onClick={onOpenProfile} className="h-11 px-4 rounded-full bg-white text-sm text-ink inline-flex items-center gap-1.5 shadow-[0_1px_2px_rgb(11_18_32/0.05)] hover:bg-sky-50 transition">
+              <Settings className="w-4 h-4" />
+              {tr('Profile', 'प्रोफाइल')}
             </button>
           )}
-          {!firebaseUser && (
-            <button onClick={onOpenAuth} className={`${ghostPill} h-11 px-4 text-sm bg-white/80 dark:bg-white/5 whitespace-nowrap`}>
-              {np ? 'सिंक गर्न लगइन' : 'Sign in to sync'}
-            </button>
-          )}
-          <button onClick={onOpenProfile} className={`${ghostPill} h-11 px-4 text-sm bg-white/80 dark:bg-white/5 whitespace-nowrap`}>
-            <Settings className="w-4 h-4 opacity-70" />
-            {np ? 'प्रोफाइल' : 'Edit profile'}
-          </button>
           {onNavigateTab && (
-            <button onClick={() => onNavigateTab('quizzes')} className={`${blackPill} h-11 px-5 text-sm shadow-pill whitespace-nowrap`}>
-              <Zap className="w-4 h-4" />
-              {np ? 'दैनिक क्विज' : 'Daily quiz'}
+            <button onClick={() => onNavigateTab('quizzes')} className="h-11 px-5 rounded-full bg-ink text-white text-sm font-medium shadow-pill hover:bg-black transition">
+              {tr('Take a mock', 'नमुना परीक्षा दिनुहोस्')}
             </button>
           )}
         </div>
-      </section>
-
-      {/* METRICS */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((m) => {
-          const Icon = m.icon;
-          return (
-            <button
-              key={m.key}
-              onClick={() => setActiveSubTab(m.tab)}
-              className={`${card} p-5 sm:p-6 text-left transition hover:-translate-y-0.5`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-ink-soft dark:text-slate-400">{m.label}</span>
-                <span className="w-8 h-8 rounded-full bg-sky-100 dark:bg-white/10 inline-flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-ink dark:text-white" />
-                </span>
-              </div>
-              <div className="mt-4 flex items-baseline gap-1.5">
-                <span className="font-display text-4xl font-semibold text-ink dark:text-white leading-none">{m.value}</span>
-                {m.unit && <span className="text-sm text-ink-soft dark:text-slate-400">{m.unit}</span>}
-              </div>
-              <p className="mt-2 text-xs text-ink-soft dark:text-slate-400 truncate">{m.sub}</p>
-            </button>
-          );
-        })}
       </section>
 
       {/* SUB-NAV */}
-      <nav className="flex items-center gap-1 p-1.5 rounded-full bg-white/70 dark:bg-white/5 ring-1 ring-black/[0.04] dark:ring-white/10 overflow-x-auto no-scrollbar max-w-full w-fit">
+      <nav className="flex items-center gap-1 p-1 rounded-full bg-white shadow-[0_1px_2px_rgb(11_18_32/0.05)] overflow-x-auto no-scrollbar max-w-full w-fit">
         {subTabs.map((tab) => {
           const active = activeSubTab === tab.id;
           return (
@@ -367,179 +388,115 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id)}
               aria-current={active ? 'page' : undefined}
-              className={`h-10 px-4 rounded-full text-sm whitespace-nowrap inline-flex items-center gap-1.5 transition ${
-                active ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'text-ink-soft hover:text-ink dark:text-slate-400 dark:hover:text-white'
-              }`}
+              className={`h-9 px-3.5 rounded-full text-[13px] whitespace-nowrap inline-flex items-center gap-1.5 transition ${active ? 'bg-ink text-white' : 'text-ink-soft hover:text-ink'}`}
             >
               {np ? tab.labelNp : tab.labelEn}
-              {tab.count ? <span className={`text-xs ${active ? 'opacity-70' : 'opacity-60'}`}>{tab.count}</span> : null}
+              {tab.count ? <span className="text-xs opacity-60">{num(tab.count, lang)}</span> : null}
             </button>
           );
         })}
       </nav>
 
-      {/* OVERVIEW */}
+      {/* OVERVIEW (design A) */}
       {activeSubTab === 'overview' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recommended */}
-            <section className={`${card} lg:col-span-2 p-6 sm:p-8`}>
-              <div className={cardHead}>
-                <h2 className={cardTitle}>{np ? 'तपाईंका लागि सिफारिस' : 'Recommended for you'}</h2>
-                <button onClick={() => setActiveSubTab('recommended')} className={linkBtn}>
-                  {np ? 'सबै' : 'View all'} <ChevronRight className="w-4 h-4" />
-                </button>
+        <div className="flex flex-col gap-5">
+          <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))]">
+            {kpis.map((k) => (
+              <button
+                key={k.label}
+                onClick={() => setActiveSubTab(k.tab)}
+                className="text-left bg-white rounded-[22px] p-[18px] flex flex-col gap-1.5 shadow-soft hover:-translate-y-0.5 transition"
+              >
+                <span className="text-[12.5px] text-[#667085]">{k.label}</span>
+                <span className="font-display text-[32px] font-semibold leading-none text-ink">{k.value}</span>
+                <span className="text-[12.5px]" style={{ color: k.good ? '#047857' : '#475467' }}>{k.delta}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-4 items-stretch">
+            <section className="flex-[2_1_420px] min-w-0 bg-white rounded-[24px] p-[22px] shadow-soft flex flex-col gap-3.5">
+              <div className="flex justify-between items-baseline">
+                <h2 className="font-semibold text-ink">{tr('Mock accuracy', 'नमुना परीक्षा शुद्धता')}</h2>
+                <span className="text-xs text-[#667085]">{tr('Last 8 weeks', 'पछिल्ला ८ हप्ता')}</span>
               </div>
-              {recommendedList.length === 0 ? (
-                <p className={empty}>{np ? 'अहिले कुनै सिफारिस छैन। प्रोफाइल अपडेट गर्नुहोस्।' : 'No matches yet. Update your profile to get recommendations.'}</p>
-              ) : (
-                <div className="mt-2">
-                  {recommendedList.slice(0, 3).map(({ vacancy, matchScore }) => {
-                    const saved = savedVacanciesMap.has(vacancy.id);
-                    return (
-                      <div key={vacancy.id} className={row}>
-                        <button onClick={() => onSelectVacancy(vacancy)} className="min-w-0 text-left group">
-                          <div className="flex items-center gap-2 text-xs text-ink-soft dark:text-slate-400">
-                            <span className="px-2 py-0.5 rounded-full bg-sky-100 dark:bg-white/10 text-ink dark:text-white">{matchScore}% {np ? 'मेल' : 'match'}</span>
-                            <span className="truncate">{vacancy.category}</span>
-                          </div>
-                          <h3 className="mt-1.5 font-display text-base font-medium text-ink dark:text-white line-clamp-1 group-hover:underline underline-offset-4">
-                            {np && vacancy.titleNp ? vacancy.titleNp : vacancy.title}
-                          </h3>
-                          <p className="mt-0.5 text-sm text-ink-soft dark:text-slate-400 truncate">
-                            {vacancy.organization || vacancy.org} · {vacancy.province}
-                          </p>
-                        </button>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            onClick={() => toggleSave(vacancy)}
-                            aria-pressed={saved}
-                            title={np ? 'सुरक्षित गर्नुहोस्' : 'Save'}
-                            className={`w-10 h-10 rounded-full inline-flex items-center justify-center transition ${
-                              saved ? 'bg-ink text-white dark:bg-white dark:text-ink' : 'ring-1 ring-slate-200 dark:ring-white/15 text-ink dark:text-white hover:bg-slate-50 dark:hover:bg-white/5'
-                            }`}
-                          >
-                            <Bookmark className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} />
-                          </button>
-                          <button onClick={() => onSelectVacancy(vacancy)} className={`${blackPill} h-10 px-4 text-sm`}>
-                            {np ? 'हेर्नुहोस्' : 'View'}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="flex items-end gap-2.5 h-[150px]" role="img" aria-label={tr('Weekly mock accuracy', 'साप्ताहिक शुद्धता')}>
+                {weekly.map((a, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1.5 h-full">
+                    <span className="text-[11px] text-ink-soft">{a === null ? '' : num(a, lang)}</span>
+                    <div
+                      className="w-full rounded-t-[10px] rounded-b-[4px] transition-[height] duration-300"
+                      style={{
+                        height: a === null ? 4 : Math.max(6, a * 1.1),
+                        background: a === null ? '#eef2f6' : i === 7 ? '#0b1220' : a >= 70 ? '#5ea9e2' : '#cfe8fa'
+                      }}
+                    />
+                    <span className="text-[10.5px] text-[#98a2b3]">{tr('W', 'ह')}{num(i + 1, lang)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2 flex-wrap items-center pt-1">
+                <span className="text-[12.5px] text-ink-soft">{tr('Weak areas:', 'कमजोर विषय:')}</span>
+                {prepSummary.weakTopics.length ? (
+                  prepSummary.weakTopics.slice(0, 3).map((w) => (
+                    <span key={w.topic} className="text-xs px-2.5 py-1 rounded-full bg-[#fff1f2] text-[#be123c]">{w.topic}</span>
+                  ))
+                ) : (
+                  <span className="text-xs text-[#98a2b3]">{tr('Take a mock to find them', 'पत्ता लगाउन नमुना परीक्षा दिनुहोस्')}</span>
+                )}
+              </div>
             </section>
 
-            {/* Closing soon */}
-            <section className={`${card} p-6 sm:p-8`}>
-              <div className={cardHead}>
-                <h2 className={cardTitle}>{np ? 'छिट्टै सकिने' : 'Closing soon'}</h2>
-                <button onClick={() => setActiveSubTab('closing_soon')} className={linkBtn}>
-                  {np ? 'सबै' : 'All'} <ChevronRight className="w-4 h-4" />
-                </button>
+            <section className="flex-[1_1_300px] bg-white rounded-[24px] p-[22px] shadow-soft flex flex-col gap-1">
+              <div className="flex justify-between items-baseline mb-2">
+                <h2 className="font-semibold text-ink">{tr('Closing soon', 'चाँडै सकिने')}</h2>
+                {onNavigateTab && (
+                  <button onClick={() => onNavigateTab('tracker')} className="text-[13px] underline underline-offset-2 text-ink">
+                    {tr('All applications', 'सबै आवेदन')}
+                  </button>
+                )}
               </div>
-              {closingSoonList.length === 0 ? (
-                <p className={empty}>{np ? 'तत्काल सकिने विज्ञापन छैन।' : 'No urgent deadlines right now.'}</p>
+              {upcoming.length === 0 ? (
+                <p className="py-6 text-sm text-[#667085]">{tr('No open deadlines right now.', 'अहिले कुनै खुला अन्तिम मिति छैन।')}</p>
               ) : (
-                <div className="mt-2">
-                  {closingSoonList.slice(0, 4).map(({ vacancy, isUrgent, statusLabelEn, statusLabelNp }) => (
-                    <button key={vacancy.id} onClick={() => onSelectVacancy(vacancy)} className={`${row} w-full text-left group`}>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-medium text-ink dark:text-white line-clamp-1 group-hover:underline underline-offset-4">{vacancy.title}</h3>
-                        <p className="mt-0.5 text-xs text-ink-soft dark:text-slate-400 truncate">{vacancy.organization || vacancy.org}</p>
-                      </div>
-                      <span
-                        className={`shrink-0 text-xs px-2.5 py-1 rounded-full ${
-                          isUrgent ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300' : 'bg-slate-100 text-ink-soft dark:bg-white/10 dark:text-slate-300'
-                        }`}
-                      >
-                        {np ? statusLabelNp : statusLabelEn}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                upcoming.map(({ vacancy, sub, dl }) => (
+                  <button key={vacancy.id} onClick={() => onSelectVacancy(vacancy)} className="flex gap-3 items-center py-2.5 border-t border-[#eef2f6] text-left">
+                    <span className="w-11 flex-none text-center font-display font-semibold text-xl" style={{ color: dl <= 10 ? '#be123c' : '#b45309' }}>
+                      {num(dl, lang)}{tr('d', 'दि')}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13.5px] font-semibold leading-[1.3] text-ink line-clamp-1">{np && vacancy.titleNp ? vacancy.titleNp : vacancy.title}</span>
+                      <span className="block text-xs text-[#667085] truncate">{sub}</span>
+                    </span>
+                  </button>
+                ))
               )}
             </section>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Weak areas */}
-            <section className={`${card} p-6 sm:p-8`}>
-              <div className={cardHead}>
-                <h2 className={cardTitle}>{np ? 'सुधार गर्नुपर्ने विषय' : 'Areas to improve'}</h2>
-                <button onClick={() => setActiveSubTab('preparation')} className={linkBtn}>
-                  {np ? 'विस्तृत' : 'Details'} <ChevronRight className="w-4 h-4" />
-                </button>
+          <section className="flex flex-col gap-3">
+            <h2 className="font-display text-xl font-semibold text-ink">{tr('Recommended for you', 'तपाईंका लागि सिफारिस')}</h2>
+            {recommendedList.length === 0 ? (
+              <p className="text-sm text-[#667085]">{tr('Update your profile to get recommendations.', 'सिफारिसका लागि प्रोफाइल अपडेट गर्नुहोस्।')}</p>
+            ) : (
+              <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))]">
+                {recommendedList.slice(0, 3).map(({ vacancy, matchScore: ms }) => (
+                  <button
+                    key={vacancy.id}
+                    onClick={() => onSelectVacancy(vacancy)}
+                    className="text-left rounded-[22px] p-[18px] flex flex-col gap-2.5 shadow-soft hover:-translate-y-0.5 transition"
+                    style={{ background: `linear-gradient(180deg, ${tintHex(vacancy.category || '')}, #fff 70%)` }}
+                  >
+                    <span className="self-start text-xs font-semibold px-[9px] py-1 rounded-full bg-white text-[#047857]">
+                      {tr(`${ms}% match`, `${num(ms, lang)}% मिलान`)}
+                    </span>
+                    <span className="font-semibold text-[15px] leading-[1.3] text-ink">{np && vacancy.titleNp ? vacancy.titleNp : vacancy.title}</span>
+                    <span className="text-[12.5px] text-ink-soft">{vacancy.shortOrg || vacancy.organization}</span>
+                  </button>
+                ))}
               </div>
-              {prepSummary.weakTopics.length > 0 ? (
-                <div className="mt-2">
-                  {prepSummary.weakTopics.slice(0, 3).map((wt) => (
-                    <div key={wt.topic} className={row}>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-sm font-medium text-ink dark:text-white truncate">{wt.topic}</span>
-                          <span className="text-xs text-ink-soft dark:text-slate-400 shrink-0">
-                            {wt.correct}/{wt.totalAnswered}
-                          </span>
-                        </div>
-                        <div className="mt-2 h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-                          <div className="h-full rounded-full bg-sky-400" style={{ width: `${Math.max(4, Math.min(100, wt.accuracy))}%` }} />
-                        </div>
-                      </div>
-                      <button onClick={() => setActiveSubTab('preparation')} className={`${ghostPill} h-9 px-4 text-[13px] shrink-0`}>
-                        {np ? 'अभ्यास' : 'Practice'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={empty}>
-                  <p>{np ? 'अहिलेसम्म कमजोर विषय पहिचान भएको छैन।' : 'No weak topics yet. A quick quiz will find them.'}</p>
-                  {onNavigateTab && (
-                    <button onClick={() => onNavigateTab('quizzes')} className={`${blackPill} mt-4 h-10 px-5 text-sm`}>
-                      {np ? 'क्विज सुरु गर्नुहोस्' : 'Take a quiz'}
-                    </button>
-                  )}
-                </div>
-              )}
-            </section>
-
-            {/* Recently saved */}
-            <section className={`${card} p-6 sm:p-8`}>
-              <div className={cardHead}>
-                <h2 className={cardTitle}>{np ? 'भर्खरै सुरक्षित' : 'Recently saved'}</h2>
-                <button onClick={() => setActiveSubTab('saved')} className={linkBtn}>
-                  {np ? 'सबै' : 'Manage'} <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-              {savedVacanciesList.length === 0 ? (
-                <div className={empty}>
-                  <p>{np ? 'तपाईंले कुनै विज्ञापन सुरक्षित गर्नुभएको छैन।' : 'Nothing saved yet.'}</p>
-                  {onNavigateTab && (
-                    <button onClick={() => onNavigateTab('vacancies')} className={`${blackPill} mt-4 h-10 px-5 text-sm`}>
-                      {np ? 'विज्ञापन हेर्नुहोस्' : 'Browse vacancies'}
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="mt-2">
-                  {savedVacanciesList.slice(0, 3).map(({ vacancy, appTrack }) => (
-                    <button key={vacancy.id} onClick={() => onSelectVacancy(vacancy)} className={`${row} w-full text-left group`}>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-medium text-ink dark:text-white line-clamp-1 group-hover:underline underline-offset-4">{vacancy.title}</h3>
-                        <p className="mt-0.5 text-xs text-ink-soft dark:text-slate-400 truncate">
-                          {vacancy.organization || vacancy.org} · {vacancy.application_deadline || vacancy.deadline}
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-xs px-2.5 py-1 rounded-full bg-sky-100 dark:bg-white/10 text-ink dark:text-white">{appTrack.status}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </section>
-          </div>
+            )}
+          </section>
         </div>
       )}
 
